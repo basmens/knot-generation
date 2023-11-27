@@ -3,6 +3,8 @@ package nl.basmens.generation.analyzers;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import nl.basmens.UuidSet;
+import nl.basmens.UuidSet.UuidSetElement;
 import nl.basmens.generation.AbstractTile;
 import nl.basmens.knot.Connection;
 import nl.basmens.knot.Intersection;
@@ -16,16 +18,16 @@ public class GridAnalyzerDouble implements GridAnalyzer {
     ArrayList<Knot> result = new ArrayList<>();
 
     // Create empty connections
-    Connection[][] horizontalConnections = new Connection[gridW - 1][gridH * 2];
-    Connection[][] verticalConnections = new Connection[gridW * 2][gridH - 1];
-    HashSet<Connection> allConnections = new HashSet<>();
+    UuidConnection[][] horizontalConnections = new UuidConnection[gridW - 1][gridH * 2];
+    UuidConnection[][] verticalConnections = new UuidConnection[gridW * 2][gridH - 1];
+    UuidSet<UuidConnection> allConnections = new UuidSet<>();
     for (int x = 0; x < gridW - 1; x++) {
       for (int y = 0; y < gridH; y++) {
         if ((y == 0 || y == gridH - 1) && x % 2 == 0) {
           continue;
         }
-        horizontalConnections[x][y * 2] = new Connection(x + 0.5D, y - 0.15, Math.PI);
-        horizontalConnections[x][y * 2 + 1] = new Connection(x + 0.5D, y + 0.15, 0);
+        horizontalConnections[x][y * 2] = new UuidConnection(x + 0.5D, y - 0.15, Math.PI);
+        horizontalConnections[x][y * 2 + 1] = new UuidConnection(x + 0.5D, y + 0.15, 0);
         allConnections.add(horizontalConnections[x][y * 2 + 1]);
       }
     }
@@ -34,27 +36,25 @@ public class GridAnalyzerDouble implements GridAnalyzer {
         if ((x == 0 || x == gridW - 1) && y % 2 == 0) {
           continue;
         }
-        verticalConnections[x * 2][y] = new Connection(x - 0.15, y + 0.5D, Math.PI / 2);
-        verticalConnections[x * 2 + 1][y] = new Connection(x + 0.15, y + 0.5D, Math.PI * 1.5);
+        verticalConnections[x * 2][y] = new UuidConnection(x - 0.15, y + 0.5D, Math.PI / 2);
+        verticalConnections[x * 2 + 1][y] = new UuidConnection(x + 0.15, y + 0.5D, Math.PI * 1.5);
         allConnections.add(verticalConnections[x * 2][y]);
       }
     }
 
-    int count = 0;
-    // Read one loop at a time, untill no loops remain unread
+    // Read one loop at a time, until no loops remain unread
     while (!allConnections.isEmpty()) {
-      Connection firstConnection = allConnections.iterator().next();
+      Connection firstConnection = allConnections.getAny();
       HashSet<Intersection> intersectionsToRemove = new HashSet<>();
 
       Connection current = firstConnection;
       int x = (int) Math.floor(current.getPosX() + 0.2);
       int y = (int) Math.floor(current.getPosY() + 0.2);
-      int dir = (current.getDir() / Math.PI < 0.25) ? 1 : 2;
       // If horizontal connection, then dir = right, else dir = down
+      int dir = (current.getDir() / Math.PI < 0.25) ? 1 : 2;
 
       // Loop through loop
       do {
-        count++;
         // Step
         switch (dir) {
           case 0:
@@ -123,5 +123,24 @@ public class GridAnalyzerDouble implements GridAnalyzer {
 
   public void setGridH(int gridH) {
     this.gridH = gridH;
+  }
+
+
+  private static class UuidConnection extends Connection implements UuidSetElement {
+    private int uuid;
+
+    public UuidConnection(double posX, double posY, double dir) {
+      super(posX, posY, dir);
+    }
+
+    @Override
+    public int getUuid() {
+      return uuid;
+    }
+
+    @Override
+    public void setUuid(int uuid) {
+      this.uuid = uuid;
+    }
   }
 }

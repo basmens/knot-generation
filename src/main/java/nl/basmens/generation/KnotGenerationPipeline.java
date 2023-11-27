@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import nl.basmens.Main;
 import nl.basmens.generation.analyzers.GridAnalyzer;
 import nl.basmens.generation.generators.GridGenerator;
 import nl.basmens.knot.Knot;
@@ -50,34 +51,36 @@ public class KnotGenerationPipeline implements Runnable {
 
   @Override
   public void run() {
-    while (running) {
+    do {
       knots.clear();
       generator.generateGrid();
       knots = analyzer.extractKnots(generator.getGrid());
   
-      synchronized (fileIoSyncLocks.get(fileExportName)) {
-        try {
-          URL resource = KnotGenerationPipeline.class.getResource("/");
-          String path = Paths.get(resource.toURI()).toAbsolutePath().toString();
-          path = path.substring(0, path.length() - "target/classes".length());
-          path += "results/" + fileExportName + ".json";
-          File file = new File(path);
-          JSONObject json = file.exists() ? PApplet.loadJSONObject(file) : new JSONObject();
-    
-          for (Knot k : knots) {
-            String key = Integer.toString(k.getLength());
-            int count = json.getInt(key, 0) + 1;
-            json.setInt(key, count);
+      if (Main.SAVE_RESULTS) {
+        synchronized (fileIoSyncLocks.get(fileExportName)) {
+          try {
+            URL resource = KnotGenerationPipeline.class.getResource("/");
+            String path = Paths.get(resource.toURI()).toAbsolutePath().toString();
+            path = path.substring(0, path.length() - "target/classes".length());
+            path += "results/" + fileExportName + ".json";
+            File file = new File(path);
+            JSONObject json = file.exists() ? PApplet.loadJSONObject(file) : new JSONObject();
+      
+            for (Knot k : knots) {
+              String key = Integer.toString(k.getLength());
+              int count = json.getInt(key, 0) + 1;
+              json.setInt(key, count);
+            }
+      
+            json.save(file, "indent=2");
+          } catch (URISyntaxException e) {
+            e.printStackTrace();
+          } catch (ClassCastException e) {
+            System.out.println("Caught in " + fileExportName);
           }
-    
-          json.save(file, "indent=2");
-        } catch (URISyntaxException e) {
-          e.printStackTrace();
-        } catch (ClassCastException e) {
-          System.out.println("Caught in " + fileExportName);
         }
       }
-    }
+    } while (running && Main.MULTI_THREAD);
   }
 
   public Tileset getTileset() {

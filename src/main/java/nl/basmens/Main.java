@@ -20,13 +20,17 @@ import processing.core.PGraphics;
 import processing.opengl.PGraphicsOpenGL;
 
 public class Main extends PApplet {
+  public static final boolean SAVE_RESULTS = false;
+  public static final boolean MULTI_THREAD = false;
+  public static final boolean CURVY_KNOT_DISPLAY = true;
+
   private Tileset tileset;
-  private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[20];
+  private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[1];
 
   private int gridW = 40;
   private int gridH = 40;
 
-  private int imgRes = 16;
+  private int imgRes = 7;
 
   private String resourcePath;
 
@@ -37,9 +41,12 @@ public class Main extends PApplet {
   // ===================================================================================================================
   @Override
   public void settings() {
-    // size(3200, 1600, P2D); // FullScreen
-    // size(1800, 1200, P2D);
-    size(300, 300, P2D);
+    if (MULTI_THREAD) {
+      size(300, 300, P2D);
+    } else {
+      size(3200, 1600, P2D); // FullScreen
+      // size(1800, 1200, P2D);
+    }
   }
 
   @Override
@@ -60,8 +67,8 @@ public class Main extends PApplet {
 
     // Set tileset
     // setTilesetToBasicFour();
-    setTilesetToDoubled(1, 1, 1, 1, 1, 1, 1, 1, 1);
-    // setTilesetToDoubled(0, 1, 1, 1, 1, 0, 1, 1, 2);
+    // setTilesetToDoubled(1, 1, 1, 1, 1, 1, 1, 1, 1);
+    setTilesetToDoubled(0, 1, 1, 1, 1, 0, 1, 1, 2);
     // setTilesetToDoubled(1, 0, 0, 0, 0, 1, 0, 0, 2);
 
     // Start
@@ -74,90 +81,102 @@ public class Main extends PApplet {
       // gridH, GridGeneratorDouble::new,
       // GridAnalyzerDouble::new, "knots " + gridW + "x" + gridH);
 
-      int s = 200 - 10 * i;
+      int s = 10 * (knotGenerationPipelines.length - i);
+      s = 1500;
       knotGenerationPipelines[i] = new KnotGenerationPipeline(tileset, s, s, GridGeneratorDouble::new,
           GridAnalyzerDouble::new, "knots " + s + "x" + s);
 
-      startGenerationCycle(i);
+      // startGenerationCycle(i);
     }
   }
 
   private void startGenerationCycle(int index) {
-    Thread t = new Thread(knotGenerationPipelines[index]);
-    t.start();
+    if (MULTI_THREAD) {
+      Thread t = new Thread(knotGenerationPipelines[index]);
+      t.start();
+    } else {
+      knotGenerationPipelines[index].run();
+    }
   }
 
+  boolean toGen = true;
   @Override
   public void draw() {
     background(30);
+    if (toGen) {
+      startGenerationCycle(0);
+      toGen = false;
+    }
 
-    // // Draw tiles
-    // imageMode(CORNER);
-    // double tileW = (double) width / knotGenerationPipelines[0].getGridW() * 0.8;
-    // double tileH = (double) height / knotGenerationPipelines[0].getGridH();
-    // for (int x = 0; x < knotGenerationPipelines[0].getGridW(); x++) {
-    // for (int y = 0; y < knotGenerationPipelines[0].getGridH(); y++) {
-    // image(knotGenerationPipelines[0].getGenerator().getTileAtPos(x, y).img,
-    // (float) (x * tileW),
-    // (float) (y * tileH), (float) tileW, (float) tileH);
-    // }
-    // }
+    if (!MULTI_THREAD) {
+      // Draw tiles
+      imageMode(CORNER);
+      double tileW = (double) width / knotGenerationPipelines[0].getGridW() * 0.8;
+      double tileH = (double) height / knotGenerationPipelines[0].getGridH();
+      // for (int x = 0; x < knotGenerationPipelines[0].getGridW(); x++) {
+      //   for (int y = 0; y < knotGenerationPipelines[0].getGridH(); y++) {
+      //     image(knotGenerationPipelines[0].getGenerator().getTileAtPos(x, y).img,
+      //         (float) (x * tileW),
+      //         (float) (y * tileH), (float) tileW, (float) tileH);
+      //   }
+      // }
 
-    // // View knot on grid
-    // ArrayList<Knot> knots = knotGenerationPipelines[0].getKnots();
-    // if (!knots.isEmpty()) {
-    // Knot knot = knots.get(knotBeingViewed);
-    // Connection c = knot.getFirstConnection();
-    // stroke(250, 220, 150, 90);
-    // strokeWeight((float) (height / 5D / knotGenerationPipelines[0].getGridH()));
-    // strokeJoin(ROUND);
-    // noFill();
-    // beginShape();
-    // // Curvy
-    // double anchorX1 = (c.getPrev().getPosX() + 0.5D) * tileW;
-    // double anchorY1 = (c.getPrev().getPosY() + 0.5D) * tileH;
-    // vertex((float) anchorX1, (float) anchorY1);
-    // do {
-    // double anchorX2 = (c.getPosX() + 0.5D) * tileW;
-    // double anchorY2 = (c.getPosY() + 0.5D) * tileH;
+      // View knot on grid
+      ArrayList<Knot> knots = knotGenerationPipelines[0].getKnots();
+      if (!knots.isEmpty()) {
+        Knot knot = knots.get(knotBeingViewed);
+        Connection c = knot.getFirstConnection();
+        stroke(250, 220, 150, 90);
+        strokeWeight((float) (height / 5D / knotGenerationPipelines[0].getGridH()));
+        strokeJoin(ROUND);
+        noFill();
+        beginShape();
+        if (CURVY_KNOT_DISPLAY) {
+          // Curvy
+          double anchorX1 = (c.getPrev().getPosX() + 0.5D) * tileW;
+          double anchorY1 = (c.getPrev().getPosY() + 0.5D) * tileH;
+          vertex((float) anchorX1, (float) anchorY1);
+          do {
+            double anchorX2 = (c.getPosX() + 0.5D) * tileW;
+            double anchorY2 = (c.getPosY() + 0.5D) * tileH;
 
-    // double dir1 = c.getPrev().getDir();
-    // double dir2 = c.getDir() + Math.PI;
+            double dir1 = c.getPrev().getDir();
+            double dir2 = c.getDir() + Math.PI;
 
-    // double controlX1 = anchorX1 + Math.cos(dir1) * tileW * 0.3;
-    // double controlY1 = anchorY1 + Math.sin(dir1) * tileH * 0.3;
-    // double controlX2 = anchorX2 + Math.cos(dir2) * tileW * 0.3;
-    // double controlY2 = anchorY2 + Math.sin(dir2) * tileH * 0.3;
+            double controlX1 = anchorX1 + Math.cos(dir1) * tileW * 0.3;
+            double controlY1 = anchorY1 + Math.sin(dir1) * tileH * 0.3;
+            double controlX2 = anchorX2 + Math.cos(dir2) * tileW * 0.3;
+            double controlY2 = anchorY2 + Math.sin(dir2) * tileH * 0.3;
 
-    // bezierVertex((float) controlX1, (float) controlY1, (float) controlX2, (float)
-    // controlY2, (float) anchorX2,
-    // (float) anchorY2);
-    // anchorX1 = anchorX2;
-    // anchorY1 = anchorY2;
+            bezierVertex((float) controlX1, (float) controlY1, (float) controlX2, (float) controlY2, (float) anchorX2,
+                (float) anchorY2);
+            anchorX1 = anchorX2;
+            anchorY1 = anchorY2;
 
-    // c = c.getNext();
-    // } while (c != knot.getFirstConnection());
-    // endShape();
+            c = c.getNext();
+          } while (c != knot.getFirstConnection());
+          endShape();
+        } else {
+          // Straight
+          do {
+            double x = (c.getPosX() + 0.5D) * tileW;
+            double y = (c.getPosY() + 0.5D) * tileH;
+            vertex((float) x, (float) y);
+            c = c.getNext();
+          } while (c != knot.getFirstConnection());
+          endShape(CLOSE);
+        }
 
-    // // Straight
-    // // do {
-    // // double x = (c.getPosX() + 0.5D) * tileW;
-    // // double y = (c.getPosY() + 0.5D) * tileH;
-    // // vertex((float) x, (float) y);
-    // // c = c.getNext();
-    // // } while (c != knot.getFirstConnection());
-    // // endShape(CLOSE);
-
-    // // View knot info
-    // noStroke();
-    // fill(255);
-    // textSize(45);
-    // textAlign(LEFT, TOP);
-    // text("Displaying knot " + (knotBeingViewed + 1) + "/" + knots.size(), (float)
-    // (width * 0.8) + 30, 30);
-    // textSize(35);
-    // text(" - Length = " + knot.getLength(), (float) (width * 0.8) + 30, 90);
-    // }
+        // View knot info
+        noStroke();
+        fill(255);
+        textSize(45);
+        textAlign(LEFT, TOP);
+        text("Displaying knot " + (knotBeingViewed + 1) + "/" + knots.size(), (float) (width * 0.8) + 30, 30);
+        textSize(35);
+        text(" - Length = " + knot.getLength(), (float) (width * 0.8) + 30, 90);
+      }
+    }
   }
 
   // ===================================================================================================================
@@ -165,8 +184,10 @@ public class Main extends PApplet {
   // ===================================================================================================================
   @Override
   public void mousePressed() {
-    for (int i = 0; i < knotGenerationPipelines.length; i++) {
-      // startGenerationCycle(i);
+    if (!MULTI_THREAD) {
+      for (int i = 0; i < knotGenerationPipelines.length; i++) {
+        startGenerationCycle(i);
+      }
     }
   }
 
