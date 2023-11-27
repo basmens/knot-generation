@@ -3,8 +3,8 @@ package nl.basmens.generation.analyzers;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import nl.basmens.UuidSet;
-import nl.basmens.UuidSet.UuidSetElement;
+import nl.basmens.IndexedSet;
+import nl.basmens.IndexedSet.UuidSetElement;
 import nl.basmens.generation.AbstractTile;
 import nl.basmens.knot.Connection;
 import nl.basmens.knot.Intersection;
@@ -18,16 +18,16 @@ public class GridAnalyzerDouble implements GridAnalyzer {
     ArrayList<Knot> result = new ArrayList<>();
 
     // Create empty connections
-    UuidConnection[][] horizontalConnections = new UuidConnection[gridW - 1][gridH * 2];
-    UuidConnection[][] verticalConnections = new UuidConnection[gridW * 2][gridH - 1];
-    UuidSet<UuidConnection> allConnections = new UuidSet<>();
+    AnalyzerConnection[][] horizontalConnections = new AnalyzerConnection[gridW - 1][gridH * 2];
+    AnalyzerConnection[][] verticalConnections = new AnalyzerConnection[gridW * 2][gridH - 1];
+    IndexedSet<AnalyzerConnection> allConnections = new IndexedSet<>();
     for (int x = 0; x < gridW - 1; x++) {
       for (int y = 0; y < gridH; y++) {
         if ((y == 0 || y == gridH - 1) && x % 2 == 0) {
           continue;
         }
-        horizontalConnections[x][y * 2] = new UuidConnection(x + 0.5D, y - 0.15, Math.PI);
-        horizontalConnections[x][y * 2 + 1] = new UuidConnection(x + 0.5D, y + 0.15, 0);
+        horizontalConnections[x][y * 2] = new AnalyzerConnection(x + 0.5D, y - 0.15, Math.PI, x, y);
+        horizontalConnections[x][y * 2 + 1] = new AnalyzerConnection(x + 0.5D, y + 0.15, 0, x, y);
         allConnections.add(horizontalConnections[x][y * 2 + 1]);
       }
     }
@@ -36,20 +36,20 @@ public class GridAnalyzerDouble implements GridAnalyzer {
         if ((x == 0 || x == gridW - 1) && y % 2 == 0) {
           continue;
         }
-        verticalConnections[x * 2][y] = new UuidConnection(x - 0.15, y + 0.5D, Math.PI / 2);
-        verticalConnections[x * 2 + 1][y] = new UuidConnection(x + 0.15, y + 0.5D, Math.PI * 1.5);
+        verticalConnections[x * 2][y] = new AnalyzerConnection(x - 0.15, y + 0.5D, Math.PI / 2, x, y);
+        verticalConnections[x * 2 + 1][y] = new AnalyzerConnection(x + 0.15, y + 0.5D, Math.PI * 1.5, x, y);
         allConnections.add(verticalConnections[x * 2][y]);
       }
     }
 
     // Read one loop at a time, until no loops remain unread
     while (!allConnections.isEmpty()) {
-      Connection firstConnection = allConnections.getAny();
+      AnalyzerConnection firstConnection = allConnections.getAny();
       HashSet<Intersection> intersectionsToRemove = new HashSet<>();
 
-      Connection current = firstConnection;
-      int x = (int) Math.floor(current.getPosX() + 0.2);
-      int y = (int) Math.floor(current.getPosY() + 0.2);
+      AnalyzerConnection current = firstConnection;
+      int x = current.indexX;
+      int y = current.indexY;
       // If horizontal connection, then dir = right, else dir = down
       int dir = (current.getDir() / Math.PI < 0.25) ? 1 : 2;
 
@@ -79,7 +79,7 @@ public class GridAnalyzerDouble implements GridAnalyzer {
 
         // Add intersections
         while (current.getNext().isIntersected()) {
-          current = current.getNext();
+          current = (AnalyzerConnection) current.getNext();
 
           // If new intersection, queue remove. If not new, it is double and thus belongs
           // to the loop
@@ -90,7 +90,7 @@ public class GridAnalyzerDouble implements GridAnalyzer {
           }
         }
         allConnections.remove(current);
-        current = current.getNext();
+        current = (AnalyzerConnection) current.getNext();
       } while (current != firstConnection);
 
       // Remove singular intersections
@@ -126,21 +126,25 @@ public class GridAnalyzerDouble implements GridAnalyzer {
   }
 
 
-  private static class UuidConnection extends Connection implements UuidSetElement {
-    private int uuid;
+  private static class AnalyzerConnection extends Connection implements UuidSetElement {
+    public final int indexX;
+    public final int indexY;
+    private int setIndex;
 
-    public UuidConnection(double posX, double posY, double dir) {
+    public AnalyzerConnection(double posX, double posY, double dir, int indexX, int indexY) {
       super(posX, posY, dir);
+      this.indexX = indexX;
+      this.indexY = indexY;
     }
 
     @Override
-    public int getUuid() {
-      return uuid;
+    public int getSetIndex() {
+      return setIndex;
     }
 
     @Override
-    public void setUuid(int uuid) {
-      this.uuid = uuid;
+    public void setSetIndex(int uuid) {
+      this.setIndex = uuid;
     }
   }
 }

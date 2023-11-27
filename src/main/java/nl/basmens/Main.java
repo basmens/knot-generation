@@ -82,7 +82,7 @@ public class Main extends PApplet {
       // GridAnalyzerDouble::new, "knots " + gridW + "x" + gridH);
 
       int s = 10 * (knotGenerationPipelines.length - i);
-      s = 1500;
+      s = 3000;
       knotGenerationPipelines[i] = new KnotGenerationPipeline(tileset, s, s, GridGeneratorDouble::new,
           GridAnalyzerDouble::new, "knots " + s + "x" + s);
 
@@ -100,6 +100,7 @@ public class Main extends PApplet {
   }
 
   boolean toGen = true;
+
   @Override
   public void draw() {
     background(30);
@@ -114,11 +115,11 @@ public class Main extends PApplet {
       double tileW = (double) width / knotGenerationPipelines[0].getGridW() * 0.8;
       double tileH = (double) height / knotGenerationPipelines[0].getGridH();
       // for (int x = 0; x < knotGenerationPipelines[0].getGridW(); x++) {
-      //   for (int y = 0; y < knotGenerationPipelines[0].getGridH(); y++) {
-      //     image(knotGenerationPipelines[0].getGenerator().getTileAtPos(x, y).img,
-      //         (float) (x * tileW),
-      //         (float) (y * tileH), (float) tileW, (float) tileH);
-      //   }
+      // for (int y = 0; y < knotGenerationPipelines[0].getGridH(); y++) {
+      // image(knotGenerationPipelines[0].getGenerator().getTileAtPos(x, y).img,
+      // (float) (x * tileW),
+      // (float) (y * tileH), (float) tileW, (float) tileH);
+      // }
       // }
 
       // View knot on grid
@@ -209,27 +210,29 @@ public class Main extends PApplet {
       return;
     }
 
-    // Init save
-    println("Saving...");
-    PGraphics p = createGraphics(knotGenerationPipelines[0].getGridW() * imgRes,
-        knotGenerationPipelines[0].getGridH() * imgRes);
-    p.beginDraw();
-    p.background(0);
+    if (!MULTI_THREAD) {
+      // Init save
+      println("Saving...");
+      PGraphics p = createGraphics(knotGenerationPipelines[0].getGridW() * imgRes,
+          knotGenerationPipelines[0].getGridH() * imgRes);
+      p.beginDraw();
+      p.background(0);
 
-    // Draw Tiles
-    p.imageMode(CORNER);
-    for (int x = 0; x < knotGenerationPipelines[0].getGridW(); x++) {
-      for (int y = 0; y < knotGenerationPipelines[0].getGridH(); y++) {
-        p.image(knotGenerationPipelines[0].getGenerator().getTileAtPos(x, y).img, x * imgRes, y * imgRes, imgRes,
-            imgRes);
+      // Draw Tiles
+      p.imageMode(CORNER);
+      for (int x = 0; x < knotGenerationPipelines[0].getGridW(); x++) {
+        for (int y = 0; y < knotGenerationPipelines[0].getGridH(); y++) {
+          p.image(knotGenerationPipelines[0].getGenerator().getTileAtPos(x, y).img, x * imgRes, y * imgRes, imgRes,
+              imgRes);
+        }
       }
-    }
 
-    // Save
-    p.endDraw();
-    String path = resourcePath.substring(0, resourcePath.length() - "target/classes/".length());
-    p.save(path + "results/gen result.png");
-    println("Saved");
+      // Save
+      p.endDraw();
+      String path = resourcePath.substring(0, resourcePath.length() - "target/classes/".length());
+      p.save(path + "results/gen result.png");
+      println("Saved");
+    }
   }
 
   // ===================================================================================================================

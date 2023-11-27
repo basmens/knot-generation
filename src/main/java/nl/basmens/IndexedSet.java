@@ -9,53 +9,31 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class UuidSet<E extends UuidSet.UuidSetElement> extends AbstractSet<E> {
-  private ArrayList<E> list = new ArrayList<>();
-  private int uuidCounter;
-  private int removedElementsCount;
-
-  private int getIndexOfUuid(int uuid, int lowerBound, int upperBound) {
-    int guess = (lowerBound + upperBound) / 2;
-    int guessedUuid = list.get(guess).getUuid();
-    if (guessedUuid == uuid) {
-      return guess;
-    } else if (lowerBound == upperBound - 1) {
-      return -1;
-    } else if (guessedUuid > uuid) {
-      return getIndexOfUuid(uuid, lowerBound, guessedUuid);
-    } else {
-      return getIndexOfUuid(uuid, guessedUuid, upperBound);
-    }
-  }
+public class IndexedSet<E extends IndexedSet.UuidSetElement> extends AbstractSet<E> {
+  private ArrayList<E> elements = new ArrayList<>();
 
   private int getIndexOfElement(E elem) {
-    if (list.isEmpty()) {
-      return -1;
-    }
-    int uuid = elem.getUuid();
-    int index = (uuid == 0) ? 0
-        : getIndexOfUuid(uuid, Math.max(uuid - removedElementsCount, 0), Math.min(uuid + 1, list.size()));
-    if (list.get(index) == elem) {
+    int index = elem.getSetIndex();
+    if (index < elements.size() && elements.get(index) == elem) {
       return index;
     }
     return -1;
   }
 
   public E getAny() {
-    if (list.isEmpty()) {
+    if (elements.isEmpty()) {
       return null;
     }
-    return list.get(0);
+    return elements.get(0);
   }
 
   @Override
   public boolean add(E e) {
-    if (!list.isEmpty() && contains(e)) {
+    if (contains(e)) {
       return false;
     }
-    e.setUuid(uuidCounter);
-    uuidCounter++;
-    list.add(e);
+    e.setSetIndex(elements.size());
+    elements.add(e);
     return true;
   }
 
@@ -70,9 +48,7 @@ public class UuidSet<E extends UuidSet.UuidSetElement> extends AbstractSet<E> {
 
   @Override
   public void clear() {
-    list.clear();
-    uuidCounter = 0;
-    removedElementsCount = 0;
+    elements.clear();
   }
 
   @Override
@@ -90,76 +66,73 @@ public class UuidSet<E extends UuidSet.UuidSetElement> extends AbstractSet<E> {
   public boolean remove(Object o) {
     try {
       E elem = (E) o;
-      int uuid = elem.getUuid();
       int index = getIndexOfElement(elem);
       if (index != -1) {
-        E lastElem = list.get(list.size() - 1);
-        lastElem.setUuid(uuid);
-        elem.setUuid(0);
-        list.set(index, lastElem);
-        list.remove(list.size() - 1);
-        removedElementsCount++;
+        E lastElem = elements.get(elements.size() - 1);
+        lastElem.setSetIndex(index);
+        elements.set(index, lastElem);
+        elements.remove(elements.size() - 1);
         return true;
       }
+      return false;
     } catch (ClassCastException e) {
       return false;
     }
-    return false;
   }
 
   @Override
   public boolean isEmpty() {
-    return list.isEmpty();
+    return elements.isEmpty();
   }
 
   @Override
   public Iterator<E> iterator() {
-    return list.iterator();
+    return elements.iterator();
   }
 
   @Override
   public int size() {
-    return list.size();
+    return elements.size();
   }
 
   @Override
   public Object[] toArray() {
-    return list.toArray();
+    return elements.toArray();
   }
 
   @Override
   public <T> T[] toArray(T[] a) {
-    return list.toArray(a);
+    return elements.toArray(a);
   }
 
   @Override
   public String toString() {
-    return list.toString();
+    return elements.toString();
   }
 
   @Override
   public boolean removeIf(Predicate<? super E> filter) {
-    return list.removeIf(filter);
+    return elements.removeIf(filter);
   }
 
   @Override
   public Stream<E> stream() {
-    return list.stream();
+    return elements.stream();
   }
 
   @Override
   public <T> T[] toArray(IntFunction<T[]> generator) {
-    return list.toArray(generator);
+    return elements.toArray(generator);
   }
 
   @Override
   public void forEach(Consumer<? super E> action) {
-    list.forEach(action);
+    elements.forEach(action);
   }
 
   public abstract interface UuidSetElement {
-    int getUuid();
+    int getSetIndex();
 
-    void setUuid(int uuid);
+    void setSetIndex(int setIndex);
   }
 }

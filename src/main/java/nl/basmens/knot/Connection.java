@@ -107,12 +107,4 @@ public class Connection {
   public void setDir(double dir) {
     this.dir = dir;
   }
-
-  @Override
-  public int hashCode() {
-    int hash = 17;
-    hash = ((hash + (int) posX) << 5) - (hash + (int) posX);
-    hash = ((hash + (int) posY) << 5) - (hash + (int) posY);
-    return hash;
-  }
 }
