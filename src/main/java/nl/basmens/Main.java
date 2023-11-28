@@ -5,9 +5,12 @@ import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.function.Supplier;
 
+import nl.basmens.generation.IntersectedConnectionsFactory;
 import nl.basmens.generation.KnotGenerationPipeline;
-import nl.basmens.generation.AbstractTile;
+import nl.basmens.generation.Tile;
 import nl.basmens.generation.Tileset;
 import nl.basmens.generation.analyzers.GridAnalyzerBasic;
 import nl.basmens.generation.analyzers.GridAnalyzerDouble;
@@ -16,31 +19,63 @@ import nl.basmens.generation.generators.GridGeneratorDouble;
 import nl.basmens.knot.Connection;
 import nl.basmens.knot.Knot;
 import nl.benmens.processing.PApplet;
+import nl.benmens.processing.PAppletProxy;
 import processing.core.PGraphics;
 import processing.opengl.PGraphicsOpenGL;
 
 public class Main extends PApplet {
+  public static final String RESOURCE_PATH;
+
   public static final boolean SAVE_RESULTS = false;
   public static final boolean MULTI_THREAD = false;
   public static final boolean CURVY_KNOT_DISPLAY = true;
+  private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
+  private int imgRes = 17;
 
-  private Tileset tileset;
+  private enum Tilesets {
+    BASIC(Main::getTilesetBasicFour),
+    UNWEIGHTED(() -> getTilesetDoubled(1, 1, 1, 1, 1, 1, 1, 1, 1)),
+    WEIGHTED_HIGH(() -> getTilesetDoubled(0, 1, 1, 1, 1, 0, 1, 1, 2)),
+    WEIGHTED_LOW(() -> getTilesetDoubled(1, 0, 0, 0, 0, 1, 0, 0, 2));
+
+    private final Supplier<Tileset> tilesetSupplier;
+    private Tileset tileset;
+
+    Tilesets(Supplier<Tileset> tilesetSupplier) {
+      this.tilesetSupplier = tilesetSupplier;
+    }
+
+    public Tileset getTileset() {
+      if (tileset == null) {
+        tileset = tilesetSupplier.get();
+      }
+      return tileset;
+    }
+  }
+
   private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[1];
-
-  private int gridW = 40;
-  private int gridH = 40;
-
-  private int imgRes = 7;
-
-  private String resourcePath;
+  private Thread[] knotGenerationPipelineThreads = new Thread[knotGenerationPipelines.length];
 
   private int knotBeingViewed;
+
+  static {
+    String path = "";
+    try {
+      URL resource = Main.class.getResource("/");
+      path = Paths.get(resource.toURI()).toAbsolutePath().toString() + FileSystems.getDefault().getSeparator();
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
+    }
+    RESOURCE_PATH = path;
+  }
 
   // ===================================================================================================================
   // Native processing functions for lifecycle
   // ===================================================================================================================
   @Override
   public void settings() {
+    PAppletProxy.setSharedApplet(this);
+
     if (MULTI_THREAD) {
       size(300, 300, P2D);
     } else {
@@ -55,72 +90,52 @@ public class Main extends PApplet {
     ((PGraphicsOpenGL) g).textureSampling(3);
     surface.setLocation(0, 0);
 
-    // Get resource path;
-    try {
-      URL resource = Main.class.getResource("/");
-      resourcePath = Paths.get(resource.toURI()).toAbsolutePath().toString() + FileSystems.getDefault().getSeparator();
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-      stop();
-      return;
-    }
-
-    // Set tileset
-    // setTilesetToBasicFour();
-    // setTilesetToDoubled(1, 1, 1, 1, 1, 1, 1, 1, 1);
-    setTilesetToDoubled(0, 1, 1, 1, 1, 0, 1, 1, 2);
-    // setTilesetToDoubled(1, 0, 0, 0, 0, 1, 0, 0, 2);
-
     // Start
     for (int i = 0; i < knotGenerationPipelines.length; i++) {
-      // knotGenerationPipelines[i] = new KnotGenerationPipeline(tileset, gridW,
-      // gridH, GridGeneratorBasic::new,
-      // GridAnalyzerBasic::new, "knots " + gridW + "x" + gridH);
-
-      // knotGenerationPipelines[i] = new KnotGenerationPipeline(tileset, gridW,
-      // gridH, GridGeneratorDouble::new,
-      // GridAnalyzerDouble::new, "knots " + gridW + "x" + gridH);
-
       int s = 10 * (knotGenerationPipelines.length - i);
-      s = 3000;
-      knotGenerationPipelines[i] = new KnotGenerationPipeline(tileset, s, s, GridGeneratorDouble::new,
-          GridAnalyzerDouble::new, "knots " + s + "x" + s);
+      s = 8;
 
-      // startGenerationCycle(i);
+      String fileName = "knots tileset " + TILESET.toString().toLowerCase(Locale.ENGLISH) + "/knots " + s + "x" + s;
+
+      // Basic
+      // knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), s, s,
+      //     GridGeneratorBasic::new, GridAnalyzerBasic::new, fileName);
+
+      // Double
+      knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), s, s,
+          GridGeneratorDouble::new, GridAnalyzerDouble::new, fileName);
+
+      startGenerationCycle(i);
     }
   }
 
   private void startGenerationCycle(int index) {
     if (MULTI_THREAD) {
-      Thread t = new Thread(knotGenerationPipelines[index]);
-      t.start();
+      knotGenerationPipelineThreads[index] = new Thread(knotGenerationPipelines[index]);
+      knotGenerationPipelineThreads[index].start();
     } else {
       knotGenerationPipelines[index].run();
     }
   }
 
-  boolean toGen = true;
-
   @Override
   public void draw() {
     background(30);
-    if (toGen) {
-      startGenerationCycle(0);
-      toGen = false;
-    }
 
     if (!MULTI_THREAD) {
       // Draw tiles
-      imageMode(CORNER);
       double tileW = (double) width / knotGenerationPipelines[0].getGridW() * 0.8;
       double tileH = (double) height / knotGenerationPipelines[0].getGridH();
-      // for (int x = 0; x < knotGenerationPipelines[0].getGridW(); x++) {
-      // for (int y = 0; y < knotGenerationPipelines[0].getGridH(); y++) {
-      // image(knotGenerationPipelines[0].getGenerator().getTileAtPos(x, y).img,
-      // (float) (x * tileW),
-      // (float) (y * tileH), (float) tileW, (float) tileH);
-      // }
-      // }
+      if (knotGenerationPipelines[0].getGridW() <= 300) {
+        imageMode(CORNER);
+        for (int x = 0; x < knotGenerationPipelines[0].getGridW(); x++) {
+          for (int y = 0; y < knotGenerationPipelines[0].getGridH(); y++) {
+            image(knotGenerationPipelines[0].getGenerator().getTileAtPos(x, y).img,
+                (float) (x * tileW),
+                (float) (y * tileH), (float) tileW, (float) tileH);
+          }
+        }
+      }
 
       // View knot on grid
       ArrayList<Knot> knots = knotGenerationPipelines[0].getKnots();
@@ -128,7 +143,7 @@ public class Main extends PApplet {
         Knot knot = knots.get(knotBeingViewed);
         Connection c = knot.getFirstConnection();
         stroke(250, 220, 150, 90);
-        strokeWeight((float) (height / 5D / knotGenerationPipelines[0].getGridH()));
+        strokeWeight((float) (height / 6D / knotGenerationPipelines[0].getGridH()));
         strokeJoin(ROUND);
         noFill();
         beginShape();
@@ -144,10 +159,17 @@ public class Main extends PApplet {
             double dir1 = c.getPrev().getDir();
             double dir2 = c.getDir() + Math.PI;
 
-            double controlX1 = anchorX1 + Math.cos(dir1) * tileW * 0.3;
-            double controlY1 = anchorY1 + Math.sin(dir1) * tileH * 0.3;
-            double controlX2 = anchorX2 + Math.cos(dir2) * tileW * 0.3;
-            double controlY2 = anchorY2 + Math.sin(dir2) * tileH * 0.3;
+            double dx = c.getPosX() - c.getPrev().getPosX();
+            double dy = c.getPosY() - c.getPrev().getPosY();
+            double controlPointDist = Math.sqrt(dx * dx + dy * dy) * 0.35;
+            if (Math.abs(angleDifference(dir1, dir2)) < 0.1) {
+              controlPointDist *= 2;
+            }
+
+            double controlX1 = anchorX1 + Math.cos(dir1) * tileW * controlPointDist;
+            double controlY1 = anchorY1 + Math.sin(dir1) * tileH * controlPointDist;
+            double controlX2 = anchorX2 + Math.cos(dir2) * tileW * controlPointDist;
+            double controlY2 = anchorY2 + Math.sin(dir2) * tileH * controlPointDist;
 
             bezierVertex((float) controlX1, (float) controlY1, (float) controlX2, (float) controlY2, (float) anchorX2,
                 (float) anchorY2);
@@ -176,8 +198,18 @@ public class Main extends PApplet {
         text("Displaying knot " + (knotBeingViewed + 1) + "/" + knots.size(), (float) (width * 0.8) + 30, 30);
         textSize(35);
         text(" - Length = " + knot.getLength(), (float) (width * 0.8) + 30, 90);
+        text(" - Intersection # = " + knot.getIntersections().size(), (float) (width * 0.8) + 30, 130);
       }
     }
+  }
+
+  public static double angleDifference(double a1, double a2) {
+    double dif = a1 - a2;
+    dif %= Math.PI * 2;
+    dif += Math.PI * 3;
+    dif %= Math.PI * 2;
+    dif -= Math.PI;
+    return dif;
   }
 
   // ===================================================================================================================
@@ -204,9 +236,24 @@ public class Main extends PApplet {
       return;
     }
     if (key == 'f') {
-      for (int i = 0; i < knotGenerationPipelines.length; i++) {
-        knotGenerationPipelines[i].running = false;
+      println("Finishing...");
+      // Terminate threads
+      for (KnotGenerationPipeline p : knotGenerationPipelines) {
+        p.stop();
       }
+
+      // Wait for the threads to end
+      for (Thread t : knotGenerationPipelineThreads) {
+        while (t.isAlive()) {
+          try {
+            Thread.sleep(10);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+      exit();
+      println("Finished");
       return;
     }
 
@@ -229,7 +276,7 @@ public class Main extends PApplet {
 
       // Save
       p.endDraw();
-      String path = resourcePath.substring(0, resourcePath.length() - "target/classes/".length());
+      String path = RESOURCE_PATH.substring(0, RESOURCE_PATH.length() - "target/classes/".length());
       p.save(path + "results/gen result.png");
       println("Saved");
     }
@@ -238,350 +285,300 @@ public class Main extends PApplet {
   // ===================================================================================================================
   // Tileset basic four
   // ===================================================================================================================
-  private void setTilesetToBasicFour() {
-    ArrayList<AbstractTile> tiles = new ArrayList<>();
+  private static Tileset getTilesetBasicFour() {
+    ArrayList<Tile> tiles = new ArrayList<>();
+    String path = RESOURCE_PATH + "tilesets/basic_four/";
 
-    String path = resourcePath + "tilesets/basic_four/";
-
-    AbstractTile t = new AbstractTile(loadImage(path + "corner0.png")) {
-      public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
+    tiles.add(new Tile(PAppletProxy.loadImage(path + "corner0.png")) {
+      @Override
+      public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert,
+          IntersectedConnectionsFactory intersectedConnections) {
         vert[x][y].setNext(hor[x - 1][y]);
         return 3;
       }
 
-      public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
+      @Override
+      public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert,
+          IntersectedConnectionsFactory intersectedConnections) {
         hor[x][y].setNext(vert[x][y - 1]);
         return 0;
       }
 
-      public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
+      @Override
+      public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert,
+          IntersectedConnectionsFactory intersectedConnections) {
         vert[x][y - 1].setNext(hor[x][y]);
         return 1;
       }
 
-      public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
+      @Override
+      public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert,
+          IntersectedConnectionsFactory intersectedConnections) {
         hor[x - 1][y].setNext(vert[x][y]);
         return 2;
       }
-    };
-    tiles.add(t);
+    });
 
-    t = new AbstractTile(loadImage(path + "corner1.png")) {
-      public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
+    tiles.add(new Tile(PAppletProxy.loadImage(path + "corner1.png")) {
+      @Override
+      public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert,
+          IntersectedConnectionsFactory intersectedConnections) {
         vert[x][y].setNext(hor[x][y]);
         return 1;
       }
 
-      public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
+      @Override
+      public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert,
+          IntersectedConnectionsFactory intersectedConnections) {
         hor[x][y].setNext(vert[x][y]);
         return 2;
       }
 
-      public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
+      @Override
+      public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert,
+          IntersectedConnectionsFactory intersectedConnections) {
         vert[x][y - 1].setNext(hor[x - 1][y]);
         return 3;
       }
 
-      public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
+      @Override
+      public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert,
+          IntersectedConnectionsFactory intersectedConnections) {
         hor[x - 1][y].setNext(vert[x][y - 1]);
         return 0;
       }
-    };
-    tiles.add(t);
+    });
 
-    t = new AbstractTile(loadImage(path + "intersection0.png")) {
-      public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x][y].setNext(vert[x][y - 1]);
+    tiles.add(new Tile(PAppletProxy.loadImage(path + "intersection0.png")) {
+      @Override
+      public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert,
+          IntersectedConnectionsFactory intersectedConnections) {
+        Connection c = intersectedConnections.getConnection(x, y, 0);
+        c.setDir(-Math.PI / 2);
+        vert[x][y].setNext(c);
+        c.setNext(vert[x][y - 1]);
         return 0;
       }
 
-      public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x][y].setNext(hor[x - 1][y]);
+      @Override
+      public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert,
+          IntersectedConnectionsFactory intersectedConnections) {
+        Connection c = intersectedConnections.getConnection(x, y, 1);
+        c.setDir(Math.PI);
+        hor[x][y].setNext(c);
+        c.setNext(hor[x - 1][y]);
         return 3;
       }
 
-      public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x][y - 1].setNext(vert[x][y]);
+      @Override
+      public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert,
+          IntersectedConnectionsFactory intersectedConnections) {
+        Connection c = intersectedConnections.getConnection(x, y, 0);
+        c.setDir(Math.PI / 2);
+        vert[x][y - 1].setNext(c);
+        c.setNext(vert[x][y]);
         return 2;
       }
 
-      public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x - 1][y].setNext(hor[x][y]);
+      @Override
+      public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert,
+          IntersectedConnectionsFactory intersectedConnections) {
+        Connection c = intersectedConnections.getConnection(x, y, 1);
+        c.setDir(0);
+        hor[x - 1][y].setNext(c);
+        c.setNext(hor[x][y]);
         return 1;
       }
-    };
-    tiles.add(t);
+    });
 
-    t = new AbstractTile(loadImage(path + "intersection1.png")) {
-      public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x][y].setNext(vert[x][y - 1]);
+    tiles.add(new Tile(PAppletProxy.loadImage(path + "intersection1.png")) {
+      @Override
+      public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert,
+          IntersectedConnectionsFactory intersectedConnections) {
+        Connection c = intersectedConnections.getConnection(x, y, 0);
+        c.setDir(-Math.PI / 2);
+        vert[x][y].setNext(c);
+        c.setNext(vert[x][y - 1]);
         return 0;
       }
 
-      public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x][y].setNext(hor[x - 1][y]);
+      @Override
+      public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert,
+          IntersectedConnectionsFactory intersectedConnections) {
+        Connection c = intersectedConnections.getConnection(x, y, 1);
+        c.setDir(Math.PI);
+        hor[x][y].setNext(c);
+        c.setNext(hor[x - 1][y]);
         return 3;
       }
 
-      public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x][y - 1].setNext(vert[x][y]);
+      @Override
+      public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert,
+          IntersectedConnectionsFactory intersectedConnections) {
+        Connection c = intersectedConnections.getConnection(x, y, 0);
+        c.setDir(Math.PI / 2);
+        vert[x][y - 1].setNext(c);
+        c.setNext(vert[x][y]);
         return 2;
       }
 
-      public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x - 1][y].setNext(hor[x][y]);
+      @Override
+      public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert,
+          IntersectedConnectionsFactory intersectedConnections) {
+        Connection c = intersectedConnections.getConnection(x, y, 1);
+        c.setDir(0);
+        hor[x - 1][y].setNext(c);
+        c.setNext(hor[x][y]);
         return 1;
       }
-    };
-    tiles.add(t);
+    });
 
-    tileset = new Tileset(tiles.toArray(AbstractTile[]::new));
+    return new Tileset(tiles.toArray(Tile[]::new));
   }
 
   // ===================================================================================================================
   // Tileset doubled
   // ===================================================================================================================
-  private void setTilesetToDoubled(int rrrr, int rlrl, int rlbb, int lrlr, int lbbr, int llll, int brlb, int bbrl,
-      int bbbb) {
-    ArrayList<AbstractTile> tiles = new ArrayList<>();
-
-    String path = resourcePath + "tilesets/doubled/";
+  private static Tileset getTilesetDoubled(int rrrr, int rlrl, int rlbb, int lrlr, int lbbr, int llll, int brlb,
+      int bbrl, int bbbb) {
+    ArrayList<Tile> tiles = new ArrayList<>();
+    String path = RESOURCE_PATH + "tilesets/doubled/";
 
     // rrrr
-    AbstractTile t = new AbstractTile(loadImage(path + "rrrr.png")) {
-      public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2 + 1][y].setNext(hor[x][y * 2 + 1]);
-        return 1;
-      }
-
-      public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x][y * 2].setNext(vert[x * 2 + 1][y - 1]);
-        return 0;
-      }
-
-      public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2][y - 1].setNext(hor[x - 1][y * 2]);
-        return 3;
-      }
-
-      public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x - 1][y * 2 + 1].setNext(vert[x * 2][y]);
-        return 2;
-      }
-    };
     for (int i = 0; i < rrrr; i++) {
-      tiles.add(t);
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "rrrr.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          vert[x * 2 + 1][y].setNext(hor[x][y * 2 + 1]);
+          hor[x][y * 2].setNext(vert[x * 2 + 1][y - 1]);
+          vert[x * 2][y - 1].setNext(hor[x - 1][y * 2]);
+          hor[x - 1][y * 2 + 1].setNext(vert[x * 2][y]);
+        }
+      });
     }
 
     // rlrl
-    t = new AbstractTile(loadImage(path + "rlrl.png")) {
-      public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2 + 1][y].setNext(hor[x][y * 2 + 1]);
-        return 1;
-      }
-
-      public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x][y * 2].setNext(vert[x * 2][y]);
-        return 2;
-      }
-
-      public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2][y - 1].setNext(hor[x - 1][y * 2]);
-        return 3;
-      }
-
-      public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x - 1][y * 2 + 1].setNext(vert[x * 2 + 1][y - 1]);
-        return 0;
-      }
-    };
     for (int i = 0; i < rlrl; i++) {
-      tiles.add(t);
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "rlrl.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          vert[x * 2 + 1][y].setNext(hor[x][y * 2 + 1]);
+          hor[x][y * 2].setNext(vert[x * 2][y]);
+          vert[x * 2][y - 1].setNext(hor[x - 1][y * 2]);
+          hor[x - 1][y * 2 + 1].setNext(vert[x * 2 + 1][y - 1]);
+        }
+      });
     }
 
     // rlbb
-    t = new AbstractTile(loadImage(path + "rlbb.png")) {
-      public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2 + 1][y].setNext(hor[x][y * 2 + 1]);
-        return 1;
-      }
-
-      public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x][y * 2].setNext(vert[x * 2][y]);
-        return 2;
-      }
-
-      public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2][y - 1].setNext(vert[x * 2 + 1][y - 1]);
-        return 0;
-      }
-
-      public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x - 1][y * 2 + 1].setNext(hor[x - 1][y * 2]);
-        return 3;
-      }
-    };
     for (int i = 0; i < rlbb; i++) {
-      tiles.add(t);
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "rlbb.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          vert[x * 2 + 1][y].setNext(hor[x][y * 2 + 1]);
+          hor[x][y * 2].setNext(vert[x * 2][y]);
+          vert[x * 2][y - 1].setNext(vert[x * 2 + 1][y - 1]);
+          hor[x - 1][y * 2 + 1].setNext(hor[x - 1][y * 2]);
+        }
+      });
     }
 
     // lrlr
-    t = new AbstractTile(loadImage(path + "lrlr.png")) {
-      public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2 + 1][y].setNext(hor[x - 1][y * 2]);
-        return 3;
-      }
-
-      public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x][y * 2].setNext(vert[x * 2 + 1][y - 1]);
-        return 0;
-      }
-
-      public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2][y - 1].setNext(hor[x][y * 2 + 1]);
-        return 1;
-      }
-
-      public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x - 1][y * 2 + 1].setNext(vert[x * 2][y]);
-        return 2;
-      }
-    };
     for (int i = 0; i < lrlr; i++) {
-      tiles.add(t);
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "lrlr.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          vert[x * 2 + 1][y].setNext(hor[x - 1][y * 2]);
+          hor[x][y * 2].setNext(vert[x * 2 + 1][y - 1]);
+          vert[x * 2][y - 1].setNext(hor[x][y * 2 + 1]);
+          hor[x - 1][y * 2 + 1].setNext(vert[x * 2][y]);
+        }
+      });
     }
 
     // lbbr
-    t = new AbstractTile(loadImage(path + "lbbr.png")) {
-      public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2 + 1][y].setNext(hor[x - 1][y * 2]);
-        return 3;
-      }
-
-      public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x][y * 2].setNext(hor[x][y * 2 + 1]);
-        return 1;
-      }
-
-      public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2][y - 1].setNext(vert[x * 2 + 1][y - 1]);
-        return 0;
-      }
-
-      public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x - 1][y * 2 + 1].setNext(vert[x * 2][y]);
-        return 2;
-      }
-    };
     for (int i = 0; i < lbbr; i++) {
-      tiles.add(t);
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "lbbr.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          vert[x * 2 + 1][y].setNext(hor[x - 1][y * 2]);
+          hor[x][y * 2].setNext(hor[x][y * 2 + 1]);
+          vert[x * 2][y - 1].setNext(vert[x * 2 + 1][y - 1]);
+          hor[x - 1][y * 2 + 1].setNext(vert[x * 2][y]);
+        }
+      });
     }
 
     // llll
-    t = new AbstractTile(loadImage(path + "llll.png")) {
-      public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2 + 1][y].setNext(hor[x - 1][y * 2]);
-        return 3;
-      }
-
-      public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x][y * 2].setNext(vert[x * 2][y]);
-        return 2;
-      }
-
-      public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2][y - 1].setNext(hor[x][y * 2 + 1]);
-        return 1;
-      }
-
-      public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x - 1][y * 2 + 1].setNext(vert[x * 2 + 1][y - 1]);
-        return 0;
-      }
-    };
     for (int i = 0; i < llll; i++) {
-      tiles.add(t);
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "llll.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          Connection upIn = new Connection(x, y - 0.2, Math.PI * 0.35);
+          Connection upOut = new Connection(x, y - 0.2, -Math.PI * 0.35);
+          Connection leftIn = new Connection(x - 0.2, y, -Math.PI * 0.15);
+          Connection leftOut = new Connection(x - 0.2, y, -Math.PI * 0.85);
+          Connection downIn = new Connection(x, y + 0.2, -Math.PI * 0.65);
+          Connection downOut = new Connection(x, y + 0.2, Math.PI * 0.65);
+          Connection rightIn = new Connection(x + 0.2, y, Math.PI * 0.85);
+          Connection rightOut = new Connection(x + 0.2, y, Math.PI * 0.15);
+
+          vert[x * 2 + 1][y].setNext(downIn);
+          downIn.setNext(leftOut);
+          leftOut.setNext(hor[x - 1][y * 2]);
+          hor[x][y * 2].setNext(rightIn);
+          rightIn.setNext(downOut);
+          downOut.setNext(vert[x * 2][y]);
+          vert[x * 2][y - 1].setNext(upIn);
+          upIn.setNext(rightOut);
+          rightOut.setNext(hor[x][y * 2 + 1]);
+          hor[x - 1][y * 2 + 1].setNext(leftIn);
+          leftIn.setNext(upOut);
+          upOut.setNext(vert[x * 2 + 1][y - 1]);
+        }
+      });
     }
 
     // brlb
-    t = new AbstractTile(loadImage(path + "brlb.png")) {
-      public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2 + 1][y].setNext(vert[x * 2][y]);
-        return 2;
-      }
-
-      public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x][y * 2].setNext(vert[x * 2 + 1][y - 1]);
-        return 0;
-      }
-
-      public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2][y - 1].setNext(hor[x][y * 2 + 1]);
-        return 1;
-      }
-
-      public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x - 1][y * 2 + 1].setNext(hor[x - 1][y * 2]);
-        return 3;
-      }
-    };
     for (int i = 0; i < brlb; i++) {
-      tiles.add(t);
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "brlb.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          vert[x * 2 + 1][y].setNext(vert[x * 2][y]);
+          hor[x][y * 2].setNext(vert[x * 2 + 1][y - 1]);
+          vert[x * 2][y - 1].setNext(hor[x][y * 2 + 1]);
+          hor[x - 1][y * 2 + 1].setNext(hor[x - 1][y * 2]);
+        }
+      });
     }
 
     // bbrl
-    t = new AbstractTile(loadImage(path + "bbrl.png")) {
-      public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2 + 1][y].setNext(vert[x * 2][y]);
-        return 2;
-      }
-
-      public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x][y * 2].setNext(hor[x][y * 2 + 1]);
-        return 1;
-      }
-
-      public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2][y - 1].setNext(hor[x - 1][y * 2]);
-        return 3;
-      }
-
-      public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x - 1][y * 2 + 1].setNext(vert[x * 2 + 1][y - 1]);
-        return 0;
-      }
-    };
     for (int i = 0; i < bbrl; i++) {
-      tiles.add(t);
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "bbrl.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          vert[x * 2 + 1][y].setNext(vert[x * 2][y]);
+          hor[x][y * 2].setNext(hor[x][y * 2 + 1]);
+          vert[x * 2][y - 1].setNext(hor[x - 1][y * 2]);
+          hor[x - 1][y * 2 + 1].setNext(vert[x * 2 + 1][y - 1]);
+        }
+      });
     }
 
     // bbbb
-    t = new AbstractTile(loadImage(path + "bbbb.png")) {
-      public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2 + 1][y].setNext(vert[x * 2][y]);
-        return 2;
-      }
-
-      public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x][y * 2].setNext(hor[x][y * 2 + 1]);
-        return 1;
-      }
-
-      public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
-        vert[x * 2][y - 1].setNext(vert[x * 2 + 1][y - 1]);
-        return 0;
-      }
-
-      public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
-        hor[x - 1][y * 2 + 1].setNext(hor[x - 1][y * 2]);
-        return 3;
-      }
-    };
     for (int i = 0; i < bbbb; i++) {
-      tiles.add(t);
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "bbbb.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          vert[x * 2 + 1][y].setNext(vert[x * 2][y]);
+          hor[x][y * 2].setNext(hor[x][y * 2 + 1]);
+          vert[x * 2][y - 1].setNext(vert[x * 2 + 1][y - 1]);
+          hor[x - 1][y * 2 + 1].setNext(hor[x - 1][y * 2]);
+        }
+      });
     }
 
-    tileset = new Tileset(tiles.toArray(AbstractTile[]::new));
+    return new Tileset(tiles.toArray(Tile[]::new));
   }
 
   // ===================================================================================================================

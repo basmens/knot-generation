@@ -1,9 +1,9 @@
 package nl.basmens.generation;
 
 public class Tileset {
-  private final AbstractTile[] tiles;
+  private final Tile[] tiles;
 
-  public Tileset(AbstractTile... tiles) {
+  public Tileset(Tile... tiles) {
     this.tiles = tiles;
   }
 
@@ -11,7 +11,7 @@ public class Tileset {
     return tiles.length;
   }
 
-  public AbstractTile getTileByIndex(int index) {
+  public Tile getTileByIndex(int index) {
     return tiles[index];
   }
 }

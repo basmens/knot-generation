@@ -1,134 +1,94 @@
 package nl.basmens.generation.generators;
 
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.FileSystems;
-import java.nio.file.Paths;
 import java.util.Random;
 
 import nl.basmens.Main;
-import nl.basmens.generation.AbstractTile;
+import nl.basmens.generation.IntersectedConnectionsFactory;
+import nl.basmens.generation.Tile;
 import nl.basmens.generation.Tileset;
 import nl.basmens.knot.Connection;
 import nl.benmens.processing.PAppletProxy;
 
 public class GridGeneratorBasic implements GridGenerator {
-  private static final AbstractTile tileEmpty;
-  private static final AbstractTile[] tileCurve = new AbstractTile[4];
+  public static final Tile tileEmpty;
+  private static final Tile[] tileCurve = new Tile[4];
 
   private final Random random = new Random();
   private final Tileset tileset;
 
   private int gridW;
   private int gridH;
-  private AbstractTile[][] grid;
+  private Tile[][] grid;
 
   static {
     // Load tileEmpty and tileCurves
-    String path = "";
-    try {
-      URL resource = GridGeneratorBasic.class.getResource("/");
-      path = Paths.get(resource.toURI()).toAbsolutePath().toString() + FileSystems.getDefault().getSeparator();
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    }
+    String path = Main.RESOURCE_PATH;
     if ("".equals(path)) {
       tileEmpty = null;
     } else {
       // Empty
-      tileEmpty = new AbstractTile(PAppletProxy.getSharedApplet().loadImage(path + "empty.png")) {
-        public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
-          return -1;
-        }
-
-        public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
-          return -1;
-        }
-
-        public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
-          return -1;
-        }
-
-        public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
-          return -1;
-        }
+      tileEmpty = new Tile(PAppletProxy.getSharedApplet().loadImage(path + "empty.png")) {
       };
       // Curve 0
-      tileCurve[0] = new AbstractTile(PAppletProxy.getSharedApplet().loadImage(path + "curve0.png")) {
-        public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
-          return -1;
-        }
-        
-        public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
+      tileCurve[0] = new Tile(PAppletProxy.getSharedApplet().loadImage(path + "curve0.png")) {
+        @Override
+        public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert,
+            IntersectedConnectionsFactory intersectedConnections) {
           hor[x][y].setNext(vert[x][y - 1]);
           return 0;
         }
-        
-        public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
+
+        @Override
+        public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert,
+            IntersectedConnectionsFactory intersectedConnections) {
           vert[x][y - 1].setNext(hor[x][y]);
           return 1;
         }
-        
-        public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
-          return -1;
-        }
       };
       // Curve 1
-      tileCurve[1] = new AbstractTile(PAppletProxy.getSharedApplet().loadImage(path + "curve1.png")) {
-        public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
+      tileCurve[1] = new Tile(PAppletProxy.getSharedApplet().loadImage(path + "curve1.png")) {
+        @Override
+        public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert,
+            IntersectedConnectionsFactory intersectedConnections) {
           vert[x][y].setNext(hor[x][y]);
           return 1;
         }
-        
-        public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
+
+        @Override
+        public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert,
+            IntersectedConnectionsFactory intersectedConnections) {
           hor[x][y].setNext(vert[x][y]);
           return 2;
         }
-        
-        public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
-          return -1;
-        }
-        
-        public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
-          return -1;
-        }
       };
       // Curve 2
-      tileCurve[2] = new AbstractTile(PAppletProxy.getSharedApplet().loadImage(path + "curve2.png")) {
-        public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
+      tileCurve[2] = new Tile(PAppletProxy.getSharedApplet().loadImage(path + "curve2.png")) {
+        @Override
+        public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert,
+            IntersectedConnectionsFactory intersectedConnections) {
           vert[x][y].setNext(hor[x - 1][y]);
           return 3;
         }
-        
-        public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
-          return -1;
-        }
-        
-        public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
-          return -1;
-        }
-        
-        public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
+
+        @Override
+        public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert,
+            IntersectedConnectionsFactory intersectedConnections) {
           hor[x - 1][y].setNext(vert[x][y]);
           return 2;
         }
       };
       // Curve 3
-      tileCurve[3] = new AbstractTile(PAppletProxy.getSharedApplet().loadImage(path + "curve3.png")) {
-        public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert) {
-          return -1;
-        }
-        
-        public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert) {
-          return -1;
-        }
-        
-        public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert) {
+      tileCurve[3] = new Tile(PAppletProxy.getSharedApplet().loadImage(path + "curve3.png")) {
+        @Override
+        public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert,
+            IntersectedConnectionsFactory intersectedConnections) {
           vert[x][y - 1].setNext(hor[x - 1][y]);
           return 3;
         }
-        
-        public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert) {
+
+        @Override
+        public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert,
+            IntersectedConnectionsFactory intersectedConnections) {
           hor[x - 1][y].setNext(vert[x][y - 1]);
           return 0;
         }
@@ -136,15 +96,12 @@ public class GridGeneratorBasic implements GridGenerator {
     }
   }
 
-  public GridGeneratorBasic(Tileset tileset, int gridW, int gridH) {
+  public GridGeneratorBasic(Tileset tileset) {
     this.tileset = tileset;
-
-    this.gridW = gridW;
-    this.gridH = gridH;
   }
 
   public void generateGrid() {
-    grid = new AbstractTile[gridW][gridH];
+    grid = new Tile[gridW][gridH];
 
     // Fill edges
     for (int x = 1; x < gridW - 1; x++) {
@@ -168,7 +125,7 @@ public class GridGeneratorBasic implements GridGenerator {
     }
   }
 
-  public AbstractTile getTileAtPos(int x, int y) {
+  public Tile getTileAtPos(int x, int y) {
     return grid[x][y];
   }
 
@@ -188,7 +145,7 @@ public class GridGeneratorBasic implements GridGenerator {
     this.gridH = gridH;
   }
 
-  public AbstractTile[][] getGrid() {
+  public Tile[][] getGrid() {
     return grid;
   }
 }
