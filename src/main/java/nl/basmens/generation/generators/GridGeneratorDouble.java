@@ -3,7 +3,6 @@ package nl.basmens.generation.generators;
 import java.util.Random;
 
 import nl.basmens.Main;
-import nl.basmens.generation.IntersectedConnectionsFactory;
 import nl.basmens.generation.Tile;
 import nl.basmens.generation.Tileset;
 import nl.basmens.knot.Connection;
