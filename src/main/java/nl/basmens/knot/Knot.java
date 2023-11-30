@@ -1,6 +1,7 @@
 package nl.basmens.knot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Knot {
   private Connection firstConnection;
@@ -24,7 +25,7 @@ public class Knot {
     return firstConnection;
   }
 
-  public ArrayList<Intersection> getIntersections() {
+  public List<Intersection> getIntersections() {
     return intersections;
   }
 

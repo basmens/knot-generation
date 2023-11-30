@@ -12,9 +12,7 @@ import nl.basmens.generation.IntersectedConnectionsFactory;
 import nl.basmens.generation.KnotGenerationPipeline;
 import nl.basmens.generation.Tile;
 import nl.basmens.generation.Tileset;
-import nl.basmens.generation.analyzers.GridAnalyzerBasic;
 import nl.basmens.generation.analyzers.GridAnalyzerDouble;
-import nl.basmens.generation.generators.GridGeneratorBasic;
 import nl.basmens.generation.generators.GridGeneratorDouble;
 import nl.basmens.knot.Connection;
 import nl.basmens.knot.Knot;
@@ -249,6 +247,7 @@ public class Main extends PApplet {
             Thread.sleep(10);
           } catch (InterruptedException e) {
             e.printStackTrace();
+            Thread.currentThread().interrupt();
           }
         }
       }
