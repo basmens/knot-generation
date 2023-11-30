@@ -1,13 +1,10 @@
 package nl.basmens.generation.analyzers;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import nl.basmens.IndexedSet;
-import nl.basmens.IndexedSet.UuidSetElement;
 import nl.basmens.generation.Tile;
 import nl.basmens.knot.Connection;
-import nl.basmens.knot.Intersection;
 import nl.basmens.knot.Knot;
 
 public class GridAnalyzerDouble implements GridAnalyzer {
@@ -59,7 +56,7 @@ public class GridAnalyzerDouble implements GridAnalyzer {
 
   private Knot readKnot(IndexedSet<AnalyzerConnection> allConnections) {
     AnalyzerConnection firstConnection = allConnections.getAny();
-    HashSet<Intersection> intersectionsToRemove = new HashSet<>();
+    IndexedSet<AnalyzerIntersection> intersectionsToRemove = new IndexedSet<>();
     Connection current = firstConnection;
 
     // Loop through the knot
@@ -73,10 +70,11 @@ public class GridAnalyzerDouble implements GridAnalyzer {
 
         // If new intersection, queue remove. If not new, it is double and thus belongs
         // to the loop
-        if (intersectionsToRemove.contains(current.getIntersection())) {
-          intersectionsToRemove.remove(current.getIntersection());
+        AnalyzerIntersection ai = (AnalyzerIntersection) current.getIntersection();
+        if (intersectionsToRemove.contains(ai)) {
+          intersectionsToRemove.remove(ai);
         } else {
-          intersectionsToRemove.add(current.getIntersection());
+          intersectionsToRemove.add(ai);
         }
       }
 
@@ -85,7 +83,7 @@ public class GridAnalyzerDouble implements GridAnalyzer {
     } while (current != firstConnection);
 
     // Remove singular intersections
-    for (Intersection i : intersectionsToRemove) {
+    for (AnalyzerIntersection i : intersectionsToRemove) {
       if (i.under.getNext() != null) {
         i.under.getPrev().setNext(i.under.getNext());
       }
@@ -111,23 +109,5 @@ public class GridAnalyzerDouble implements GridAnalyzer {
 
   public void setGridH(int gridH) {
     this.gridH = gridH;
-  }
-
-  private static class AnalyzerConnection extends Connection implements UuidSetElement {
-    private int setIndex;
-
-    public AnalyzerConnection(double posX, double posY, double dir) {
-      super(posX, posY, dir);
-    }
-
-    @Override
-    public int getSetIndex() {
-      return setIndex;
-    }
-
-    @Override
-    public void setSetIndex(int uuid) {
-      this.setIndex = uuid;
-    }
   }
 }

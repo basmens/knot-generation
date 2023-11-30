@@ -1,14 +1,11 @@
 package nl.basmens.generation.analyzers;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import nl.basmens.IndexedSet;
-import nl.basmens.IndexedSet.UuidSetElement;
 import nl.basmens.generation.IntersectedConnectionsFactory;
 import nl.basmens.generation.Tile;
 import nl.basmens.knot.Connection;
-import nl.basmens.knot.Intersection;
 import nl.basmens.knot.Knot;
 
 public class GridAnalyzerBasic implements GridAnalyzer {
@@ -19,15 +16,15 @@ public class GridAnalyzerBasic implements GridAnalyzer {
     ArrayList<Knot> result = new ArrayList<>();
 
     // Create empty connections
-    AnalyzerConnection[][] horizontalConnections = new AnalyzerConnection[gridW - 1][gridH];
-    AnalyzerConnection[][] verticalConnections = new AnalyzerConnection[gridW][gridH - 1];
-    IndexedSet<AnalyzerConnection> allConnections = new IndexedSet<>();
+    IndexAnalyzerConnection[][] horizontalConnections = new IndexAnalyzerConnection[gridW - 1][gridH];
+    IndexAnalyzerConnection[][] verticalConnections = new IndexAnalyzerConnection[gridW][gridH - 1];
+    IndexedSet<IndexAnalyzerConnection> allConnections = new IndexedSet<>();
     for (int x = 0; x < gridW - 1; x++) {
       for (int y = 0; y < gridH; y++) {
         if ((y == 0 || y == gridH - 1) && x % 2 == 0) {
           continue;
         }
-        horizontalConnections[x][y] = new AnalyzerConnection(x + 0.5D, y, 0, x, y);
+        horizontalConnections[x][y] = new IndexAnalyzerConnection(x + 0.5D, y, 0, x, y);
         allConnections.add(horizontalConnections[x][y]);
       }
     }
@@ -36,7 +33,7 @@ public class GridAnalyzerBasic implements GridAnalyzer {
         if ((x == 0 || x == gridW - 1) && y % 2 == 0) {
           continue;
         }
-        verticalConnections[x][y] = new AnalyzerConnection(x, y + 0.5D, Math.PI / 2, x, y);
+        verticalConnections[x][y] = new IndexAnalyzerConnection(x, y + 0.5D, Math.PI / 2, x, y);
         allConnections.add(verticalConnections[x][y]);
       }
     }
@@ -51,15 +48,15 @@ public class GridAnalyzerBasic implements GridAnalyzer {
     return result;
   }
 
-  private static Knot readKnot(Tile[][] grid, AnalyzerConnection[][] horizontalConnections,
-      AnalyzerConnection[][] verticalConnections, IndexedSet<AnalyzerConnection> allConnections,
+  private static Knot readKnot(Tile[][] grid, IndexAnalyzerConnection[][] horizontalConnections,
+      IndexAnalyzerConnection[][] verticalConnections, IndexedSet<IndexAnalyzerConnection> allConnections,
       IntersectedConnectionsFactory intersectedConnections) {
-    AnalyzerConnection firstConnection = allConnections.getAny();
-    HashSet<Intersection> intersectionsToRemove = new HashSet<>();
+    IndexAnalyzerConnection firstConnection = allConnections.getAny();
+    IndexedSet<AnalyzerIntersection> intersectionsToRemove = new IndexedSet<>();
 
     Connection current = firstConnection;
-    int x = ((AnalyzerConnection) current).indexX;
-    int y = ((AnalyzerConnection) current).indexY;
+    int x = ((IndexAnalyzerConnection) current).indexX;
+    int y = ((IndexAnalyzerConnection) current).indexY;
     int dir = (current.getPosX() % 1 > 0.1) ? 1 : 2; // If horizontal connection, then dir = right, else dir = down
 
     // Loop through the knot
@@ -99,17 +96,18 @@ public class GridAnalyzerBasic implements GridAnalyzer {
 
         // If new intersection, queue remove. If not new, it is double and thus belongs
         // to the loop
-        if (intersectionsToRemove.contains(current.getIntersection())) {
-          intersectionsToRemove.remove(current.getIntersection());
+        AnalyzerIntersection ai = (AnalyzerIntersection) current.getIntersection();
+        if (intersectionsToRemove.contains(ai)) {
+          intersectionsToRemove.remove(ai);
         } else {
-          intersectionsToRemove.add(current.getIntersection());
+          intersectionsToRemove.add(ai);
         }
       }
       current = current.getNext();
     } while (current != firstConnection);
 
     // Remove singular intersections
-    for (Intersection i : intersectionsToRemove) {
+    for (AnalyzerIntersection i : intersectionsToRemove) {
       if (i.under.getNext() != null) {
         i.under.getPrev().setNext(i.under.getNext());
       }
@@ -137,25 +135,14 @@ public class GridAnalyzerBasic implements GridAnalyzer {
     this.gridH = gridH;
   }
 
-  private static class AnalyzerConnection extends Connection implements UuidSetElement {
+  private static class IndexAnalyzerConnection extends AnalyzerConnection {
     public final int indexX;
     public final int indexY;
-    private int setIndex;
 
-    public AnalyzerConnection(double posX, double posY, double dir, int indexX, int indexY) {
+    public IndexAnalyzerConnection(double posX, double posY, double dir, int indexX, int indexY) {
       super(posX, posY, dir);
       this.indexX = indexX;
       this.indexY = indexY;
-    }
-
-    @Override
-    public int getSetIndex() {
-      return setIndex;
-    }
-
-    @Override
-    public void setSetIndex(int uuid) {
-      this.setIndex = uuid;
     }
   }
 }
