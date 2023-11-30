@@ -5,6 +5,7 @@ import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.function.Supplier;
 
@@ -26,17 +27,21 @@ import processing.opengl.PGraphicsOpenGL;
 public class Main extends PApplet {
   public static final String RESOURCE_PATH;
 
-  public static final boolean SAVE_RESULTS = false;
+  public static final boolean SAVE_RESULTS = true;
   public static final boolean MULTI_THREAD = false;
   public static final boolean CURVY_KNOT_DISPLAY = true;
-  private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
-  private int imgRes = 17;
+  private static final Tilesets TILESET = Tilesets.BASIC;
+  private int imgRes = 7;
 
   private enum Tilesets {
     BASIC(Main::getTilesetBasicFour),
     UNWEIGHTED(() -> getTilesetDoubled(1, 1, 1, 1, 1, 1, 1, 1, 1)),
     WEIGHTED_HIGH(() -> getTilesetDoubled(0, 1, 1, 1, 1, 0, 1, 1, 2)),
-    WEIGHTED_LOW(() -> getTilesetDoubled(1, 0, 0, 0, 0, 1, 0, 0, 2));
+    WEIGHTED_LOW(() -> getTilesetDoubled(1, 0, 0, 0, 0, 1, 0, 0, 2)),
+    EXPANDED_UNWEIGHTED(
+        () -> getTilesetDoubledStraights(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)),
+    EXPANDED_WEIGHTED(
+        () -> getTilesetDoubledStraights(1, 1, 2, 1, 1, 1, 0, 2, 1, 1, 1, 0, 1, 2, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0));
 
     private final Supplier<Tileset> tilesetSupplier;
     private Tileset tileset;
@@ -93,17 +98,17 @@ public class Main extends PApplet {
     // Start
     for (int i = 0; i < knotGenerationPipelines.length; i++) {
       int s = 10 * (knotGenerationPipelines.length - i);
-      s = 8;
+      s = 3000;
 
       String fileName = "knots tileset " + TILESET.toString().toLowerCase(Locale.ENGLISH) + "/knots " + s + "x" + s;
 
       // Basic
-      // knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), s, s,
-      //     GridGeneratorBasic::new, GridAnalyzerBasic::new, fileName);
+      knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), s, s,
+      GridGeneratorBasic::new, GridAnalyzerBasic::new, fileName);
 
       // Double
-      knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), s, s,
-          GridGeneratorDouble::new, GridAnalyzerDouble::new, fileName);
+      // knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), s, s,
+      //     GridGeneratorDouble::new, GridAnalyzerDouble::new, fileName);
 
       startGenerationCycle(i);
     }
@@ -244,12 +249,10 @@ public class Main extends PApplet {
 
       // Wait for the threads to end
       for (Thread t : knotGenerationPipelineThreads) {
-        while (t.isAlive()) {
-          try {
-            Thread.sleep(10);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
+        try {
+          t.join();
+        } catch (InterruptedException e) {
+          e.printStackTrace();
         }
       }
       exit();
@@ -353,7 +356,7 @@ public class Main extends PApplet {
       @Override
       public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert,
           IntersectedConnectionsFactory intersectedConnections) {
-        Connection c = intersectedConnections.getConnection(x, y, 0);
+        Connection c = intersectedConnections.getConnectionA(x, y);
         c.setDir(-Math.PI / 2);
         vert[x][y].setNext(c);
         c.setNext(vert[x][y - 1]);
@@ -363,7 +366,7 @@ public class Main extends PApplet {
       @Override
       public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert,
           IntersectedConnectionsFactory intersectedConnections) {
-        Connection c = intersectedConnections.getConnection(x, y, 1);
+        Connection c = intersectedConnections.getConnectionB(x, y);
         c.setDir(Math.PI);
         hor[x][y].setNext(c);
         c.setNext(hor[x - 1][y]);
@@ -373,7 +376,7 @@ public class Main extends PApplet {
       @Override
       public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert,
           IntersectedConnectionsFactory intersectedConnections) {
-        Connection c = intersectedConnections.getConnection(x, y, 0);
+        Connection c = intersectedConnections.getConnectionA(x, y);
         c.setDir(Math.PI / 2);
         vert[x][y - 1].setNext(c);
         c.setNext(vert[x][y]);
@@ -383,7 +386,7 @@ public class Main extends PApplet {
       @Override
       public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert,
           IntersectedConnectionsFactory intersectedConnections) {
-        Connection c = intersectedConnections.getConnection(x, y, 1);
+        Connection c = intersectedConnections.getConnectionB(x, y);
         c.setDir(0);
         hor[x - 1][y].setNext(c);
         c.setNext(hor[x][y]);
@@ -395,7 +398,7 @@ public class Main extends PApplet {
       @Override
       public int setConnectionInputGoingUp(int x, int y, Connection[][] hor, Connection[][] vert,
           IntersectedConnectionsFactory intersectedConnections) {
-        Connection c = intersectedConnections.getConnection(x, y, 0);
+        Connection c = intersectedConnections.getConnectionA(x, y);
         c.setDir(-Math.PI / 2);
         vert[x][y].setNext(c);
         c.setNext(vert[x][y - 1]);
@@ -405,7 +408,7 @@ public class Main extends PApplet {
       @Override
       public int setConnectionInputGoingLeft(int x, int y, Connection[][] hor, Connection[][] vert,
           IntersectedConnectionsFactory intersectedConnections) {
-        Connection c = intersectedConnections.getConnection(x, y, 1);
+        Connection c = intersectedConnections.getConnectionB(x, y);
         c.setDir(Math.PI);
         hor[x][y].setNext(c);
         c.setNext(hor[x - 1][y]);
@@ -415,7 +418,7 @@ public class Main extends PApplet {
       @Override
       public int setConnectionInputGoingDown(int x, int y, Connection[][] hor, Connection[][] vert,
           IntersectedConnectionsFactory intersectedConnections) {
-        Connection c = intersectedConnections.getConnection(x, y, 0);
+        Connection c = intersectedConnections.getConnectionA(x, y);
         c.setDir(Math.PI / 2);
         vert[x][y - 1].setNext(c);
         c.setNext(vert[x][y]);
@@ -425,7 +428,7 @@ public class Main extends PApplet {
       @Override
       public int setConnectionInputGoingRight(int x, int y, Connection[][] hor, Connection[][] vert,
           IntersectedConnectionsFactory intersectedConnections) {
-        Connection c = intersectedConnections.getConnection(x, y, 1);
+        Connection c = intersectedConnections.getConnectionB(x, y);
         c.setDir(0);
         hor[x - 1][y].setNext(c);
         c.setNext(hor[x][y]);
@@ -522,6 +525,10 @@ public class Main extends PApplet {
           Connection downOut = new Connection(x, y + 0.2, Math.PI * 0.65);
           Connection rightIn = new Connection(x + 0.2, y, Math.PI * 0.85);
           Connection rightOut = new Connection(x + 0.2, y, Math.PI * 0.15);
+          IntersectedConnectionsFactory.createIntersection(upIn, upOut);
+          IntersectedConnectionsFactory.createIntersection(leftIn, leftOut);
+          IntersectedConnectionsFactory.createIntersection(downIn, downOut);
+          IntersectedConnectionsFactory.createIntersection(rightIn, rightOut);
 
           vert[x * 2 + 1][y].setNext(downIn);
           downIn.setNext(leftOut);
@@ -574,6 +581,357 @@ public class Main extends PApplet {
           hor[x][y * 2].setNext(hor[x][y * 2 + 1]);
           vert[x * 2][y - 1].setNext(vert[x * 2 + 1][y - 1]);
           hor[x - 1][y * 2 + 1].setNext(hor[x - 1][y * 2]);
+        }
+      });
+    }
+
+    return new Tileset(tiles.toArray(Tile[]::new));
+  }
+
+  // ===================================================================================================================
+  // Tileset doubled with straights
+  // ===================================================================================================================
+  private static Tileset getTilesetDoubledStraights(int rrrr, int rsbr, int rlrl, int rlbb, int rrsb, int rssl,
+      int lrlr, int lbbr, int lbsl, int lrss, int llbs, int llll, int bbbb, int brlb, int bsbs, int brrs, int bbrl,
+      int bsll, int sbrr, int sslr, int sbsb, int sllb, int ssss, int slrs) {
+    ArrayList<Tile> tiles = new ArrayList<>(
+        Arrays.asList(getTilesetDoubled(rrrr, rlrl, rlbb, lrlr, lbbr, llll, brlb, bbrl, bbbb).getTiles()));
+    String path = RESOURCE_PATH + "tilesets/doubled_with_straights/";
+
+    // rsbr
+    for (int i = 0; i < rsbr; i++) {
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "rsbr.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          vert[x * 2 + 1][y].setNext(hor[x][y * 2 + 1]);
+          hor[x][y * 2].setNext(hor[x - 1][y * 2]);
+          vert[x * 2][y - 1].setNext(vert[x * 2 + 1][y - 1]);
+          hor[x - 1][y * 2 + 1].setNext(vert[x * 2][y]);
+        }
+      });
+    }
+
+    // rrsb
+    for (int i = 0; i < rrsb; i++) {
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "rrsb.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          vert[x * 2 + 1][y].setNext(hor[x][y * 2 + 1]);
+          hor[x][y * 2].setNext(vert[x * 2 + 1][y - 1]);
+          vert[x * 2][y - 1].setNext(vert[x * 2][y]);
+          hor[x - 1][y * 2 + 1].setNext(hor[x - 1][y * 2]);
+        }
+      });
+    }
+
+    // rssl
+    for (int i = 0; i < rssl; i++) {
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "rssl.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          Connection left1 = new Connection(x, y - 0.15, Math.PI);
+          Connection left2 = new Connection(x - 0.15, y - 0.15, Math.PI);
+          Connection down1 = new Connection(x - 0.15, y - 0.15, Math.PI / 2);
+          Connection down2 = new Connection(x - 0.15, y, Math.PI / 2);
+          Connection right1 = new Connection(x - 0.15, y, -Math.PI * 0.15);
+          Connection right2 = new Connection(x, y - 0.15, -Math.PI * 0.35);
+          IntersectedConnectionsFactory.createIntersection(left1, right2);
+          IntersectedConnectionsFactory.createIntersection(left2, down1);
+          IntersectedConnectionsFactory.createIntersection(down2, right1);
+
+          vert[x * 2 + 1][y].setNext(hor[x][y * 2 + 1]);
+          hor[x][y * 2].setNext(left1);
+          left1.setNext(left2);
+          left2.setNext(hor[x - 1][y * 2]);
+          vert[x * 2][y - 1].setNext(down1);
+          down1.setNext(down2);
+          down2.setNext(vert[x * 2][y]);
+          hor[x - 1][y * 2 + 1].setNext(right1);
+          right1.setNext(right2);
+          right2.setNext(vert[x * 2 + 1][y - 1]);
+        }
+      });
+    }
+
+    // lbsl
+    for (int i = 0; i < lbsl; i++) {
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "lbsl.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          Connection up1 = new Connection(x, y, -Math.PI * 0.65);
+          Connection up2 = new Connection(x - 0.15, y - 0.1, -Math.PI * 0.85);
+          Connection down1 = new Connection(x - 0.15, y - 0.1, -Math.PI / 2);
+          Connection down2 = new Connection(x - 0.15, y + 0.1, -Math.PI / 2);
+          Connection right1 = new Connection(x - 0.15, y + 0.1, -Math.PI * 0.15);
+          Connection right2 = new Connection(x, y, -Math.PI * 0.35);
+          IntersectedConnectionsFactory.createIntersection(up1, right2);
+          IntersectedConnectionsFactory.createIntersection(up2, down1);
+          IntersectedConnectionsFactory.createIntersection(down2, right1);
+          
+          vert[x * 2 + 1][y].setNext(up1);
+          up1.setNext(up2);
+          up2.setNext(hor[x - 1][y * 2]);
+          hor[x][y * 2].setNext(hor[x][y * 2 + 1]);
+          vert[x * 2][y - 1].setNext(down1);
+          down1.setNext(down2);
+          down2.setNext(vert[x * 2][y]);
+          hor[x - 1][y * 2 + 1].setNext(right1);
+          right1.setNext(right2);
+          right2.setNext(vert[x * 2 + 1][y - 1]);
+        }
+      });
+    }
+
+    // lrss
+    for (int i = 0; i < lrss; i++) {
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "lrss.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          Connection up1 = new Connection(x, y + 0.15, -Math.PI * 0.65);
+          Connection up2 = new Connection(x - 0.15, y, -Math.PI * 0.85);
+          Connection down1 = new Connection(x - 0.15, y, Math.PI / 2);
+          Connection down2 = new Connection(x - 0.15, y + 0.15, Math.PI / 2);
+          Connection right1 = new Connection(x - 0.15, y + 0.15, 0);
+          Connection right2 = new Connection(x, y + 0.15, 0);
+          IntersectedConnectionsFactory.createIntersection(up1, right2);
+          IntersectedConnectionsFactory.createIntersection(up2, down1);
+          IntersectedConnectionsFactory.createIntersection(down2, right1);
+          
+          vert[x * 2 + 1][y].setNext(up1);
+          up1.setNext(up2);
+          up2.setNext(hor[x - 1][y * 2]);
+          hor[x][y * 2].setNext(vert[x * 2 + 1][y - 1]);
+          vert[x * 2][y - 1].setNext(down1);
+          down1.setNext(down2);
+          down2.setNext(vert[x * 2][y]);
+          hor[x - 1][y * 2 + 1].setNext(right1);
+          right1.setNext(right2);
+          right2.setNext(hor[x][y * 2 + 1]);
+        }
+      });
+    }
+
+    // llbs
+    for (int i = 0; i < llbs; i++) {
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "llbs.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          Connection up1 = new Connection(x + 0.1, y + 0.15, -Math.PI * 0.65);
+          Connection up2 = new Connection(x, y, -Math.PI * 0.85);
+          Connection left1 = new Connection(x, y, Math.PI * 0.85);
+          Connection left2 = new Connection(x - 0.1, y + 0.15, Math.PI * 0.65);
+          Connection right1 = new Connection(x - 0.1, y + 0.15, 0);
+          Connection right2 = new Connection(x + 0.1, y + 0.15, 0);
+          IntersectedConnectionsFactory.createIntersection(up1, right2);
+          IntersectedConnectionsFactory.createIntersection(up2, left1);
+          IntersectedConnectionsFactory.createIntersection(left2, right1);
+          
+          vert[x * 2 + 1][y].setNext(up1);
+          up1.setNext(up2);
+          up2.setNext(hor[x - 1][y * 2]);
+          hor[x][y * 2].setNext(left1);
+          left1.setNext(left2);
+          left2.setNext(vert[x * 2][y]);
+          vert[x * 2][y - 1].setNext(vert[x * 2 + 1][y - 1]);
+          hor[x - 1][y * 2 + 1].setNext(right1);
+          right1.setNext(right2);
+          right2.setNext(hor[x][y * 2 + 1]);
+        }
+      });
+    }
+
+    // bsbs
+    for (int i = 0; i < bsbs; i++) {
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "bsbs.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          vert[x * 2 + 1][y].setNext(vert[x * 2][y]);
+          hor[x][y * 2].setNext(hor[x - 1][y * 2]);
+          vert[x * 2][y - 1].setNext(vert[x * 2 + 1][y - 1]);
+          hor[x - 1][y * 2 + 1].setNext(hor[x][y * 2 + 1]);
+        }
+      });
+    }
+
+    // brrs
+    for (int i = 0; i < brrs; i++) {
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "brrs.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          vert[x * 2 + 1][y].setNext(vert[x * 2][y]);
+          hor[x][y * 2].setNext(vert[x * 2 + 1][y - 1]);
+          vert[x * 2][y - 1].setNext(hor[x - 1][y * 2]);
+          hor[x - 1][y * 2 + 1].setNext(hor[x][y * 2 + 1]);
+        }
+      });
+    }
+
+    // bsll
+    for (int i = 0; i < bsll; i++) {
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "bsll.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          Connection left1 = new Connection(x + 0.1, y - 0.15, Math.PI);
+          Connection left2 = new Connection(x - 0.1, y - 0.15, Math.PI);
+          Connection down1 = new Connection(x - 0.1, y - 0.15, Math.PI * 0.35);
+          Connection down2 = new Connection(x, y, Math.PI * 0.15);
+          Connection right1 = new Connection(x, y, -Math.PI * 0.15);
+          Connection right2 = new Connection(x + 0.1, y - 0.15, -Math.PI * 0.35);
+          IntersectedConnectionsFactory.createIntersection(left1, right2);
+          IntersectedConnectionsFactory.createIntersection(left2, down1);
+          IntersectedConnectionsFactory.createIntersection(down2, right1);
+          
+          vert[x * 2 + 1][y].setNext(vert[x * 2][y]);
+          hor[x][y * 2].setNext(left1);
+          left1.setNext(left2);
+          left2.setNext(hor[x - 1][y * 2]);
+          vert[x * 2][y - 1].setNext(down1);
+          down1.setNext(down2);
+          down2.setNext(hor[x][y * 2 + 1]);
+          hor[x - 1][y * 2 + 1].setNext(right1);
+          right1.setNext(right2);
+          right2.setNext(vert[x * 2 + 1][y - 1]);
+        }
+      });
+    }
+
+    // sbrr
+    for (int i = 0; i < sbrr; i++) {
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "sbrr.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          vert[x * 2 + 1][y].setNext(vert[x * 2 + 1][y - 1]);
+          hor[x][y * 2].setNext(hor[x][y * 2 + 1]);
+          vert[x * 2][y - 1].setNext(hor[x - 1][y * 2]);
+          hor[x - 1][y * 2 + 1].setNext(vert[x * 2][y]);
+        }
+      });
+    }
+
+    // sslr
+    for (int i = 0; i < sslr; i++) {
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "sslr.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          Connection up1 = new Connection(x + 0.15, y, -Math.PI / 2);
+          Connection up2 = new Connection(x + 0.15, y - 0.15, -Math.PI / 2);
+          Connection left1 = new Connection(x + 0.15, y - 0.15, Math.PI);
+          Connection left2 = new Connection(x, y - 0.15, Math.PI);
+          Connection down1 = new Connection(x, y - 0.15, Math.PI * 0.35);
+          Connection down2 = new Connection(x + 0.15, y, Math.PI * 0.15);
+          IntersectedConnectionsFactory.createIntersection(up1, down2);
+          IntersectedConnectionsFactory.createIntersection(up2, left1);
+          IntersectedConnectionsFactory.createIntersection(left2, down1);
+          
+          vert[x * 2 + 1][y].setNext(up1);
+          up1.setNext(up2);
+          up2.setNext(vert[x * 2 + 1][y - 1]);
+          hor[x][y * 2].setNext(left1);
+          left1.setNext(left2);
+          left2.setNext(hor[x - 1][y * 2]);
+          vert[x * 2][y - 1].setNext(down1);
+          down1.setNext(down2);
+          down2.setNext(hor[x][y * 2 + 1]);
+          hor[x - 1][y * 2 + 1].setNext(vert[x * 2][y]);
+        }
+      });
+    }
+
+    // sbsb
+    for (int i = 0; i < sbsb; i++) {
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "sbsb.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          vert[x * 2 + 1][y].setNext(vert[x * 2 + 1][y - 1]);
+          hor[x][y * 2].setNext(hor[x][y * 2 + 1]);
+          vert[x * 2][y - 1].setNext(vert[x * 2][y]);
+          hor[x - 1][y * 2 + 1].setNext(hor[x - 1][y * 2]);
+        }
+      });
+    }
+
+    // sllb
+    for (int i = 0; i < sllb; i++) {
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "sllb.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          Connection up1 = new Connection(x + 0.15, y + 0.1, -Math.PI / 2);
+          Connection up2 = new Connection(x + 0.15, y - 0.1, -Math.PI / 2);
+          Connection left1 = new Connection(x + 0.15, y - 0.1, Math.PI * 0.85);
+          Connection left2 = new Connection(x, y, Math.PI * 0.65);
+          Connection down1 = new Connection(x, y, Math.PI * 0.35);
+          Connection down2 = new Connection(x + 0.15, y + 0.1, Math.PI * 0.15);
+          IntersectedConnectionsFactory.createIntersection(up1, down2);
+          IntersectedConnectionsFactory.createIntersection(up2, left1);
+          IntersectedConnectionsFactory.createIntersection(left2, down1);
+          
+          vert[x * 2 + 1][y].setNext(up1);
+          up1.setNext(up2);
+          up2.setNext(vert[x * 2 + 1][y - 1]);
+          hor[x][y * 2].setNext(left1);
+          left1.setNext(left2);
+          left2.setNext(vert[x * 2][y]);
+          vert[x * 2][y - 1].setNext(down1);
+          down1.setNext(down2);
+          down2.setNext(hor[x][y * 2 + 1]);
+          hor[x - 1][y * 2 + 1].setNext(hor[x - 1][y * 2]);
+        }
+      });
+    }
+
+    // ssss
+    for (int i = 0; i < ssss; i++) {
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "ssss.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          Connection up1 = new Connection(x + 0.15, y + 0.15, -Math.PI / 2);
+          Connection up2 = new Connection(x + 0.15, y - 0.15, -Math.PI / 2);
+          Connection left1 = new Connection(x + 0.15, y - 0.15, Math.PI);
+          Connection left2 = new Connection(x - 0.15, y - 0.15, Math.PI);
+          Connection down1 = new Connection(x - 0.15, y - 0.15, Math.PI / 2);
+          Connection down2 = new Connection(x - 0.15, y + 0.15, Math.PI / 2);
+          Connection right1 = new Connection(x - 0.15, y + 0.15, 0);
+          Connection right2 = new Connection(x + 0.15, y + 0.15, 0);
+          IntersectedConnectionsFactory.createIntersection(up1, right2);
+          IntersectedConnectionsFactory.createIntersection(up2, left1);
+          IntersectedConnectionsFactory.createIntersection(left2, down1);
+          IntersectedConnectionsFactory.createIntersection(down2, right1);
+          
+          vert[x * 2 + 1][y].setNext(up1);
+          up1.setNext(up2);
+          up2.setNext(vert[x * 2 + 1][y - 1]);
+          hor[x][y * 2].setNext(left1);
+          left1.setNext(left2);
+          left2.setNext(hor[x - 1][y * 2]);
+          vert[x * 2][y - 1].setNext(down1);
+          down1.setNext(down2);
+          down2.setNext(vert[x * 2][y]);
+          hor[x - 1][y * 2 + 1].setNext(right1);
+          right1.setNext(right2);
+          right2.setNext(hor[x][y * 2 + 1]);
+        }
+      });
+    }
+
+    // slrs
+    for (int i = 0; i < slrs; i++) {
+      tiles.add(new Tile(PAppletProxy.loadImage(path + "slrs.png")) {
+        @Override
+        public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
+          Connection up1 = new Connection(x + 0.15, y + 0.15, -Math.PI / 2);
+          Connection up2 = new Connection(x + 0.15, y, -Math.PI / 2);
+          Connection left1 = new Connection(x + 0.15, y, Math.PI * 0.85);
+          Connection left2 = new Connection(x, y + 0.15, Math.PI * 0.65);
+          Connection right1 = new Connection(x, y + 0.15, 0);
+          Connection right2 = new Connection(x + 0.15, y + 0.15, 0);
+          IntersectedConnectionsFactory.createIntersection(up1, right2);
+          IntersectedConnectionsFactory.createIntersection(up2, left1);
+          IntersectedConnectionsFactory.createIntersection(left2, right1);
+          
+          vert[x * 2 + 1][y].setNext(vert[x * 2 + 1][y - 1]);
+          hor[x][y * 2].setNext(vert[x * 2][y]);
+          vert[x * 2][y - 1].setNext(hor[x - 1][y * 2]);
+          hor[x - 1][y * 2 + 1].setNext(hor[x][y * 2 + 1]);
         }
       });
     }

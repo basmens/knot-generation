@@ -3,36 +3,39 @@ package nl.basmens.generation;
 import java.util.ArrayList;
 import java.util.Random;
 
+import nl.basmens.generation.analyzers.GridAnalyzer;
 import nl.basmens.knot.Connection;
-import nl.basmens.knot.Intersection;
 
 public class IntersectedConnectionsFactory {
-  private ArrayList<ArrayList<ArrayList<Connection>>> connections = new ArrayList<>();
-  private Random random = new Random();
+  private static Random random = new Random();
+  private ArrayList<ArrayList<Connection>> connectionsA = new ArrayList<>();
+  private ArrayList<ArrayList<Connection>> connectionsB = new ArrayList<>();
 
   public IntersectedConnectionsFactory(int gridW, int gridH) {
     for (int x = 0; x < gridW; x++) {
-      ArrayList<ArrayList<Connection>> list = new ArrayList<>();
-      connections.add(list);
+      connectionsA.add(new ArrayList<>());
+      connectionsB.add(new ArrayList<>());
       for (int y = 0; y < gridH; y++) {
-        list.add(new ArrayList<>());
+        connectionsA.get(x).add(new Connection(x, y, 0));
+        connectionsB.get(x).add(new Connection(x, y, 0));
+        createIntersection(connectionsA.get(x).get(y), connectionsB.get(x).get(y));
       }
     }
   }
 
-  public Connection getConnection(int x, int y, int id) {
-    ArrayList<Connection> list = connections.get(x).get(y);
-    while (list.size() <= id) {
-      Connection a = new Connection(x, y, 0);
-      Connection b = new Connection(x, y, 0);
-      list.add(a);
-      list.add(b);
-      if (random.nextBoolean()) {
-        new Intersection(a, b);
-      } else {
-        new Intersection(b, a);
-      }
+  public Connection getConnectionA(int x, int y) {
+    return connectionsA.get(x).get(y);
+  }
+
+  public Connection getConnectionB(int x, int y) {
+    return connectionsB.get(x).get(y);
+  }
+
+  public static void createIntersection(Connection a, Connection b) {
+    if (random.nextBoolean()) {
+      new GridAnalyzer.AnalyzerIntersection(a, b);
+    } else {
+      new GridAnalyzer.AnalyzerIntersection(b, a);
     }
-    return list.get(id);
   }
 }

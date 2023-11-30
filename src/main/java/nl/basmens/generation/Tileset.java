@@ -14,4 +14,8 @@ public class Tileset {
   public Tile getTileByIndex(int index) {
     return tiles[index];
   }
+
+  public Tile[] getTiles() {
+    return tiles;
+  }
 }

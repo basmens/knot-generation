@@ -9,7 +9,7 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class IndexedSet<E extends IndexedSet.UuidSetElement> extends AbstractSet<E> {
+public class IndexedSet<E extends IndexedSet.IndexedSetElement> extends AbstractSet<E> {
   private ArrayList<E> elements = new ArrayList<>();
 
   private int getIndexOfElement(E elem) {
@@ -130,7 +130,7 @@ public class IndexedSet<E extends IndexedSet.UuidSetElement> extends AbstractSet
     elements.forEach(action);
   }
 
-  public abstract interface UuidSetElement {
+  public abstract interface IndexedSetElement {
     int getSetIndex();
 
     void setSetIndex(int setIndex);
