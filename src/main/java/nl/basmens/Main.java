@@ -27,7 +27,7 @@ import processing.opengl.PGraphicsOpenGL;
 public class Main extends PApplet {
   public static final String RESOURCE_PATH;
 
-  public static final boolean SAVE_RESULTS = true;
+  public static final boolean SAVE_RESULTS = false;
   public static final boolean MULTI_THREAD = false;
   public static final boolean CURVY_KNOT_DISPLAY = true;
   private static final Tilesets TILESET = Tilesets.BASIC;
@@ -77,6 +77,7 @@ public class Main extends PApplet {
   // ===================================================================================================================
   // Native processing functions for lifecycle
   // ===================================================================================================================
+
   @Override
   public void settings() {
     PAppletProxy.setSharedApplet(this);
@@ -84,8 +85,7 @@ public class Main extends PApplet {
     if (MULTI_THREAD) {
       size(300, 300, P2D);
     } else {
-      size(3200, 1600, P2D); // FullScreen
-      // size(1800, 1200, P2D);
+      size((int) (1920 * 1.2), 1080, P2D);
     }
   }
 
@@ -98,17 +98,17 @@ public class Main extends PApplet {
     // Start
     for (int i = 0; i < knotGenerationPipelines.length; i++) {
       int s = 10 * (knotGenerationPipelines.length - i);
-      s = 3000;
+      s = 30;
 
       String fileName = "knots tileset " + TILESET.toString().toLowerCase(Locale.ENGLISH) + "/knots " + s + "x" + s;
 
-      // Basic
-      knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), s, s,
-      GridGeneratorBasic::new, GridAnalyzerBasic::new, fileName);
-
-      // Double
-      // knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), s, s,
-      //     GridGeneratorDouble::new, GridAnalyzerDouble::new, fileName);
+      if (TILESET == Tilesets.BASIC) {
+        knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), s, s,
+            GridGeneratorBasic::new, GridAnalyzerBasic::new, fileName);
+      } else {
+        knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), s, s,
+            GridGeneratorDouble::new, GridAnalyzerDouble::new, fileName);
+      }
 
       startGenerationCycle(i);
     }
@@ -130,84 +130,99 @@ public class Main extends PApplet {
     background(30);
 
     if (!MULTI_THREAD) {
-      // Draw tiles
-      double tileW = (double) width / knotGenerationPipelines[0].getGridW() * 0.8;
-      double tileH = (double) height / knotGenerationPipelines[0].getGridH();
-      if (knotGenerationPipelines[0].getGridW() <= 300) {
-        imageMode(CORNER);
-        for (int x = 0; x < knotGenerationPipelines[0].getGridW(); x++) {
-          for (int y = 0; y < knotGenerationPipelines[0].getGridH(); y++) {
-            image(knotGenerationPipelines[0].getGenerator().getTileAtPos(x, y).img,
-                (float) (x * tileW),
-                (float) (y * tileH), (float) tileW, (float) tileH);
-          }
+      display();
+    }
+  }
+
+  private void display() {
+    double tileW = (double) width / knotGenerationPipelines[0].getGridW() * 0.8;
+    double tileH = (double) height / knotGenerationPipelines[0].getGridH();
+
+    displayTiles(tileW, tileH);
+
+    ArrayList<Knot> knots = knotGenerationPipelines[0].getKnots();
+    Knot viewedKnot = knots.get(knotBeingViewed);
+
+    displayKnot(viewedKnot, tileW, tileH);
+    displayKnotInfo(viewedKnot);
+  }
+
+  private void displayTiles(double tileW, double tileH) {
+    if (knotGenerationPipelines[0].getGridW() <= 300) {
+      imageMode(CORNER);
+      for (int x = 0; x < knotGenerationPipelines[0].getGridW(); x++) {
+        for (int y = 0; y < knotGenerationPipelines[0].getGridH(); y++) {
+          image(knotGenerationPipelines[0].getGenerator().getTileAtPos(x, y).img,
+              (float) (x * tileW),
+              (float) (y * tileH), (float) tileW, (float) tileH);
         }
-      }
-
-      // View knot on grid
-      ArrayList<Knot> knots = knotGenerationPipelines[0].getKnots();
-      if (!knots.isEmpty()) {
-        Knot knot = knots.get(knotBeingViewed);
-        Connection c = knot.getFirstConnection();
-        stroke(250, 220, 150, 90);
-        strokeWeight((float) (height / 6D / knotGenerationPipelines[0].getGridH()));
-        strokeJoin(ROUND);
-        noFill();
-        beginShape();
-        if (CURVY_KNOT_DISPLAY) {
-          // Curvy
-          double anchorX1 = (c.getPrev().getPosX() + 0.5D) * tileW;
-          double anchorY1 = (c.getPrev().getPosY() + 0.5D) * tileH;
-          vertex((float) anchorX1, (float) anchorY1);
-          do {
-            double anchorX2 = (c.getPosX() + 0.5D) * tileW;
-            double anchorY2 = (c.getPosY() + 0.5D) * tileH;
-
-            double dir1 = c.getPrev().getDir();
-            double dir2 = c.getDir() + Math.PI;
-
-            double dx = c.getPosX() - c.getPrev().getPosX();
-            double dy = c.getPosY() - c.getPrev().getPosY();
-            double controlPointDist = Math.sqrt(dx * dx + dy * dy) * 0.35;
-            if (Math.abs(angleDifference(dir1, dir2)) < 0.1) {
-              controlPointDist *= 2;
-            }
-
-            double controlX1 = anchorX1 + Math.cos(dir1) * tileW * controlPointDist;
-            double controlY1 = anchorY1 + Math.sin(dir1) * tileH * controlPointDist;
-            double controlX2 = anchorX2 + Math.cos(dir2) * tileW * controlPointDist;
-            double controlY2 = anchorY2 + Math.sin(dir2) * tileH * controlPointDist;
-
-            bezierVertex((float) controlX1, (float) controlY1, (float) controlX2, (float) controlY2, (float) anchorX2,
-                (float) anchorY2);
-            anchorX1 = anchorX2;
-            anchorY1 = anchorY2;
-
-            c = c.getNext();
-          } while (c != knot.getFirstConnection());
-          endShape();
-        } else {
-          // Straight
-          do {
-            double x = (c.getPosX() + 0.5D) * tileW;
-            double y = (c.getPosY() + 0.5D) * tileH;
-            vertex((float) x, (float) y);
-            c = c.getNext();
-          } while (c != knot.getFirstConnection());
-          endShape(CLOSE);
-        }
-
-        // View knot info
-        noStroke();
-        fill(255);
-        textSize(45);
-        textAlign(LEFT, TOP);
-        text("Displaying knot " + (knotBeingViewed + 1) + "/" + knots.size(), (float) (width * 0.8) + 30, 30);
-        textSize(35);
-        text(" - Length = " + knot.getLength(), (float) (width * 0.8) + 30, 90);
-        text(" - Intersection # = " + knot.getIntersections().size(), (float) (width * 0.8) + 30, 130);
       }
     }
+  }
+
+  private void displayKnot(Knot knot, double tileW, double tileH) {
+    Connection connection = knot.getFirstConnection();
+    stroke(250, 220, 150, 90);
+    strokeWeight((float) (height / 6D / knotGenerationPipelines[0].getGridH()));
+    strokeJoin(ROUND);
+    noFill();
+    beginShape();
+
+    if (CURVY_KNOT_DISPLAY) {
+      // Curvy
+      double anchorX1 = (connection.getPrev().getPosX() + 0.5D) * tileW;
+      double anchorY1 = (connection.getPrev().getPosY() + 0.5D) * tileH;
+      vertex((float) anchorX1, (float) anchorY1);
+      do {
+        double anchorX2 = (connection.getPosX() + 0.5D) * tileW;
+        double anchorY2 = (connection.getPosY() + 0.5D) * tileH;
+
+        double dir1 = connection.getPrev().getDir();
+        double dir2 = connection.getDir() + Math.PI;
+
+        double dx = connection.getPosX() - connection.getPrev().getPosX();
+        double dy = connection.getPosY() - connection.getPrev().getPosY();
+        double controlPointDist = Math.sqrt(dx * dx + dy * dy) * 0.35;
+        if (Math.abs(angleDifference(dir1, dir2)) < 0.1) {
+          controlPointDist *= 2;
+        }
+
+        double controlX1 = anchorX1 + Math.cos(dir1) * tileW * controlPointDist;
+        double controlY1 = anchorY1 + Math.sin(dir1) * tileH * controlPointDist;
+        double controlX2 = anchorX2 + Math.cos(dir2) * tileW * controlPointDist;
+        double controlY2 = anchorY2 + Math.sin(dir2) * tileH * controlPointDist;
+
+        bezierVertex((float) controlX1, (float) controlY1, (float) controlX2, (float) controlY2, (float) anchorX2,
+            (float) anchorY2);
+        anchorX1 = anchorX2;
+        anchorY1 = anchorY2;
+
+        connection = connection.getNext();
+      } while (connection != knot.getFirstConnection());
+      endShape();
+    } else {
+      // Straight
+      do {
+        double x = (connection.getPosX() + 0.5D) * tileW;
+        double y = (connection.getPosY() + 0.5D) * tileH;
+        vertex((float) x, (float) y);
+        connection = connection.getNext();
+      } while (connection != knot.getFirstConnection());
+      endShape(CLOSE);
+    }
+  }
+
+  private void displayKnotInfo(Knot knot) {
+    // View knot info
+    noStroke();
+    fill(255);
+    textSize(45);
+    textAlign(LEFT, TOP);
+    text("Displaying knot " + (knotBeingViewed + 1) + "/" + knotGenerationPipelines[0].getKnots().size(),
+        (float) (width * 0.8) + 30, 30);
+    textSize(35);
+    text(" - Length = " + knot.getLength(), (float) (width * 0.8) + 30, 90);
+    text(" - Intersection # = " + knot.getIntersections().size(), (float) (width * 0.8) + 30, 130);
   }
 
   public static double angleDifference(double a1, double a2) {
@@ -235,57 +250,61 @@ public class Main extends PApplet {
   public void keyPressed() {
     if (key == 'w') {
       knotBeingViewed = (knotBeingViewed + 1) % knotGenerationPipelines[0].getKnots().size();
-      return;
-    }
-    if (key == 's') {
+
+    } else if (key == 's') {
       knotBeingViewed = (knotBeingViewed - 1 + knotGenerationPipelines[0].getKnots().size())
           % knotGenerationPipelines[0].getKnots().size();
-      return;
-    }
-    if (key == 'f') {
+
+    } else if (key == 'f' && MULTI_THREAD) {
       println("Finishing...");
-      // Terminate threads
-      for (KnotGenerationPipeline p : knotGenerationPipelines) {
-        p.stop();
-      }
-
-      // Wait for the threads to end
-      for (Thread t : knotGenerationPipelineThreads) {
-        try {
-          t.join();
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-          Thread.currentThread().interrupt();
-        }
-      }
-      exit();
+      stopKnotGenerationPipelines();
       println("Finished");
-      return;
-    }
 
-    if (!MULTI_THREAD) {
-      // Init save
+    } else if (key == 'z' && !MULTI_THREAD) {
       println("Saving...");
-      PGraphics p = createGraphics(knotGenerationPipelines[0].getGridW() * imgRes,
-          knotGenerationPipelines[0].getGridH() * imgRes);
-      p.beginDraw();
-      p.background(0);
-
-      // Draw Tiles
-      p.imageMode(CORNER);
-      for (int x = 0; x < knotGenerationPipelines[0].getGridW(); x++) {
-        for (int y = 0; y < knotGenerationPipelines[0].getGridH(); y++) {
-          p.image(knotGenerationPipelines[0].getGenerator().getTileAtPos(x, y).img, x * imgRes, y * imgRes, imgRes,
-              imgRes);
-        }
-      }
-
-      // Save
-      p.endDraw();
-      String path = RESOURCE_PATH.substring(0, RESOURCE_PATH.length() - "target/classes/".length());
-      p.save(path + "results/gen result.png");
+      saveKnotImage();
       println("Saved");
     }
+  }
+
+  private void stopKnotGenerationPipelines() {
+    // Terminate threads
+    for (KnotGenerationPipeline p : knotGenerationPipelines) {
+      p.stop();
+    }
+
+    // Wait for the threads to end
+    for (Thread t : knotGenerationPipelineThreads) {
+      try {
+        t.join();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+        Thread.currentThread().interrupt();
+      }
+    }
+    exit();
+  }
+
+  public void saveKnotImage() {
+    // Init save
+    PGraphics p = createGraphics(knotGenerationPipelines[0].getGridW() * imgRes,
+        knotGenerationPipelines[0].getGridH() * imgRes);
+    p.beginDraw();
+    p.background(0);
+
+    // Draw Tiles
+    p.imageMode(CORNER);
+    for (int x = 0; x < knotGenerationPipelines[0].getGridW(); x++) {
+      for (int y = 0; y < knotGenerationPipelines[0].getGridH(); y++) {
+        p.image(knotGenerationPipelines[0].getGenerator().getTileAtPos(x, y).img, x * imgRes, y * imgRes, imgRes,
+            imgRes);
+      }
+    }
+
+    // Save
+    p.endDraw();
+    String path = RESOURCE_PATH.substring(0, RESOURCE_PATH.length() - "target/classes/".length());
+    p.save(path + "results/gen result.png");
   }
 
   // ===================================================================================================================
@@ -466,6 +485,7 @@ public class Main extends PApplet {
     // rlrl
     for (int i = 0; i < rlrl; i++) {
       tiles.add(new Tile(PAppletProxy.loadImage(path + "rlrl.png")) {
+
         @Override
         public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
           vert[x * 2 + 1][y].setNext(hor[x][y * 2 + 1]);
@@ -617,6 +637,7 @@ public class Main extends PApplet {
     // rrsb
     for (int i = 0; i < rrsb; i++) {
       tiles.add(new Tile(PAppletProxy.loadImage(path + "rrsb.png")) {
+
         @Override
         public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
           vert[x * 2 + 1][y].setNext(hor[x][y * 2 + 1]);
@@ -670,7 +691,7 @@ public class Main extends PApplet {
           IntersectedConnectionsFactory.createIntersection(up1, right2);
           IntersectedConnectionsFactory.createIntersection(up2, down1);
           IntersectedConnectionsFactory.createIntersection(down2, right1);
-          
+
           vert[x * 2 + 1][y].setNext(up1);
           up1.setNext(up2);
           up2.setNext(hor[x - 1][y * 2]);
@@ -699,7 +720,7 @@ public class Main extends PApplet {
           IntersectedConnectionsFactory.createIntersection(up1, right2);
           IntersectedConnectionsFactory.createIntersection(up2, down1);
           IntersectedConnectionsFactory.createIntersection(down2, right1);
-          
+
           vert[x * 2 + 1][y].setNext(up1);
           up1.setNext(up2);
           up2.setNext(hor[x - 1][y * 2]);
@@ -728,7 +749,7 @@ public class Main extends PApplet {
           IntersectedConnectionsFactory.createIntersection(up1, right2);
           IntersectedConnectionsFactory.createIntersection(up2, left1);
           IntersectedConnectionsFactory.createIntersection(left2, right1);
-          
+
           vert[x * 2 + 1][y].setNext(up1);
           up1.setNext(up2);
           up2.setNext(hor[x - 1][y * 2]);
@@ -783,7 +804,7 @@ public class Main extends PApplet {
           IntersectedConnectionsFactory.createIntersection(left1, right2);
           IntersectedConnectionsFactory.createIntersection(left2, down1);
           IntersectedConnectionsFactory.createIntersection(down2, right1);
-          
+
           vert[x * 2 + 1][y].setNext(vert[x * 2][y]);
           hor[x][y * 2].setNext(left1);
           left1.setNext(left2);
@@ -825,7 +846,7 @@ public class Main extends PApplet {
           IntersectedConnectionsFactory.createIntersection(up1, down2);
           IntersectedConnectionsFactory.createIntersection(up2, left1);
           IntersectedConnectionsFactory.createIntersection(left2, down1);
-          
+
           vert[x * 2 + 1][y].setNext(up1);
           up1.setNext(up2);
           up2.setNext(vert[x * 2 + 1][y - 1]);
@@ -867,7 +888,7 @@ public class Main extends PApplet {
           IntersectedConnectionsFactory.createIntersection(up1, down2);
           IntersectedConnectionsFactory.createIntersection(up2, left1);
           IntersectedConnectionsFactory.createIntersection(left2, down1);
-          
+
           vert[x * 2 + 1][y].setNext(up1);
           up1.setNext(up2);
           up2.setNext(vert[x * 2 + 1][y - 1]);
@@ -899,7 +920,7 @@ public class Main extends PApplet {
           IntersectedConnectionsFactory.createIntersection(up2, left1);
           IntersectedConnectionsFactory.createIntersection(left2, down1);
           IntersectedConnectionsFactory.createIntersection(down2, right1);
-          
+
           vert[x * 2 + 1][y].setNext(up1);
           up1.setNext(up2);
           up2.setNext(vert[x * 2 + 1][y - 1]);
@@ -930,7 +951,7 @@ public class Main extends PApplet {
           IntersectedConnectionsFactory.createIntersection(up1, right2);
           IntersectedConnectionsFactory.createIntersection(up2, left1);
           IntersectedConnectionsFactory.createIntersection(left2, right1);
-          
+
           vert[x * 2 + 1][y].setNext(vert[x * 2 + 1][y - 1]);
           hor[x][y * 2].setNext(vert[x * 2][y]);
           vert[x * 2][y - 1].setNext(hor[x - 1][y * 2]);
