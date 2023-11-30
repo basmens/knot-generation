@@ -108,6 +108,8 @@ public class Main extends PApplet {
   }
 
   private void startGenerationCycle(int index) {
+    knotBeingViewed = 0;
+
     if (MULTI_THREAD) {
       knotGenerationPipelineThreads[index] = new Thread(knotGenerationPipelines[index]);
       knotGenerationPipelineThreads[index].start();
