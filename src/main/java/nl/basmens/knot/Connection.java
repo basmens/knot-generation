@@ -16,7 +16,7 @@ public class Connection {
   // ===================================================================================================================
 
   public Connection(Vector pos, double dir) {
-    this.pos = pos;
+    this.pos = pos.add(0.5, 0.5);
 
     double twoPi = Math.PI * 2;
     this.dir = ((dir % twoPi) + twoPi) % twoPi;

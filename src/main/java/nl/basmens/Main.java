@@ -33,7 +33,7 @@ public class Main extends PApplet {
 
   public static final boolean SAVE_RESULTS = false;
   public static final boolean MULTI_THREAD = false;
-  public static final boolean CURVY_KNOT_DISPLAY = true;
+  public static final boolean CURVY_KNOT_DISPLAY = false;
   private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
   private int imgRes = 7;
 
@@ -173,15 +173,13 @@ public class Main extends PApplet {
     Connection connection = knot.getFirstConnection();
     stroke(220, 210, 150, 255);
     strokeWeight(30);
-    // strokeWeight((float) (PROGRAM_SCREEN_HEIGHT / 6D /
-    // knotGenerationPipelines[0].getGridH()));
     strokeJoin(ROUND);
     noFill();
     beginShape();
 
     if (CURVY_KNOT_DISPLAY) {
       // Curvy
-      Vector anchor1 = Vector.add(connection.getPrev().getPos(), 0.5, 0.5).mult(tileW, tileH);
+      Vector anchor1 = Vector.mult(connection.getPrev().getPos(), tileW, tileH);
       vertex((float) anchor1.getX(), (float) anchor1.getY());
       do {
         Vector anchor2 = getConnectionAnchorPos(connection).mult(tileW, tileH);
@@ -215,7 +213,7 @@ public class Main extends PApplet {
     } else {
       // Straight
       do {
-        Vector position = Vector.add(connection.getPos(), 0.5, 0.5).mult(tileW, tileH);
+        Vector position = Vector.mult(connection.getPos(), tileW, tileH);
         vertex((float) position.getX(), (float) position.getY());
         connection = connection.getNext();
       } while (connection != knot.getFirstConnection());
@@ -226,7 +224,7 @@ public class Main extends PApplet {
   private static Vector getConnectionAnchorPos(Connection connection) {
     double intersectionGap = 0.3;
 
-    return Vector.add(connection.getPos(), 0.5, 0.5);
+    return connection.getPos().copy();
   }
 
   public static double angleDifference(double a1, double a2) {
