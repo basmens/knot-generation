@@ -27,10 +27,13 @@ import processing.opengl.PGraphicsOpenGL;
 public class Main extends PApplet {
   public static final String RESOURCE_PATH;
 
+  public static final float PROGRAM_SCREEN_WIDTH = 2560; // internally uses these sizes to render the screen
+  public static final float PROGRAM_SCREEN_HEIGHT = 1440; // then scales it to fit on every screen size
+
   public static final boolean SAVE_RESULTS = false;
   public static final boolean MULTI_THREAD = false;
   public static final boolean CURVY_KNOT_DISPLAY = true;
-  private static final Tilesets TILESET = Tilesets.BASIC;
+  private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
   private int imgRes = 7;
 
   private enum Tilesets {
@@ -85,7 +88,7 @@ public class Main extends PApplet {
     if (MULTI_THREAD) {
       size(300, 300, P2D);
     } else {
-      size((int) (1920 * 1.2), 1080, P2D);
+      size(1920, 1080, P2D);
     }
   }
 
@@ -98,7 +101,7 @@ public class Main extends PApplet {
     // Start
     for (int i = 0; i < knotGenerationPipelines.length; i++) {
       int s = 10 * (knotGenerationPipelines.length - i);
-      s = 30;
+      s = 4;
 
       String fileName = "knots tileset " + TILESET.toString().toLowerCase(Locale.ENGLISH) + "/knots " + s + "x" + s;
 
@@ -135,8 +138,13 @@ public class Main extends PApplet {
   }
 
   private void display() {
-    double tileW = (double) width / knotGenerationPipelines[0].getGridW() * 0.8;
-    double tileH = (double) height / knotGenerationPipelines[0].getGridH();
+    // scale the screen so every screensize works
+    translate(width / 2f, height / 2f);
+    scale(Math.min(width / PROGRAM_SCREEN_WIDTH, height / PROGRAM_SCREEN_HEIGHT));
+    translate(-PROGRAM_SCREEN_WIDTH / 2f, -PROGRAM_SCREEN_HEIGHT / 2f);
+
+    double tileW = (double) PROGRAM_SCREEN_WIDTH / knotGenerationPipelines[0].getGridW() * 0.8;
+    double tileH = (double) PROGRAM_SCREEN_HEIGHT / knotGenerationPipelines[0].getGridH();
 
     displayTiles(tileW, tileH);
 
@@ -163,7 +171,7 @@ public class Main extends PApplet {
   private void displayKnot(Knot knot, double tileW, double tileH) {
     Connection connection = knot.getFirstConnection();
     stroke(250, 220, 150, 90);
-    strokeWeight((float) (height / 6D / knotGenerationPipelines[0].getGridH()));
+    strokeWeight((float) (PROGRAM_SCREEN_HEIGHT / 6D / knotGenerationPipelines[0].getGridH()));
     strokeJoin(ROUND);
     noFill();
     beginShape();
@@ -219,10 +227,10 @@ public class Main extends PApplet {
     textSize(45);
     textAlign(LEFT, TOP);
     text("Displaying knot " + (knotBeingViewed + 1) + "/" + knotGenerationPipelines[0].getKnots().size(),
-        (float) (width * 0.8) + 30, 30);
+    2078, 30);
     textSize(35);
-    text(" - Length = " + knot.getLength(), (float) (width * 0.8) + 30, 90);
-    text(" - Intersection # = " + knot.getIntersections().size(), (float) (width * 0.8) + 30, 130);
+    text(" - Length = " + knot.getLength(), 2078, 90);
+    text(" - Intersection # = " + knot.getIntersections().size(), 2078, 130);
   }
 
   public static double angleDifference(double a1, double a2) {
@@ -249,11 +257,11 @@ public class Main extends PApplet {
   @Override
   public void keyPressed() {
     if (key == 'w') {
-      knotBeingViewed = (knotBeingViewed + 1) % knotGenerationPipelines[0].getKnots().size();
+      setKnotBeingViewed((knotBeingViewed + 1) % knotGenerationPipelines[0].getKnots().size());
 
     } else if (key == 's') {
-      knotBeingViewed = (knotBeingViewed - 1 + knotGenerationPipelines[0].getKnots().size())
-          % knotGenerationPipelines[0].getKnots().size();
+      setKnotBeingViewed((knotBeingViewed - 1 + knotGenerationPipelines[0].getKnots().size())
+          % knotGenerationPipelines[0].getKnots().size());
 
     } else if (key == 'f' && MULTI_THREAD) {
       println("Finishing...");
@@ -265,6 +273,10 @@ public class Main extends PApplet {
       saveKnotImage();
       println("Saved");
     }
+  }
+
+  private void setKnotBeingViewed(int knotBeingViewed) {
+    this.knotBeingViewed = knotBeingViewed;
   }
 
   private void stopKnotGenerationPipelines() {
