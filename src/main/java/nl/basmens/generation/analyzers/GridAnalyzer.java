@@ -7,6 +7,7 @@ import nl.basmens.generation.Tile;
 import nl.basmens.knot.Connection;
 import nl.basmens.knot.Intersection;
 import nl.basmens.knot.Knot;
+import nl.basmens.utils.Vector;
 
 public interface GridAnalyzer {
   ArrayList<Knot> extractKnots(Tile[][] grid);
@@ -19,8 +20,8 @@ public interface GridAnalyzer {
   class AnalyzerConnection extends Connection implements IndexedSetElement {
     private int setIndex;
 
-    public AnalyzerConnection(double posX, double posY, double dir) {
-      super(posX, posY, dir);
+    public AnalyzerConnection(Vector pos, double dir) {
+      super(pos, dir);
     }
 
     public int getSetIndex() {

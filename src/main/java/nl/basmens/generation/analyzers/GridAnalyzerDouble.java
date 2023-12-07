@@ -6,6 +6,7 @@ import nl.basmens.IndexedSet;
 import nl.basmens.generation.Tile;
 import nl.basmens.knot.Connection;
 import nl.basmens.knot.Knot;
+import nl.basmens.utils.Vector;
 
 public class GridAnalyzerDouble implements GridAnalyzer {
   private int gridW;
@@ -23,8 +24,8 @@ public class GridAnalyzerDouble implements GridAnalyzer {
         if ((y == 0 || y == gridH - 1) && x % 2 == 0) {
           continue;
         }
-        horizontalConnections[x][y * 2] = new AnalyzerConnection(x + 0.5D, y - 0.15, Math.PI);
-        horizontalConnections[x][y * 2 + 1] = new AnalyzerConnection(x + 0.5D, y + 0.15, 0);
+        horizontalConnections[x][y * 2] = new AnalyzerConnection(new Vector(x + 0.5D, y - 0.15), Math.PI);
+        horizontalConnections[x][y * 2 + 1] = new AnalyzerConnection(new Vector(x + 0.5D, y + 0.15), 0);
         allConnections.add(horizontalConnections[x][y * 2 + 1]);
       }
     }
@@ -33,8 +34,8 @@ public class GridAnalyzerDouble implements GridAnalyzer {
         if ((x == 0 || x == gridW - 1) && y % 2 == 0) {
           continue;
         }
-        verticalConnections[x * 2][y] = new AnalyzerConnection(x - 0.15, y + 0.5D, Math.PI / 2);
-        verticalConnections[x * 2 + 1][y] = new AnalyzerConnection(x + 0.15, y + 0.5D, Math.PI * 1.5);
+        verticalConnections[x * 2][y] = new AnalyzerConnection(new Vector(x - 0.15, y + 0.5D), Math.PI / 2);
+        verticalConnections[x * 2 + 1][y] = new AnalyzerConnection(new Vector(x + 0.15, y + 0.5D), Math.PI * 1.5);
         allConnections.add(verticalConnections[x * 2][y]);
       }
     }

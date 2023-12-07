@@ -5,6 +5,7 @@ import java.util.Random;
 
 import nl.basmens.generation.analyzers.GridAnalyzer;
 import nl.basmens.knot.Connection;
+import nl.basmens.utils.Vector;
 
 public class IntersectedConnectionsFactory {
   private static Random random = new Random();
@@ -16,8 +17,8 @@ public class IntersectedConnectionsFactory {
       connectionsA.add(new ArrayList<>());
       connectionsB.add(new ArrayList<>());
       for (int y = 0; y < gridH; y++) {
-        connectionsA.get(x).add(new Connection(x, y, 0));
-        connectionsB.get(x).add(new Connection(x, y, 0));
+        connectionsA.get(x).add(new Connection(new Vector(x, y), 0));
+        connectionsB.get(x).add(new Connection(new Vector(x, y), 0));
         createIntersection(connectionsA.get(x).get(y), connectionsB.get(x).get(y));
       }
     }

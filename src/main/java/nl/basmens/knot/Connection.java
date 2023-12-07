@@ -1,21 +1,39 @@
 package nl.basmens.knot;
 
+import nl.basmens.utils.Vector;
+
 public class Connection {
   private Connection prev;
   private Connection next;
   
   private Intersection intersection;
   
-  private double posX;
-  private double posY;
+  private Vector pos;
   private double dir;
-
-  public Connection(double posX, double posY, double dir) {
-    this.posX = posX;
-    this.posY = posY;
-    this.dir = dir;
-  }
   
+  // ===================================================================================================================
+  // Constructor
+  // ===================================================================================================================
+
+  public Connection(Vector pos, double dir) {
+    this.pos = pos;
+
+    double twoPi = Math.PI * 2;
+    this.dir = ((dir % twoPi) + twoPi) % twoPi;
+  }
+
+  // ===================================================================================================================
+  // Getters
+  // ===================================================================================================================
+  
+  public Vector getPos() {
+    return pos;
+  }
+
+  public double getDir() {
+    return dir;
+  }
+
   public Connection getPrev() {
     return prev;
   }
@@ -44,6 +62,26 @@ public class Connection {
 
   public Intersection getIntersection() {
     return intersection;
+  }
+
+  public boolean isUnder() {
+    return isIntersected() && getIntersection().under == this;
+  }
+
+  public boolean isOver() {
+    return isIntersected() && getIntersection().over == this;
+  }
+
+  // ===================================================================================================================
+  // Setters
+  // ===================================================================================================================
+
+  public void setPos(Vector pos) {
+    this.pos = pos;
+  }
+
+  public void setDir(double dir) {
+    this.dir = dir;
   }
 
   public void setIntersection(Intersection intersection) {
@@ -82,29 +120,5 @@ public class Connection {
       this.next = next;
       next.setPrev(this);
     }
-  }
-
-  public double getPosX() {
-    return posX;
-  }
-
-  public void setPosX(double posX) {
-    this.posX = posX;
-  }
-
-  public double getPosY() {
-    return posY;
-  }
-
-  public void setPosY(double posY) {
-    this.posY = posY;
-  }
-
-  public double getDir() {
-    return dir;
-  }
-
-  public void setDir(double dir) {
-    this.dir = dir;
   }
 }

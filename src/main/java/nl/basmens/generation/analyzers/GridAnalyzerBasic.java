@@ -7,6 +7,7 @@ import nl.basmens.generation.IntersectedConnectionsFactory;
 import nl.basmens.generation.Tile;
 import nl.basmens.knot.Connection;
 import nl.basmens.knot.Knot;
+import nl.basmens.utils.Vector;
 
 public class GridAnalyzerBasic implements GridAnalyzer {
   private int gridW;
@@ -24,7 +25,7 @@ public class GridAnalyzerBasic implements GridAnalyzer {
         if ((y == 0 || y == gridH - 1) && x % 2 == 0) {
           continue;
         }
-        horizontalConnections[x][y] = new IndexAnalyzerConnection(x + 0.5D, y, 0, x, y);
+        horizontalConnections[x][y] = new IndexAnalyzerConnection(new Vector(x + 0.5D, y), 0, x, y);
         allConnections.add(horizontalConnections[x][y]);
       }
     }
@@ -33,7 +34,7 @@ public class GridAnalyzerBasic implements GridAnalyzer {
         if ((x == 0 || x == gridW - 1) && y % 2 == 0) {
           continue;
         }
-        verticalConnections[x][y] = new IndexAnalyzerConnection(x, y + 0.5D, Math.PI / 2, x, y);
+        verticalConnections[x][y] = new IndexAnalyzerConnection(new Vector(x, y + 0.5D), Math.PI / 2, x, y);
         allConnections.add(verticalConnections[x][y]);
       }
     }
@@ -57,7 +58,7 @@ public class GridAnalyzerBasic implements GridAnalyzer {
     Connection current = firstConnection;
     int x = ((IndexAnalyzerConnection) current).indexX;
     int y = ((IndexAnalyzerConnection) current).indexY;
-    int dir = (current.getPosX() % 1 > 0.1) ? 1 : 2; // If horizontal connection, then dir = right, else dir = down
+    int dir = (current.getPos().getX() % 1 > 0.1) ? 1 : 2; // If horizontal connection, then dir = right, else dir = down
 
     // Loop through the knot
     do {
@@ -139,8 +140,8 @@ public class GridAnalyzerBasic implements GridAnalyzer {
     public final int indexX;
     public final int indexY;
 
-    public IndexAnalyzerConnection(double posX, double posY, double dir, int indexX, int indexY) {
-      super(posX, posY, dir);
+    public IndexAnalyzerConnection(Vector pos, double dir, int indexX, int indexY) {
+      super(pos, dir);
       this.indexX = indexX;
       this.indexY = indexY;
     }

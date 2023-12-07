@@ -19,6 +19,7 @@ import nl.basmens.generation.generators.GridGeneratorBasic;
 import nl.basmens.generation.generators.GridGeneratorDouble;
 import nl.basmens.knot.Connection;
 import nl.basmens.knot.Knot;
+import nl.basmens.utils.Vector;
 import nl.benmens.processing.PApplet;
 import nl.benmens.processing.PAppletProxy;
 import processing.core.PGraphics;
@@ -170,40 +171,43 @@ public class Main extends PApplet {
 
   private void displayKnot(Knot knot, double tileW, double tileH) {
     Connection connection = knot.getFirstConnection();
-    stroke(250, 220, 150, 90);
-    strokeWeight((float) (PROGRAM_SCREEN_HEIGHT / 6D / knotGenerationPipelines[0].getGridH()));
+    stroke(220, 210, 150, 255);
+    strokeWeight(30);
+    // strokeWeight((float) (PROGRAM_SCREEN_HEIGHT / 6D /
+    // knotGenerationPipelines[0].getGridH()));
     strokeJoin(ROUND);
     noFill();
     beginShape();
 
     if (CURVY_KNOT_DISPLAY) {
       // Curvy
-      double anchorX1 = (connection.getPrev().getPosX() + 0.5D) * tileW;
-      double anchorY1 = (connection.getPrev().getPosY() + 0.5D) * tileH;
-      vertex((float) anchorX1, (float) anchorY1);
+      Vector anchor1 = Vector.add(connection.getPrev().getPos(), 0.5, 0.5).mult(tileW, tileH);
+      vertex((float) anchor1.getX(), (float) anchor1.getY());
       do {
-        double anchorX2 = (connection.getPosX() + 0.5D) * tileW;
-        double anchorY2 = (connection.getPosY() + 0.5D) * tileH;
+        Vector anchor2 = getConnectionAnchorPos(connection).mult(tileW, tileH);
 
         double dir1 = connection.getPrev().getDir();
         double dir2 = connection.getDir() + Math.PI;
 
-        double dx = connection.getPosX() - connection.getPrev().getPosX();
-        double dy = connection.getPosY() - connection.getPrev().getPosY();
-        double controlPointDist = Math.sqrt(dx * dx + dy * dy) * 0.35;
+        Vector diff = Vector.sub(connection.getPos(), connection.getPrev().getPos());
+
+        double controlPointDist = Math.sqrt(diff.getX() * diff.getX() + diff.getY() * diff.getY()) * 0.35;
         if (Math.abs(angleDifference(dir1, dir2)) < 0.1) {
           controlPointDist *= 2;
         }
 
-        double controlX1 = anchorX1 + Math.cos(dir1) * tileW * controlPointDist;
-        double controlY1 = anchorY1 + Math.sin(dir1) * tileH * controlPointDist;
-        double controlX2 = anchorX2 + Math.cos(dir2) * tileW * controlPointDist;
-        double controlY2 = anchorY2 + Math.sin(dir2) * tileH * controlPointDist;
+        Vector control1 = new Vector(Math.cos(dir1) * tileW * controlPointDist,
+            Math.sin(dir1) * tileH * controlPointDist)
+            .add(anchor1);
+            
+        Vector control2 = new Vector(Math.cos(dir2) * tileW * controlPointDist,
+            Math.sin(dir2) * tileH * controlPointDist)
+            .add(anchor2);
 
-        bezierVertex((float) controlX1, (float) controlY1, (float) controlX2, (float) controlY2, (float) anchorX2,
-            (float) anchorY2);
-        anchorX1 = anchorX2;
-        anchorY1 = anchorY2;
+        bezierVertex((float) control1.getX(), (float) control1.getY(), (float) control2.getX(), (float) control2.getY(), (float) anchor2.getX(),
+            (float) anchor2.getY());
+
+        anchor1 = anchor2;
 
         connection = connection.getNext();
       } while (connection != knot.getFirstConnection());
@@ -211,26 +215,18 @@ public class Main extends PApplet {
     } else {
       // Straight
       do {
-        double x = (connection.getPosX() + 0.5D) * tileW;
-        double y = (connection.getPosY() + 0.5D) * tileH;
-        vertex((float) x, (float) y);
+        Vector position = Vector.add(connection.getPos(), 0.5, 0.5).mult(tileW, tileH);
+        vertex((float) position.getX(), (float) position.getY());
         connection = connection.getNext();
       } while (connection != knot.getFirstConnection());
       endShape(CLOSE);
     }
   }
 
-  private void displayKnotInfo(Knot knot) {
-    // View knot info
-    noStroke();
-    fill(255);
-    textSize(45);
-    textAlign(LEFT, TOP);
-    text("Displaying knot " + (knotBeingViewed + 1) + "/" + knotGenerationPipelines[0].getKnots().size(),
-    2078, 30);
-    textSize(35);
-    text(" - Length = " + knot.getLength(), 2078, 90);
-    text(" - Intersection # = " + knot.getIntersections().size(), 2078, 130);
+  private static Vector getConnectionAnchorPos(Connection connection) {
+    double intersectionGap = 0.3;
+
+    return Vector.add(connection.getPos(), 0.5, 0.5);
   }
 
   public static double angleDifference(double a1, double a2) {
@@ -240,6 +236,19 @@ public class Main extends PApplet {
     dif %= Math.PI * 2;
     dif -= Math.PI;
     return dif;
+  }
+
+  private void displayKnotInfo(Knot knot) {
+    // View knot info
+    noStroke();
+    fill(255);
+    textSize(45);
+    textAlign(LEFT, TOP);
+    text("Displaying knot " + (knotBeingViewed + 1) + "/" + knotGenerationPipelines[0].getKnots().size(),
+        2078, 30);
+    textSize(35);
+    text(" - Length = " + knot.getLength(), 2078, 90);
+    text(" - Intersection # = " + knot.getIntersections().size(), 2078, 130);
   }
 
   // ===================================================================================================================
@@ -552,14 +561,14 @@ public class Main extends PApplet {
       tiles.add(new Tile(PAppletProxy.loadImage(path + "llll.png")) {
         @Override
         public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
-          Connection upIn = new Connection(x, y - 0.2, Math.PI * 0.35);
-          Connection upOut = new Connection(x, y - 0.2, -Math.PI * 0.35);
-          Connection leftIn = new Connection(x - 0.2, y, -Math.PI * 0.15);
-          Connection leftOut = new Connection(x - 0.2, y, -Math.PI * 0.85);
-          Connection downIn = new Connection(x, y + 0.2, -Math.PI * 0.65);
-          Connection downOut = new Connection(x, y + 0.2, Math.PI * 0.65);
-          Connection rightIn = new Connection(x + 0.2, y, Math.PI * 0.85);
-          Connection rightOut = new Connection(x + 0.2, y, Math.PI * 0.15);
+          Connection upIn = new Connection(new Vector(x, y - 0.2), Math.PI * 0.35);
+          Connection upOut = new Connection(new Vector(x, y - 0.2), -Math.PI * 0.35);
+          Connection leftIn = new Connection(new Vector(x - 0.2, y), -Math.PI * 0.15);
+          Connection leftOut = new Connection(new Vector(x - 0.2, y), -Math.PI * 0.85);
+          Connection downIn = new Connection(new Vector(x, y + 0.2), -Math.PI * 0.65);
+          Connection downOut = new Connection(new Vector(x, y + 0.2), Math.PI * 0.65);
+          Connection rightIn = new Connection(new Vector(x + 0.2, y), Math.PI * 0.85);
+          Connection rightOut = new Connection(new Vector(x + 0.2, y), Math.PI * 0.15);
           IntersectedConnectionsFactory.createIntersection(upIn, upOut);
           IntersectedConnectionsFactory.createIntersection(leftIn, leftOut);
           IntersectedConnectionsFactory.createIntersection(downIn, downOut);
@@ -665,12 +674,12 @@ public class Main extends PApplet {
       tiles.add(new Tile(PAppletProxy.loadImage(path + "rssl.png")) {
         @Override
         public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
-          Connection left1 = new Connection(x, y - 0.15, Math.PI);
-          Connection left2 = new Connection(x - 0.15, y - 0.15, Math.PI);
-          Connection down1 = new Connection(x - 0.15, y - 0.15, Math.PI / 2);
-          Connection down2 = new Connection(x - 0.15, y, Math.PI / 2);
-          Connection right1 = new Connection(x - 0.15, y, -Math.PI * 0.15);
-          Connection right2 = new Connection(x, y - 0.15, -Math.PI * 0.35);
+          Connection left1 = new Connection(new Vector(x, y - 0.15), Math.PI);
+          Connection left2 = new Connection(new Vector(x - 0.15, y - 0.15), Math.PI);
+          Connection down1 = new Connection(new Vector(x - 0.15, y - 0.15), Math.PI / 2);
+          Connection down2 = new Connection(new Vector(x - 0.15, y), Math.PI / 2);
+          Connection right1 = new Connection(new Vector(x - 0.15, y), -Math.PI * 0.15);
+          Connection right2 = new Connection(new Vector(x, y - 0.15), -Math.PI * 0.35);
           IntersectedConnectionsFactory.createIntersection(left1, right2);
           IntersectedConnectionsFactory.createIntersection(left2, down1);
           IntersectedConnectionsFactory.createIntersection(down2, right1);
@@ -694,12 +703,12 @@ public class Main extends PApplet {
       tiles.add(new Tile(PAppletProxy.loadImage(path + "lbsl.png")) {
         @Override
         public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
-          Connection up1 = new Connection(x, y, -Math.PI * 0.65);
-          Connection up2 = new Connection(x - 0.15, y - 0.1, -Math.PI * 0.85);
-          Connection down1 = new Connection(x - 0.15, y - 0.1, -Math.PI / 2);
-          Connection down2 = new Connection(x - 0.15, y + 0.1, -Math.PI / 2);
-          Connection right1 = new Connection(x - 0.15, y + 0.1, -Math.PI * 0.15);
-          Connection right2 = new Connection(x, y, -Math.PI * 0.35);
+          Connection up1 = new Connection(new Vector(x, y), -Math.PI * 0.65);
+          Connection up2 = new Connection(new Vector(x - 0.15, y - 0.1), -Math.PI * 0.85);
+          Connection down1 = new Connection(new Vector(x - 0.15, y - 0.1), -Math.PI / 2);
+          Connection down2 = new Connection(new Vector(x - 0.15, y + 0.1), -Math.PI / 2);
+          Connection right1 = new Connection(new Vector(x - 0.15, y + 0.1), -Math.PI * 0.15);
+          Connection right2 = new Connection(new Vector(x, y), -Math.PI * 0.35);
           IntersectedConnectionsFactory.createIntersection(up1, right2);
           IntersectedConnectionsFactory.createIntersection(up2, down1);
           IntersectedConnectionsFactory.createIntersection(down2, right1);
@@ -723,12 +732,12 @@ public class Main extends PApplet {
       tiles.add(new Tile(PAppletProxy.loadImage(path + "lrss.png")) {
         @Override
         public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
-          Connection up1 = new Connection(x, y + 0.15, -Math.PI * 0.65);
-          Connection up2 = new Connection(x - 0.15, y, -Math.PI * 0.85);
-          Connection down1 = new Connection(x - 0.15, y, Math.PI / 2);
-          Connection down2 = new Connection(x - 0.15, y + 0.15, Math.PI / 2);
-          Connection right1 = new Connection(x - 0.15, y + 0.15, 0);
-          Connection right2 = new Connection(x, y + 0.15, 0);
+          Connection up1 = new Connection(new Vector(x, y + 0.15), -Math.PI * 0.65);
+          Connection up2 = new Connection(new Vector(x - 0.15, y), -Math.PI * 0.85);
+          Connection down1 = new Connection(new Vector(x - 0.15, y), Math.PI / 2);
+          Connection down2 = new Connection(new Vector(x - 0.15, y + 0.15), Math.PI / 2);
+          Connection right1 = new Connection(new Vector(x - 0.15, y + 0.15), 0);
+          Connection right2 = new Connection(new Vector(x, y + 0.15), 0);
           IntersectedConnectionsFactory.createIntersection(up1, right2);
           IntersectedConnectionsFactory.createIntersection(up2, down1);
           IntersectedConnectionsFactory.createIntersection(down2, right1);
@@ -752,12 +761,12 @@ public class Main extends PApplet {
       tiles.add(new Tile(PAppletProxy.loadImage(path + "llbs.png")) {
         @Override
         public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
-          Connection up1 = new Connection(x + 0.1, y + 0.15, -Math.PI * 0.65);
-          Connection up2 = new Connection(x, y, -Math.PI * 0.85);
-          Connection left1 = new Connection(x, y, Math.PI * 0.85);
-          Connection left2 = new Connection(x - 0.1, y + 0.15, Math.PI * 0.65);
-          Connection right1 = new Connection(x - 0.1, y + 0.15, 0);
-          Connection right2 = new Connection(x + 0.1, y + 0.15, 0);
+          Connection up1 = new Connection(new Vector(x + 0.1, y + 0.15), -Math.PI * 0.65);
+          Connection up2 = new Connection(new Vector(x, y), -Math.PI * 0.85);
+          Connection left1 = new Connection(new Vector(x, y), Math.PI * 0.85);
+          Connection left2 = new Connection(new Vector(x - 0.1, y + 0.15), Math.PI * 0.65);
+          Connection right1 = new Connection(new Vector(x - 0.1, y + 0.15), 0);
+          Connection right2 = new Connection(new Vector(x + 0.1, y + 0.15), 0);
           IntersectedConnectionsFactory.createIntersection(up1, right2);
           IntersectedConnectionsFactory.createIntersection(up2, left1);
           IntersectedConnectionsFactory.createIntersection(left2, right1);
@@ -807,12 +816,12 @@ public class Main extends PApplet {
       tiles.add(new Tile(PAppletProxy.loadImage(path + "bsll.png")) {
         @Override
         public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
-          Connection left1 = new Connection(x + 0.1, y - 0.15, Math.PI);
-          Connection left2 = new Connection(x - 0.1, y - 0.15, Math.PI);
-          Connection down1 = new Connection(x - 0.1, y - 0.15, Math.PI * 0.35);
-          Connection down2 = new Connection(x, y, Math.PI * 0.15);
-          Connection right1 = new Connection(x, y, -Math.PI * 0.15);
-          Connection right2 = new Connection(x + 0.1, y - 0.15, -Math.PI * 0.35);
+          Connection left1 = new Connection(new Vector(x + 0.1, y - 0.15), Math.PI);
+          Connection left2 = new Connection(new Vector(x - 0.1, y - 0.15), Math.PI);
+          Connection down1 = new Connection(new Vector(x - 0.1, y - 0.15), Math.PI * 0.35);
+          Connection down2 = new Connection(new Vector(x, y), Math.PI * 0.15);
+          Connection right1 = new Connection(new Vector(x, y), -Math.PI * 0.15);
+          Connection right2 = new Connection(new Vector(x + 0.1, y - 0.15), -Math.PI * 0.35);
           IntersectedConnectionsFactory.createIntersection(left1, right2);
           IntersectedConnectionsFactory.createIntersection(left2, down1);
           IntersectedConnectionsFactory.createIntersection(down2, right1);
@@ -849,12 +858,12 @@ public class Main extends PApplet {
       tiles.add(new Tile(PAppletProxy.loadImage(path + "sslr.png")) {
         @Override
         public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
-          Connection up1 = new Connection(x + 0.15, y, -Math.PI / 2);
-          Connection up2 = new Connection(x + 0.15, y - 0.15, -Math.PI / 2);
-          Connection left1 = new Connection(x + 0.15, y - 0.15, Math.PI);
-          Connection left2 = new Connection(x, y - 0.15, Math.PI);
-          Connection down1 = new Connection(x, y - 0.15, Math.PI * 0.35);
-          Connection down2 = new Connection(x + 0.15, y, Math.PI * 0.15);
+          Connection up1 = new Connection(new Vector(x + 0.15, y), -Math.PI / 2);
+          Connection up2 = new Connection(new Vector(x + 0.15, y - 0.15), -Math.PI / 2);
+          Connection left1 = new Connection(new Vector(x + 0.15, y - 0.15), Math.PI);
+          Connection left2 = new Connection(new Vector(x, y - 0.15), Math.PI);
+          Connection down1 = new Connection(new Vector(x, y - 0.15), Math.PI * 0.35);
+          Connection down2 = new Connection(new Vector(x + 0.15, y), Math.PI * 0.15);
           IntersectedConnectionsFactory.createIntersection(up1, down2);
           IntersectedConnectionsFactory.createIntersection(up2, left1);
           IntersectedConnectionsFactory.createIntersection(left2, down1);
@@ -891,12 +900,12 @@ public class Main extends PApplet {
       tiles.add(new Tile(PAppletProxy.loadImage(path + "sllb.png")) {
         @Override
         public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
-          Connection up1 = new Connection(x + 0.15, y + 0.1, -Math.PI / 2);
-          Connection up2 = new Connection(x + 0.15, y - 0.1, -Math.PI / 2);
-          Connection left1 = new Connection(x + 0.15, y - 0.1, Math.PI * 0.85);
-          Connection left2 = new Connection(x, y, Math.PI * 0.65);
-          Connection down1 = new Connection(x, y, Math.PI * 0.35);
-          Connection down2 = new Connection(x + 0.15, y + 0.1, Math.PI * 0.15);
+          Connection up1 = new Connection(new Vector(x + 0.15, y + 0.1), -Math.PI / 2);
+          Connection up2 = new Connection(new Vector(x + 0.15, y - 0.1), -Math.PI / 2);
+          Connection left1 = new Connection(new Vector(x + 0.15, y - 0.1), Math.PI * 0.85);
+          Connection left2 = new Connection(new Vector(x, y), Math.PI * 0.65);
+          Connection down1 = new Connection(new Vector(x, y), Math.PI * 0.35);
+          Connection down2 = new Connection(new Vector(x + 0.15, y + 0.1), Math.PI * 0.15);
           IntersectedConnectionsFactory.createIntersection(up1, down2);
           IntersectedConnectionsFactory.createIntersection(up2, left1);
           IntersectedConnectionsFactory.createIntersection(left2, down1);
@@ -920,14 +929,14 @@ public class Main extends PApplet {
       tiles.add(new Tile(PAppletProxy.loadImage(path + "ssss.png")) {
         @Override
         public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
-          Connection up1 = new Connection(x + 0.15, y + 0.15, -Math.PI / 2);
-          Connection up2 = new Connection(x + 0.15, y - 0.15, -Math.PI / 2);
-          Connection left1 = new Connection(x + 0.15, y - 0.15, Math.PI);
-          Connection left2 = new Connection(x - 0.15, y - 0.15, Math.PI);
-          Connection down1 = new Connection(x - 0.15, y - 0.15, Math.PI / 2);
-          Connection down2 = new Connection(x - 0.15, y + 0.15, Math.PI / 2);
-          Connection right1 = new Connection(x - 0.15, y + 0.15, 0);
-          Connection right2 = new Connection(x + 0.15, y + 0.15, 0);
+          Connection up1 = new Connection(new Vector(x + 0.15, y + 0.15), -Math.PI / 2);
+          Connection up2 = new Connection(new Vector(x + 0.15, y - 0.15), -Math.PI / 2);
+          Connection left1 = new Connection(new Vector(x + 0.15, y - 0.15), Math.PI);
+          Connection left2 = new Connection(new Vector(x - 0.15, y - 0.15), Math.PI);
+          Connection down1 = new Connection(new Vector(x - 0.15, y - 0.15), Math.PI / 2);
+          Connection down2 = new Connection(new Vector(x - 0.15, y + 0.15), Math.PI / 2);
+          Connection right1 = new Connection(new Vector(x - 0.15, y + 0.15), 0);
+          Connection right2 = new Connection(new Vector(x + 0.15, y + 0.15), 0);
           IntersectedConnectionsFactory.createIntersection(up1, right2);
           IntersectedConnectionsFactory.createIntersection(up2, left1);
           IntersectedConnectionsFactory.createIntersection(left2, down1);
@@ -954,12 +963,12 @@ public class Main extends PApplet {
       tiles.add(new Tile(PAppletProxy.loadImage(path + "slrs.png")) {
         @Override
         public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
-          Connection up1 = new Connection(x + 0.15, y + 0.15, -Math.PI / 2);
-          Connection up2 = new Connection(x + 0.15, y, -Math.PI / 2);
-          Connection left1 = new Connection(x + 0.15, y, Math.PI * 0.85);
-          Connection left2 = new Connection(x, y + 0.15, Math.PI * 0.65);
-          Connection right1 = new Connection(x, y + 0.15, 0);
-          Connection right2 = new Connection(x + 0.15, y + 0.15, 0);
+          Connection up1 = new Connection(new Vector(x + 0.15, y + 0.15), -Math.PI / 2);
+          Connection up2 = new Connection(new Vector(x + 0.15, y), -Math.PI / 2);
+          Connection left1 = new Connection(new Vector(x + 0.15, y), Math.PI * 0.85);
+          Connection left2 = new Connection(new Vector(x, y + 0.15), Math.PI * 0.65);
+          Connection right1 = new Connection(new Vector(x, y + 0.15), 0);
+          Connection right2 = new Connection(new Vector(x + 0.15, y + 0.15), 0);
           IntersectedConnectionsFactory.createIntersection(up1, right2);
           IntersectedConnectionsFactory.createIntersection(up2, left1);
           IntersectedConnectionsFactory.createIntersection(left2, right1);
