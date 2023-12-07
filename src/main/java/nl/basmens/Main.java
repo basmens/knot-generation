@@ -172,7 +172,7 @@ public class Main extends PApplet {
   private void displayKnot(Knot knot, double tileW, double tileH) {
     Connection connection = knot.getFirstConnection();
     stroke(220, 210, 150, 255);
-    strokeWeight(30);
+    strokeWeight(20);
     strokeJoin(ROUND);
     noFill();
     beginShape();
@@ -182,7 +182,7 @@ public class Main extends PApplet {
       Vector anchor1 = Vector.mult(connection.getPrev().getPos(), tileW, tileH);
       vertex((float) anchor1.getX(), (float) anchor1.getY());
       do {
-        Vector anchor2 = getConnectionAnchorPos(connection).mult(tileW, tileH);
+        Vector anchor2 = Vector.mult(connection.getPos(), tileW, tileH);
 
         double dir1 = connection.getPrev().getDir();
         double dir2 = connection.getDir() + Math.PI;
@@ -212,19 +212,39 @@ public class Main extends PApplet {
       endShape();
     } else {
       // Straight
+      Vector prevPos = getConnectionPos(connection.getPrev(), false).mult(tileW, tileH);
       do {
-        Vector position = Vector.mult(connection.getPos(), tileW, tileH);
-        vertex((float) position.getX(), (float) position.getY());
+        Vector pos = getConnectionPos(connection, true).mult(tileW, tileH);
+        if (connection.isIntersected()) {
+          line((float) prevPos.getX(), (float) prevPos.getY(), (float) pos.getX(), (float) pos.getY());
+
+          prevPos = pos;
+          pos = getConnectionPos(connection, false).mult(tileW, tileH);
+          if (connection.isOver()) {
+            line((float) prevPos.getX(), (float) prevPos.getY(), (float) pos.getX(), (float) pos.getY());
+          }
+        } else {
+          line((float) prevPos.getX(), (float) prevPos.getY(), (float) pos.getX(), (float) pos.getY());
+        }
+
+        prevPos = pos;
         connection = connection.getNext();
       } while (connection != knot.getFirstConnection());
-      endShape(CLOSE);
     }
   }
 
-  private static Vector getConnectionAnchorPos(Connection connection) {
-    double intersectionGap = 0.3;
+  private static Vector getConnectionPos(Connection connection, boolean isPrevSide) {
+    double intersectionGap = 0.1;
 
-    return connection.getPos().copy();
+    if (!connection.isIntersected()) {
+      return connection.getPos().copy();
+    }
+
+    if (isPrevSide) {
+      return Vector.fromAngle(connection.getDir()).mult(-intersectionGap).add(connection.getPos());
+    } else {
+      return Vector.fromAngle(connection.getDir()).mult(intersectionGap).add(connection.getPos());
+    }
   }
 
   public static double angleDifference(double a1, double a2) {
