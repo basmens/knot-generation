@@ -28,12 +28,12 @@ import processing.opengl.PGraphicsOpenGL;
 public class Main extends PApplet {
   public static final String RESOURCE_PATH;
 
-  public final KnotRenderer knotRenderer = new KnotRenderer(true, false);
+  public final KnotRenderer knotRenderer = new KnotRenderer(true, false, true);
 
   public static final boolean SAVE_RESULTS = false;
   public static final boolean MULTI_THREAD = false;
   private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
-  private int size = 10;
+  private int size = 6;
   private int imgRes = 7;
 
   private enum Tilesets {
@@ -128,8 +128,6 @@ public class Main extends PApplet {
 
   @Override
   public void draw() {
-    background(30);
-
     if (!MULTI_THREAD) {
       knotRenderer.display(knotGenerationPipelines[0], width, height);
     }
