@@ -1,6 +1,7 @@
 package nl.basmens.knot;
 
 import nl.basmens.Main;
+import nl.basmens.rendering.KnotRenderer;
 
 public class Intersection {
   public final Connection under;
@@ -37,7 +38,7 @@ public class Intersection {
   // / / ^ / /
 
   public int getType() {
-    double dirDifference = Main.angleDifference(over.getDir(), under.getDir());
+    double dirDifference = KnotRenderer.angleDifference(over.getDir(), under.getDir());
 
     if (dirDifference < 0) {
       return 0;

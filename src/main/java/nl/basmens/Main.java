@@ -18,7 +18,7 @@ import nl.basmens.generation.analyzers.GridAnalyzerDouble;
 import nl.basmens.generation.generators.GridGeneratorBasic;
 import nl.basmens.generation.generators.GridGeneratorDouble;
 import nl.basmens.knot.Connection;
-import nl.basmens.knot.Knot;
+import nl.basmens.rendering.KnotRenderer;
 import nl.basmens.utils.Vector;
 import nl.benmens.processing.PApplet;
 import nl.benmens.processing.PAppletProxy;
@@ -28,13 +28,12 @@ import processing.opengl.PGraphicsOpenGL;
 public class Main extends PApplet {
   public static final String RESOURCE_PATH;
 
-  public static final float PROGRAM_SCREEN_WIDTH = 2560; // internally uses these sizes to render the screen
-  public static final float PROGRAM_SCREEN_HEIGHT = 1440; // then scales it to fit on every screen size
+  public final KnotRenderer knotRenderer = new KnotRenderer(true, false);
 
   public static final boolean SAVE_RESULTS = false;
   public static final boolean MULTI_THREAD = false;
-  public static final boolean CURVY_KNOT_DISPLAY = false;
   private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
+  private int size = 10;
   private int imgRes = 7;
 
   private enum Tilesets {
@@ -64,8 +63,6 @@ public class Main extends PApplet {
 
   private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[1];
   private Thread[] knotGenerationPipelineThreads = new Thread[knotGenerationPipelines.length];
-
-  private int knotBeingViewed;
 
   static {
     String path = "";
@@ -101,16 +98,16 @@ public class Main extends PApplet {
 
     // Start
     for (int i = 0; i < knotGenerationPipelines.length; i++) {
-      int s = 10 * (knotGenerationPipelines.length - i);
-      s = 4;
+      // size = 10 * (knotGenerationPipelines.length - i);
 
-      String fileName = "knots tileset " + TILESET.toString().toLowerCase(Locale.ENGLISH) + "/knots " + s + "x" + s;
+      String fileName = "knots tileset " + TILESET.toString().toLowerCase(Locale.ENGLISH) + "/knots " + size + "x"
+          + size;
 
       if (TILESET == Tilesets.BASIC) {
-        knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), s, s,
+        knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), size, size,
             GridGeneratorBasic::new, GridAnalyzerBasic::new, fileName);
       } else {
-        knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), s, s,
+        knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), size, size,
             GridGeneratorDouble::new, GridAnalyzerDouble::new, fileName);
       }
 
@@ -119,7 +116,7 @@ public class Main extends PApplet {
   }
 
   private void startGenerationCycle(int index) {
-    knotBeingViewed = 0;
+    knotRenderer.setKnotBeingViewed(0);
 
     if (MULTI_THREAD) {
       knotGenerationPipelineThreads[index] = new Thread(knotGenerationPipelines[index]);
@@ -134,139 +131,8 @@ public class Main extends PApplet {
     background(30);
 
     if (!MULTI_THREAD) {
-      display();
+      knotRenderer.display(knotGenerationPipelines[0], width, height);
     }
-  }
-
-  private void display() {
-    // scale the screen so every screensize works
-    translate(width / 2f, height / 2f);
-    scale(Math.min(width / PROGRAM_SCREEN_WIDTH, height / PROGRAM_SCREEN_HEIGHT));
-    translate(-PROGRAM_SCREEN_WIDTH / 2f, -PROGRAM_SCREEN_HEIGHT / 2f);
-
-    double tileW = (double) PROGRAM_SCREEN_WIDTH / knotGenerationPipelines[0].getGridW() * 0.8;
-    double tileH = (double) PROGRAM_SCREEN_HEIGHT / knotGenerationPipelines[0].getGridH();
-
-    displayTiles(tileW, tileH);
-
-    ArrayList<Knot> knots = knotGenerationPipelines[0].getKnots();
-    Knot viewedKnot = knots.get(knotBeingViewed);
-
-    displayKnot(viewedKnot, tileW, tileH);
-    displayKnotInfo(viewedKnot);
-  }
-
-  private void displayTiles(double tileW, double tileH) {
-    if (knotGenerationPipelines[0].getGridW() <= 300) {
-      imageMode(CORNER);
-      for (int x = 0; x < knotGenerationPipelines[0].getGridW(); x++) {
-        for (int y = 0; y < knotGenerationPipelines[0].getGridH(); y++) {
-          image(knotGenerationPipelines[0].getGenerator().getTileAtPos(x, y).img,
-              (float) (x * tileW),
-              (float) (y * tileH), (float) tileW, (float) tileH);
-        }
-      }
-    }
-  }
-
-  private void displayKnot(Knot knot, double tileW, double tileH) {
-    Connection connection = knot.getFirstConnection();
-    stroke(220, 210, 150, 255);
-    strokeWeight(20);
-    strokeJoin(ROUND);
-    noFill();
-    beginShape();
-
-    if (CURVY_KNOT_DISPLAY) {
-      // Curvy
-      Vector anchor1 = Vector.mult(connection.getPrev().getPos(), tileW, tileH);
-      vertex((float) anchor1.getX(), (float) anchor1.getY());
-      do {
-        Vector anchor2 = Vector.mult(connection.getPos(), tileW, tileH);
-
-        double dir1 = connection.getPrev().getDir();
-        double dir2 = connection.getDir() + Math.PI;
-
-        Vector diff = Vector.sub(connection.getPos(), connection.getPrev().getPos());
-
-        double controlPointDist = Math.sqrt(diff.getX() * diff.getX() + diff.getY() * diff.getY()) * 0.35;
-        if (Math.abs(angleDifference(dir1, dir2)) < 0.1) {
-          controlPointDist *= 2;
-        }
-
-        Vector control1 = new Vector(Math.cos(dir1) * tileW * controlPointDist,
-            Math.sin(dir1) * tileH * controlPointDist)
-            .add(anchor1);
-            
-        Vector control2 = new Vector(Math.cos(dir2) * tileW * controlPointDist,
-            Math.sin(dir2) * tileH * controlPointDist)
-            .add(anchor2);
-
-        bezierVertex((float) control1.getX(), (float) control1.getY(), (float) control2.getX(), (float) control2.getY(), (float) anchor2.getX(),
-            (float) anchor2.getY());
-
-        anchor1 = anchor2;
-
-        connection = connection.getNext();
-      } while (connection != knot.getFirstConnection());
-      endShape();
-    } else {
-      // Straight
-      Vector prevPos = getConnectionPos(connection.getPrev(), false).mult(tileW, tileH);
-      do {
-        Vector pos = getConnectionPos(connection, true).mult(tileW, tileH);
-        if (connection.isIntersected()) {
-          line((float) prevPos.getX(), (float) prevPos.getY(), (float) pos.getX(), (float) pos.getY());
-
-          prevPos = pos;
-          pos = getConnectionPos(connection, false).mult(tileW, tileH);
-          if (connection.isOver()) {
-            line((float) prevPos.getX(), (float) prevPos.getY(), (float) pos.getX(), (float) pos.getY());
-          }
-        } else {
-          line((float) prevPos.getX(), (float) prevPos.getY(), (float) pos.getX(), (float) pos.getY());
-        }
-
-        prevPos = pos;
-        connection = connection.getNext();
-      } while (connection != knot.getFirstConnection());
-    }
-  }
-
-  private static Vector getConnectionPos(Connection connection, boolean isPrevSide) {
-    double intersectionGap = 0.1;
-
-    if (!connection.isIntersected()) {
-      return connection.getPos().copy();
-    }
-
-    if (isPrevSide) {
-      return Vector.fromAngle(connection.getDir()).mult(-intersectionGap).add(connection.getPos());
-    } else {
-      return Vector.fromAngle(connection.getDir()).mult(intersectionGap).add(connection.getPos());
-    }
-  }
-
-  public static double angleDifference(double a1, double a2) {
-    double dif = a1 - a2;
-    dif %= Math.PI * 2;
-    dif += Math.PI * 3;
-    dif %= Math.PI * 2;
-    dif -= Math.PI;
-    return dif;
-  }
-
-  private void displayKnotInfo(Knot knot) {
-    // View knot info
-    noStroke();
-    fill(255);
-    textSize(45);
-    textAlign(LEFT, TOP);
-    text("Displaying knot " + (knotBeingViewed + 1) + "/" + knotGenerationPipelines[0].getKnots().size(),
-        2078, 30);
-    textSize(35);
-    text(" - Length = " + knot.getLength(), 2078, 90);
-    text(" - Intersection # = " + knot.getIntersections().size(), 2078, 130);
   }
 
   // ===================================================================================================================
@@ -284,11 +150,13 @@ public class Main extends PApplet {
   @Override
   public void keyPressed() {
     if (key == 'w') {
-      setKnotBeingViewed((knotBeingViewed + 1) % knotGenerationPipelines[0].getKnots().size());
+      knotRenderer
+          .setKnotBeingViewed((knotRenderer.getKnotBeingViewed() + 1) % knotGenerationPipelines[0].getKnots().size());
 
     } else if (key == 's') {
-      setKnotBeingViewed((knotBeingViewed - 1 + knotGenerationPipelines[0].getKnots().size())
-          % knotGenerationPipelines[0].getKnots().size());
+      knotRenderer
+          .setKnotBeingViewed((knotRenderer.getKnotBeingViewed() - 1 + knotGenerationPipelines[0].getKnots().size())
+              % knotGenerationPipelines[0].getKnots().size());
 
     } else if (key == 'f' && MULTI_THREAD) {
       println("Finishing...");
@@ -300,10 +168,6 @@ public class Main extends PApplet {
       saveKnotImage();
       println("Saved");
     }
-  }
-
-  private void setKnotBeingViewed(int knotBeingViewed) {
-    this.knotBeingViewed = knotBeingViewed;
   }
 
   private void stopKnotGenerationPipelines() {
