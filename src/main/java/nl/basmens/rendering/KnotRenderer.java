@@ -1,25 +1,30 @@
 package nl.basmens.rendering;
 
 import static nl.benmens.processing.PAppletProxy.background;
+import static nl.benmens.processing.PAppletProxy.beginShape;
 import static nl.benmens.processing.PAppletProxy.bezier;
+import static nl.benmens.processing.PAppletProxy.bezierPoint;
+import static nl.benmens.processing.PAppletProxy.bezierTangent;
 import static nl.benmens.processing.PAppletProxy.color;
+import static nl.benmens.processing.PAppletProxy.endShape;
 import static nl.benmens.processing.PAppletProxy.fill;
 import static nl.benmens.processing.PAppletProxy.image;
 import static nl.benmens.processing.PAppletProxy.imageMode;
-import static nl.benmens.processing.PAppletProxy.line;
 import static nl.benmens.processing.PAppletProxy.noFill;
 import static nl.benmens.processing.PAppletProxy.noStroke;
 import static nl.benmens.processing.PAppletProxy.scale;
 import static nl.benmens.processing.PAppletProxy.stroke;
 import static nl.benmens.processing.PAppletProxy.strokeCap;
+import static nl.benmens.processing.PAppletProxy.strokeJoin;
 import static nl.benmens.processing.PAppletProxy.strokeWeight;
 import static nl.benmens.processing.PAppletProxy.text;
 import static nl.benmens.processing.PAppletProxy.textAlign;
 import static nl.benmens.processing.PAppletProxy.textSize;
 import static nl.benmens.processing.PAppletProxy.translate;
+import static nl.benmens.processing.PAppletProxy.vertex;
 import static processing.core.PConstants.CORNER;
 import static processing.core.PConstants.LEFT;
-import static processing.core.PConstants.PROJECT;
+import static processing.core.PConstants.ROUND;
 import static processing.core.PConstants.SQUARE;
 import static processing.core.PConstants.TOP;
 
@@ -36,7 +41,7 @@ public class KnotRenderer {
   private final boolean doCurvyKnots;
   private final boolean doStroke;
 
-  private int fillColor = color(200);
+  private int fillColor = color(200, 210, 220);
   private int strokeColor = color(0);
   private float lineWidth = 60;
   private float strokeWidth = 40;
@@ -114,21 +119,15 @@ public class KnotRenderer {
 
   private void displayKnot(Knot knot, double tileW, double tileH) {
     noFill();
-    if (doCurvyKnots) {
-      strokeCap(SQUARE);
-    } else {
-      strokeCap(PROJECT);
-    }
+    strokeJoin(ROUND);
 
     Connection connection = knot.getFirstConnection();
     do {
       if ((connection.isIntersected() && connection.isUnder())) {
         drawConnection(connection, tileW, tileH);
-        drawConnection(connection.getPrev(), tileW, tileH);
 
         drawConnection(connection.getIntersection().over, tileW, tileH);
-        drawConnection(connection.getIntersection().over.getPrev(), tileW, tileH);
-      } else if (!connection.isIntersected() && !connection.getNext().isIntersected()) {
+      } else if (!connection.isIntersected()) {
         drawConnection(connection, tileW, tileH);
       }
 
@@ -137,57 +136,106 @@ public class KnotRenderer {
   }
 
   private void drawConnection(Connection connection, double tileW, double tileH) {
-    Vector pos1 = Vector.mult(connection.getPos(), tileW, tileH);
-    Vector pos2 = Vector.mult(connection.getNext().getPos(), tileW, tileH);
+    Vector pos1 = Vector.mult(connection.getPrev().getPos(), tileW, tileH);
+    Vector pos2 = Vector.mult(connection.getPos(), tileW, tileH);
+    Vector pos3 = Vector.mult(connection.getNext().getPos(), tileW, tileH);
+
     if (doCurvyKnots) {
-      double angle1 = connection.getDir();
-      double angle2 = connection.getNext().getDir();
+
+      double angle1 = connection.getPrev().getDir();
+      double angle2 = connection.getDir();
+      double angle3 = connection.getNext().getDir();
 
       if (doStroke) {
+        strokeCap(SQUARE);
         stroke(strokeColor);
         strokeWeight((strokeWidth * 2 + lineWidth) / (float) (PROGRAM_WINDOW_HEIGHT / tileH));
-        drawCurve(pos1, angle1, pos2, angle2);
+        drawCurveSection(pos1, angle1, pos2, angle2, pos3, angle3);
       }
 
+      strokeCap(ROUND);
       stroke(fillColor);
       strokeWeight(lineWidth / (float) (PROGRAM_WINDOW_HEIGHT / tileH));
-      drawCurve(pos1, angle1, pos2, angle2);
+      drawCurveSection(pos1, angle1, pos2, angle2, pos3, angle3);
 
     } else {
+
       if (doStroke) {
+        strokeCap(SQUARE);
         stroke(strokeColor);
         strokeWeight((strokeWidth * 2 + lineWidth) / (float) (PROGRAM_WINDOW_HEIGHT / tileH));
-        drawLine(pos1, pos2);
+        drawLineSection(pos1, pos2, pos3);
       }
 
+      strokeCap(ROUND);
       stroke(fillColor);
       strokeWeight(lineWidth / (float) (PROGRAM_WINDOW_HEIGHT / tileH));
-      drawLine(pos1, pos2);
+      drawLineSection(pos1, pos2, pos3);
     }
   }
 
-  private void drawCurveSection() {
+  // Line
 
+  private void drawLineSection(Vector pos1, Vector pos2, Vector pos3) {
+    Vector middlePos1 = Vector.add(pos1, pos2).div(2);
+    Vector middlePos2 = Vector.add(pos2, pos3).div(2);
+
+    beginShape();
+    vertex((float) middlePos1.getX(), (float) middlePos1.getY());
+    vertex((float) pos2.getX(), (float) pos2.getY());
+    vertex((float) middlePos2.getX(), (float) middlePos2.getY());
+    endShape();
   }
 
-  private void drawStroke() {
+  // Knot Curve
 
+  private void drawCurveSection(Vector pos1, double angle1, Vector pos2, double angle2, Vector pos3, double angle3) {
+    Vector middlePos1 = getCurveMiddle(pos1, angle1, pos2, angle2);
+    Vector middlePos2 = getCurveMiddle(pos2, angle2, pos3, angle3);
+
+    double middleAngle1 = getCurveMiddleAngle(pos1, angle1, pos2, angle2);
+    double middleAngle2 = getCurveMiddleAngle(pos2, angle2, pos3, angle3);
+
+    drawCurve(middlePos1, middleAngle1, pos2, angle2);
+    drawCurve(pos2, angle2, middlePos2, middleAngle2);
   }
 
-  private void drawCurve(Vector pos1, double angle1, Vector pos2, double angle2) {
-    double controlDist = Math.pow(Vector.dist(pos1, pos2), 0.75) *
-        Math.pow(Math.abs((angle1 - angle2) % (Math.PI + 0.001)), 0.75);
-    Vector control1 = Vector.fromAngle(angle1).mult(controlDist).add(pos1);
-    Vector control2 = Vector.fromAngle(angle2).mult(-controlDist).add(pos2);
+  private Vector getCurveMiddle(Vector startPos, double startAngle, Vector endPos, double endAngle) {
+    double controlDist = Math.pow(Vector.dist(startPos, endPos), 0.75) *
+        Math.pow(Math.abs((startAngle - endAngle) % (Math.PI + 0.001)), 0.75);
+    Vector control1 = Vector.fromAngle(startAngle).mult(controlDist).add(startPos);
+    Vector control2 = Vector.fromAngle(endAngle).mult(-controlDist).add(endPos);
 
-    bezier((float) pos1.getX(), (float) pos1.getY(),
+    return new Vector(
+        bezierPoint((float) startPos.getX(), (float) control1.getX(), (float) control2.getX(), (float) endPos.getX(),
+            0.5f),
+        bezierPoint((float) startPos.getY(), (float) control1.getY(), (float) control2.getY(), (float) endPos.getY(),
+            0.5f));
+  }
+
+  private double getCurveMiddleAngle(Vector startPos, double startAngle, Vector endPos, double endAngle) {
+    double controlDist = Math.pow(Vector.dist(startPos, endPos), 0.75) *
+        Math.pow(Math.abs((startAngle - endAngle) % (Math.PI + 0.001)), 0.75);
+    Vector control1 = Vector.fromAngle(startAngle).mult(controlDist).add(startPos);
+    Vector control2 = Vector.fromAngle(endAngle).mult(-controlDist).add(endPos);
+
+    return Math.atan2(
+        bezierTangent((float) startPos.getY(), (float) control1.getY(), (float) control2.getY(), (float) endPos.getY(),
+            0.5f),
+        bezierTangent((float) startPos.getX(), (float) control1.getX(), (float) control2.getX(), (float) endPos.getX(),
+            0.5f));
+  }
+
+  private void drawCurve(Vector startPos, double startAngle, Vector endPos, double endAngle) {
+    double controlDist = Math.pow(Vector.dist(startPos, endPos), 0.75) *
+        Math.pow(Math.abs((startAngle - endAngle) % (Math.PI + 0.001)), 0.75);
+    Vector control1 = Vector.fromAngle(startAngle).mult(controlDist).add(startPos);
+    Vector control2 = Vector.fromAngle(endAngle).mult(-controlDist).add(endPos);
+
+    bezier((float) startPos.getX(), (float) startPos.getY(),
         (float) control1.getX(), (float) control1.getY(),
         (float) control2.getX(), (float) control2.getY(),
-        (float) pos2.getX(), (float) pos2.getY());
-  }
-
-  private void drawLine(Vector pos1, Vector pos2) {
-    line((float) pos1.getX(), (float) pos1.getY(), (float) pos2.getX(), (float) pos2.getY());
+        (float) endPos.getX(), (float) endPos.getY());
   }
 
   // ===================================================================================================================

@@ -28,11 +28,11 @@ import processing.opengl.PGraphicsOpenGL;
 public class Main extends PApplet {
   public static final String RESOURCE_PATH;
 
-  public final KnotRenderer knotRenderer = new KnotRenderer(true, false, true);
+  public final KnotRenderer knotRenderer = new KnotRenderer(true, true, true);
 
   public static final boolean SAVE_RESULTS = false;
   public static final boolean MULTI_THREAD = false;
-  private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
+  private static final Tilesets TILESET = Tilesets.EXPANDED_UNWEIGHTED;
   private int size = 6;
   private int imgRes = 7;
 
