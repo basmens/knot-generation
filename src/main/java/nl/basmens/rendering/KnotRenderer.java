@@ -10,8 +10,10 @@ import static nl.benmens.processing.PAppletProxy.endShape;
 import static nl.benmens.processing.PAppletProxy.fill;
 import static nl.benmens.processing.PAppletProxy.image;
 import static nl.benmens.processing.PAppletProxy.imageMode;
+import static nl.benmens.processing.PAppletProxy.line;
 import static nl.benmens.processing.PAppletProxy.noFill;
 import static nl.benmens.processing.PAppletProxy.noStroke;
+import static nl.benmens.processing.PAppletProxy.point;
 import static nl.benmens.processing.PAppletProxy.scale;
 import static nl.benmens.processing.PAppletProxy.stroke;
 import static nl.benmens.processing.PAppletProxy.strokeCap;
@@ -40,11 +42,16 @@ public class KnotRenderer {
   private final boolean doRenderTiles;
   private final boolean doCurvyKnots;
   private final boolean doStroke;
+  private final boolean doDebugMode;
 
   private int fillColor = color(200, 210, 220);
   private int strokeColor = color(0);
   private float lineWidth = 60;
   private float strokeWidth = 40;
+
+  private int debugNormalColor = color(50, 210, 20, 200);
+  private int debugOverColor = color(70, 240, 50, 200);
+  private int debugUnderColor = color(50, 150, 20, 200);
 
   private int knotBeingViewed = 0;
 
@@ -53,13 +60,14 @@ public class KnotRenderer {
   // ===================================================================================================================
 
   public KnotRenderer() {
-    this(true, true, true);
+    this(true, true, true, false);
   }
 
-  public KnotRenderer(boolean doRenderTiles, boolean doCurvyKnots, boolean doStroke) {
+  public KnotRenderer(boolean doRenderTiles, boolean doCurvyKnots, boolean doStroke, boolean doDebugMode) {
     this.doRenderTiles = doRenderTiles;
     this.doCurvyKnots = doCurvyKnots;
     this.doStroke = doStroke;
+    this.doDebugMode = doDebugMode;
   }
 
   // ===================================================================================================================
@@ -133,6 +141,14 @@ public class KnotRenderer {
 
       connection = connection.getNext();
     } while (connection != knot.getFirstConnection());
+
+    if (doDebugMode) {
+      do {
+        drawDebug(connection, tileW, tileH);
+
+        connection = connection.getNext();
+      } while (connection != knot.getFirstConnection());
+    }
   }
 
   private void drawConnection(Connection connection, double tileW, double tileH) {
@@ -236,6 +252,28 @@ public class KnotRenderer {
         (float) control1.getX(), (float) control1.getY(),
         (float) control2.getX(), (float) control2.getY(),
         (float) endPos.getX(), (float) endPos.getY());
+  }
+
+  // DebugMode
+
+  private void drawDebug(Connection connection, double tileW, double tileH) {
+    strokeWeight((lineWidth) / (float) (PROGRAM_WINDOW_HEIGHT / tileH));
+    stroke(debugNormalColor);
+
+    Vector pos = Vector.mult(connection.getPos(), tileW, tileH);
+    point((float) pos.getX(), (float) pos.getY());
+
+    if (connection.isOver()) {
+      stroke(debugOverColor);
+    } else if (connection.isUnder()) {
+      stroke(debugUnderColor);
+    } else {
+      stroke(debugNormalColor);
+    }
+    strokeWeight((lineWidth * 0.75f) / (float) (PROGRAM_WINDOW_HEIGHT / tileH));
+    double angle = connection.getDir();
+    Vector lineEnd = Vector.fromAngle(angle).mult(30).add(pos);
+    line((float) pos.getX(), (float) pos.getY(), (float) lineEnd.getX(), (float) lineEnd.getY());
   }
 
   // ===================================================================================================================
