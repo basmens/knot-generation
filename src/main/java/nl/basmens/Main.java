@@ -585,8 +585,8 @@ public class Main extends PApplet {
         public void setConnections(int x, int y, Connection[][] hor, Connection[][] vert) {
           Connection up1 = new Connection(new Vector(x, y), -Math.PI * 0.65);
           Connection up2 = new Connection(new Vector(x - 0.15, y - 0.1), -Math.PI * 0.85);
-          Connection down1 = new Connection(new Vector(x - 0.15, y - 0.1), -Math.PI / 2);
-          Connection down2 = new Connection(new Vector(x - 0.15, y + 0.1), -Math.PI / 2);
+          Connection down1 = new Connection(new Vector(x - 0.15, y - 0.1), Math.PI / 2);
+          Connection down2 = new Connection(new Vector(x - 0.15, y + 0.1), Math.PI / 2);
           Connection right1 = new Connection(new Vector(x - 0.15, y + 0.1), -Math.PI * 0.15);
           Connection right2 = new Connection(new Vector(x, y), -Math.PI * 0.35);
           IntersectedConnectionsFactory.createIntersection(up1, right2);
