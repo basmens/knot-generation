@@ -8,6 +8,8 @@ public class Knot {
   private ArrayList<Intersection> intersections = new ArrayList<>();
   private int length;
 
+  private boolean isTricolorableCalculated = false;
+
   // ===================================================================================================================
   // Constructor
   // ===================================================================================================================
@@ -26,22 +28,20 @@ public class Knot {
   }
 
   // ===================================================================================================================
-  // Commands
+  // Invariants
   // ===================================================================================================================
 
-  public void test() {
-    int result = 0;
-
-    for (Intersection i: intersections) {
-      i.printState();
-      int type = i.getType();
-      if (type == 0) {
-        result--;
-      } else {
-        result++;
-      }
+  public void calculateTricolorability() {
+    if (isTricolorableCalculated) {
+      return;
     }
-    System.out.println(result);
+    
+    Connection connection = getFirstConnection();
+    while (!connection.isUnder() && connection != getFirstConnection().getPrev()) {
+      connection = connection.getNext();
+    }
+    connection.propagateTricolorability(1);
+    isTricolorableCalculated = true;
   }
 
   // ===================================================================================================================

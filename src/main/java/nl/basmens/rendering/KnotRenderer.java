@@ -1,12 +1,10 @@
 package nl.basmens.rendering;
 
 import static nl.benmens.processing.PAppletProxy.background;
-import static nl.benmens.processing.PAppletProxy.beginShape;
 import static nl.benmens.processing.PAppletProxy.bezier;
 import static nl.benmens.processing.PAppletProxy.bezierPoint;
 import static nl.benmens.processing.PAppletProxy.bezierTangent;
 import static nl.benmens.processing.PAppletProxy.color;
-import static nl.benmens.processing.PAppletProxy.endShape;
 import static nl.benmens.processing.PAppletProxy.fill;
 import static nl.benmens.processing.PAppletProxy.image;
 import static nl.benmens.processing.PAppletProxy.imageMode;
@@ -23,7 +21,6 @@ import static nl.benmens.processing.PAppletProxy.text;
 import static nl.benmens.processing.PAppletProxy.textAlign;
 import static nl.benmens.processing.PAppletProxy.textSize;
 import static nl.benmens.processing.PAppletProxy.translate;
-import static nl.benmens.processing.PAppletProxy.vertex;
 import static processing.core.PConstants.CORNER;
 import static processing.core.PConstants.LEFT;
 import static processing.core.PConstants.ROUND;
@@ -40,7 +37,6 @@ public class KnotRenderer {
   public static final float PROGRAM_WINDOW_HEIGHT = 1440; // then scales it to fit on every screen size
 
   private final boolean doRenderTiles;
-  private final boolean doCurvyKnots;
   private final boolean doStroke;
   private final boolean doDebugMode;
 
@@ -49,9 +45,9 @@ public class KnotRenderer {
   private float lineWidth = 60;
   private float strokeWidth = 40;
 
-  private int debugNormalColor = color(50, 210, 20, 200);
-  private int debugOverColor = color(70, 240, 50, 200);
-  private int debugUnderColor = color(50, 150, 20, 200);
+  private int debugPrimairyColor = color(255, 190, 20, 200);
+  private int debugSecondairyColor = color(20, 50, 190, 200);
+  private int debugTertairyColor = color(190, 20, 50, 200);
 
   private int knotBeingViewed = 0;
 
@@ -60,12 +56,11 @@ public class KnotRenderer {
   // ===================================================================================================================
 
   public KnotRenderer() {
-    this(true, true, true, false);
+    this(true, true, false);
   }
 
-  public KnotRenderer(boolean doRenderTiles, boolean doCurvyKnots, boolean doStroke, boolean doDebugMode) {
+  public KnotRenderer(boolean doRenderTiles, boolean doStroke, boolean doDebugMode) {
     this.doRenderTiles = doRenderTiles;
-    this.doCurvyKnots = doCurvyKnots;
     this.doStroke = doStroke;
     this.doDebugMode = doDebugMode;
   }
@@ -90,6 +85,7 @@ public class KnotRenderer {
     }
 
     Knot viewedKnot = pipeLine.getKnots().get(knotBeingViewed);
+    viewedKnot.calculateTricolorability();
 
     displayKnot(viewedKnot, tileW, tileH);
     displayKnotInfo(pipeLine, viewedKnot);
@@ -155,64 +151,47 @@ public class KnotRenderer {
     Vector pos1 = Vector.mult(connection.getPrev().getPos(), tileW, tileH);
     Vector pos2 = Vector.mult(connection.getPos(), tileW, tileH);
     Vector pos3 = Vector.mult(connection.getNext().getPos(), tileW, tileH);
+    double angle1 = connection.getPrev().getDir();
+    double angle2 = connection.getDir();
+    double angle3 = connection.getNext().getDir();
 
-    if (doCurvyKnots) {
-
-      double angle1 = connection.getPrev().getDir();
-      double angle2 = connection.getDir();
-      double angle3 = connection.getNext().getDir();
-
-      if (doStroke) {
-        strokeCap(SQUARE);
-        stroke(strokeColor);
-        strokeWeight((strokeWidth * 2 + lineWidth) / (float) (PROGRAM_WINDOW_HEIGHT / tileH));
-        drawCurveSection(pos1, angle1, pos2, angle2, pos3, angle3);
-      }
-
-      strokeCap(ROUND);
-      stroke(fillColor);
-      strokeWeight(lineWidth / (float) (PROGRAM_WINDOW_HEIGHT / tileH));
-      drawCurveSection(pos1, angle1, pos2, angle2, pos3, angle3);
-
-    } else {
-
-      if (doStroke) {
-        strokeCap(SQUARE);
-        stroke(strokeColor);
-        strokeWeight((strokeWidth * 2 + lineWidth) / (float) (PROGRAM_WINDOW_HEIGHT / tileH));
-        drawLineSection(pos1, pos2, pos3);
-      }
-
-      strokeCap(ROUND);
-      stroke(fillColor);
-      strokeWeight(lineWidth / (float) (PROGRAM_WINDOW_HEIGHT / tileH));
-      drawLineSection(pos1, pos2, pos3);
+    if (doStroke) {
+      strokeCap(SQUARE);
+      strokeWeight((strokeWidth * 2 + lineWidth) / (float) (PROGRAM_WINDOW_HEIGHT / tileH));
+      drawCurveSection(pos1, angle1, pos2, angle2, pos3, angle3, strokeColor, strokeColor);
     }
+
+    strokeCap(ROUND);
+    strokeWeight(lineWidth / (float) (PROGRAM_WINDOW_HEIGHT / tileH));
+    drawCurveSection(pos1, angle1, pos2, angle2, pos3, angle3,
+        getFillColor(connection.getPrev().getSectionValue()), getFillColor(connection.getSectionValue()));
   }
 
-  // Line
-
-  private void drawLineSection(Vector pos1, Vector pos2, Vector pos3) {
-    Vector middlePos1 = Vector.add(pos1, pos2).div(2);
-    Vector middlePos2 = Vector.add(pos2, pos3).div(2);
-
-    beginShape();
-    vertex((float) middlePos1.getX(), (float) middlePos1.getY());
-    vertex((float) pos2.getX(), (float) pos2.getY());
-    vertex((float) middlePos2.getX(), (float) middlePos2.getY());
-    endShape();
+  private int getFillColor(int sectionValue) {
+    if (sectionValue == 0) {
+      return fillColor;
+    } else if (sectionValue == 1) {
+      return color(255, 0, 0);
+    } else if (sectionValue == 2) {
+      return color(0, 255, 0);
+    } else {
+      return color(0, 0, 255);
+    }
   }
 
   // Knot Curve
 
-  private void drawCurveSection(Vector pos1, double angle1, Vector pos2, double angle2, Vector pos3, double angle3) {
+  private void drawCurveSection(Vector pos1, double angle1, Vector pos2, double angle2, Vector pos3, double angle3,
+      int color1, int color2) {
     Vector middlePos1 = getCurveMiddle(pos1, angle1, pos2, angle2);
     Vector middlePos2 = getCurveMiddle(pos2, angle2, pos3, angle3);
 
     double middleAngle1 = getCurveMiddleAngle(pos1, angle1, pos2, angle2);
     double middleAngle2 = getCurveMiddleAngle(pos2, angle2, pos3, angle3);
 
+    stroke(color1);
     drawCurve(middlePos1, middleAngle1, pos2, angle2);
+    stroke(color2);
     drawCurve(pos2, angle2, middlePos2, middleAngle2);
   }
 
@@ -257,23 +236,30 @@ public class KnotRenderer {
   // DebugMode
 
   private void drawDebug(Connection connection, double tileW, double tileH) {
-    strokeWeight((lineWidth) / (float) (PROGRAM_WINDOW_HEIGHT / tileH));
-    stroke(debugNormalColor);
-
     Vector pos = Vector.mult(connection.getPos(), tileW, tileH);
-    point((float) pos.getX(), (float) pos.getY());
 
+    strokeWeight((lineWidth) / (float) (PROGRAM_WINDOW_HEIGHT / tileH * 2));
     if (connection.isOver()) {
-      stroke(debugOverColor);
+      stroke(debugSecondairyColor);
     } else if (connection.isUnder()) {
-      stroke(debugUnderColor);
+      stroke(debugTertairyColor);
     } else {
-      stroke(debugNormalColor);
+      stroke(debugPrimairyColor);
     }
-    strokeWeight((lineWidth * 0.75f) / (float) (PROGRAM_WINDOW_HEIGHT / tileH));
+
     double angle = connection.getDir();
     Vector lineEnd = Vector.fromAngle(angle).mult(30).add(pos);
     line((float) pos.getX(), (float) pos.getY(), (float) lineEnd.getX(), (float) lineEnd.getY());
+
+    strokeWeight((lineWidth) / (float) (PROGRAM_WINDOW_HEIGHT / tileH));
+    if (!connection.isIntersected()) {
+      stroke(debugPrimairyColor);
+    } else if (connection.getIntersection().getType() == 0) {
+      stroke(debugSecondairyColor);
+    } else {
+      stroke(debugTertairyColor);
+    }
+    point((float) pos.getX(), (float) pos.getY());
   }
 
   // ===================================================================================================================
