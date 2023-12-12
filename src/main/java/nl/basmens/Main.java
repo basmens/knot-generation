@@ -853,10 +853,16 @@ public class Main extends PApplet {
           IntersectedConnectionsFactory.createIntersection(up2, left1);
           IntersectedConnectionsFactory.createIntersection(left2, right1);
 
-          vert[x * 2 + 1][y].setNext(vert[x * 2 + 1][y - 1]);
-          hor[x][y * 2].setNext(vert[x * 2][y]);
+          vert[x * 2 + 1][y].setNext(up1);
+          up1.setNext(up2);
+          up2.setNext(vert[x * 2 + 1][y - 1]);
+          hor[x][y * 2].setNext(left1);
+          left1.setNext(left2);
+          left2.setNext(vert[x * 2][y]);
           vert[x * 2][y - 1].setNext(hor[x - 1][y * 2]);
-          hor[x - 1][y * 2 + 1].setNext(hor[x][y * 2 + 1]);
+          hor[x - 1][y * 2 + 1].setNext(right1);
+          right1.setNext(right2);
+          right2.setNext(hor[x][y * 2 + 1]);
         }
       });
     }
