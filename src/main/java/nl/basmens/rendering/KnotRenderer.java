@@ -85,7 +85,6 @@ public class KnotRenderer {
     }
 
     Knot viewedKnot = pipeLine.getKnots().get(knotBeingViewed);
-    viewedKnot.calculateTricolorability();
 
     displayKnot(viewedKnot, tileW, tileH);
     displayKnotInfo(pipeLine, viewedKnot);
@@ -115,6 +114,7 @@ public class KnotRenderer {
     textSize(35);
     text(" - Length : " + knot.getLength(), 2078, 90);
     text(" - Intersections : " + knot.getIntersections().size(), 2078, 130);
+    text(" - is Tricolorable : " + knot.isTricolorable(), 2078, 170);
   }
 
   // ===================================================================================================================

@@ -9,6 +9,7 @@ public class Knot {
   private int length;
 
   private boolean isTricolorableCalculated = false;
+  private boolean isTricolorable;
 
   // ===================================================================================================================
   // Constructor
@@ -35,12 +36,24 @@ public class Knot {
     if (isTricolorableCalculated) {
       return;
     }
-    
+
     Connection connection = getFirstConnection();
     while (!connection.isUnder() && connection != getFirstConnection().getPrev()) {
       connection = connection.getNext();
     }
     connection.propagateTricolorability(1);
+
+    connection = getFirstConnection();
+    int firstSectionValue = connection.getSectionValue();
+    do {
+      int sectionValue = connection.getSectionValue();
+      if (firstSectionValue != sectionValue) {
+        isTricolorable = true;
+        break;
+      }
+      connection = connection.getNext();
+    } while (connection != getFirstConnection());
+
     isTricolorableCalculated = true;
   }
 
@@ -58,5 +71,12 @@ public class Knot {
 
   public int getLength() {
     return length;
+  }
+
+  public boolean isTricolorable() {
+    if (!isTricolorableCalculated) {
+      calculateTricolorability();
+    }
+    return isTricolorable;
   }
 }
