@@ -115,6 +115,7 @@ public class KnotRenderer {
     text(" - Length : " + knot.getLength(), 2078, 90);
     text(" - Intersections : " + knot.getIntersections().size(), 2078, 130);
     text(" - is Tricolorable : " + knot.isTricolorable(), 2078, 170);
+    text(" - Knot Determinant : " + knot.getKnotDeterminant(), 2078, 210);
   }
 
   // ===================================================================================================================

@@ -4,6 +4,10 @@ public class Intersection {
   public final Connection under;
   public final Connection over;
 
+  protected int underSectionId1;
+  protected int underSectionId2;
+  protected int overSectionId;
+
   // ===================================================================================================================
   // Constructor
   // ===================================================================================================================
