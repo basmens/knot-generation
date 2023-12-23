@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 
 import nl.basmens.generation.IntersectedConnectionsFactory;
 import nl.basmens.generation.KnotGenerationPipeline;
+import nl.basmens.generation.ResultExporter;
 import nl.basmens.generation.Tile;
 import nl.basmens.generation.Tileset;
 import nl.basmens.generation.analyzers.GridAnalyzerBasic;
@@ -27,13 +28,14 @@ import processing.opengl.PGraphicsOpenGL;
 
 public class Main extends PApplet {
   public static final String RESOURCE_PATH;
-
-  public final KnotRenderer knotRenderer = new KnotRenderer(true, true, false);
-
-  public static final boolean SAVE_RESULTS = false;
+  public static final boolean SAVE_RESULTS = true;
+  public static final boolean SAVE_TRICOLORABILITY = false;
+  public static final boolean SAVE_KNOT_DETERMINANT = true;
   public static final boolean MULTI_THREAD = false;
   private static final Tilesets TILESET = Tilesets.EXPANDED_UNWEIGHTED;
-  private int size = 300;
+
+  public final KnotRenderer knotRenderer = new KnotRenderer(true, true, false);
+  private int size = 30;
   private int imgRes = 7;
 
   private enum Tilesets {
@@ -156,10 +158,18 @@ public class Main extends PApplet {
           .setKnotBeingViewed((knotRenderer.getKnotBeingViewed() - 1 + knotGenerationPipelines[0].getKnots().size())
               % knotGenerationPipelines[0].getKnots().size());
 
-    } else if (key == 'f' && MULTI_THREAD) {
-      println("Finishing...");
-      stopKnotGenerationPipelines();
-      println("Finished");
+    } else if (key == 'f') {
+      if (MULTI_THREAD) {
+        println("Finishing...");
+        stopKnotGenerationPipelines();
+        println("Finished");
+      }
+
+      if (SAVE_RESULTS) {
+        println("Flushing data...");
+        ResultExporter.saveAll();
+        println("Flushed data");
+      }
 
     } else if (key == 'z' && !MULTI_THREAD) {
       println("Saving...");

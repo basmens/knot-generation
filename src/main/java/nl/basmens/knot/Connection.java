@@ -11,7 +11,7 @@ public class Connection {
   private Vector pos;
   private double dir;
 
-  private int sectionValue = 0; // 0 = unset
+  private int sectionValue; // 0 = unset
 
   // ===================================================================================================================
   // Constructor

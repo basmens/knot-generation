@@ -2,6 +2,9 @@ package nl.basmens.knot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 import nl.basmens.utils.Matrix;
 
@@ -10,14 +13,11 @@ public class Knot {
   private ArrayList<Intersection> intersections = new ArrayList<>();
   private int length;
 
-  private boolean hasAsignedSectionIds = false;
+  private boolean hasAsignedSectionIds;
 
-  private boolean isTricolorable;
-  private boolean isCalculatingTricolorability = false;
-  private boolean isTricolorabilityCalculated = false;
-
-  // -2 = Not calculating // -1 = Calculating...
-  private double knotDeterminant = -2;
+  // Invariants
+  private FutureTask<Boolean> tricolorabilityFuture;
+  private FutureTask<Double> knotDeterminantFuture;
 
   // ===================================================================================================================
   // Constructor
@@ -70,17 +70,12 @@ public class Knot {
   // ===================================================================================================================
   // Invariants
   // ===================================================================================================================
-
   // Tricolorability
-
-  public void startCalculatingTricolorability() {
-    if (!isCalculatingTricolorability) {
-      isCalculatingTricolorability = true;
-      new Thread(this::calculateTricolorability).start();
+  private boolean calculateTricolorability() {
+    if (intersections.size() < 3) {
+      return false;
     }
-  }
 
-  private void calculateTricolorability() {
     Connection connection = getFirstConnection();
     while (!connection.isUnder() && connection != getFirstConnection().getPrev()) {
       connection = connection.getNext();
@@ -92,28 +87,18 @@ public class Knot {
     do {
       int sectionValue = connection.getSectionValue();
       if (firstSectionValue != sectionValue) {
-        isTricolorable = true;
-        break;
+        return true;
       }
       connection = connection.getNext();
     } while (connection != getFirstConnection());
 
-    isTricolorabilityCalculated = true;
+    return false;
   }
 
   // KnotDeterminant
-
-  public void startCalculatingKnotDeterminant() {
-    if (knotDeterminant == -2) {
-      knotDeterminant = -1;
-      new Thread(this::calculateKnotDeterminant).start();
-    }
-  }
-
-  private void calculateKnotDeterminant() {
+  private double calculateKnotDeterminant() {
     if (intersections.size() < 3) {
-      knotDeterminant = 1;
-      return;
+      return 1;
     }
 
     asignSectionIds();
@@ -133,7 +118,7 @@ public class Knot {
       }
     }
 
-    knotDeterminant = Math.abs(matrix.getDeterminant());
+    return Math.abs(matrix.getDeterminant());
   }
 
   // ===================================================================================================================
@@ -152,39 +137,53 @@ public class Knot {
     return length;
   }
 
-  public boolean isTricolorable() {
-    return isTricolorable;
+  public boolean hasCalculatedTricolorability() {
+    return tricolorabilityFuture != null && tricolorabilityFuture.isDone();
   }
 
-  public boolean isTricolorabilityCalculated() {
-    return isTricolorabilityCalculated;
+  public synchronized Future<Boolean> isTricolorable() {
+    if (tricolorabilityFuture == null) {
+      tricolorabilityFuture = new FutureTask<>(this::calculateTricolorability);
+      new Thread(tricolorabilityFuture::run).start();
+    }
+    return tricolorabilityFuture;
   }
 
   public String getTricolorabilityState() {
-    if (isTricolorabilityCalculated) {
-      return "" + isTricolorable;
-    } else if (isCalculatingTricolorability) {
+    if (hasCalculatedTricolorability()) {
+      try {
+        return "" + isTricolorable().get();
+      } catch (Exception e) {
+        // Should be imposible to reach: the future is already done
+      }
+    } else if (tricolorabilityFuture != null) {
       return "Calculating...";
     }
     return "Not Calculated";
   }
 
-  public double getKnotDeterminant() {
-    return knotDeterminant;
+  public Future<Double> getKnotDeterminant() {
+    if (knotDeterminantFuture == null) {
+      knotDeterminantFuture = new FutureTask<>(this::calculateKnotDeterminant);
+      new Thread(knotDeterminantFuture::run).start();
+    }
+    return knotDeterminantFuture;
   }
 
-  public boolean isKnotDeterminantCalculated() {
-    return knotDeterminant != -2 && knotDeterminant != -1;
+  public boolean hasCalculatedKnotDeterminant() {
+    return knotDeterminantFuture != null && knotDeterminantFuture.isDone();
   }
 
   public String getKnotDeterminantState() {
-    if (knotDeterminant >= 0) {
-      return "" + String.format("%.3f", knotDeterminant);
-    } else if (knotDeterminant == -1) {
+    if (hasCalculatedKnotDeterminant()) {
+      try {
+        return "" + String.format(Locale.UK, "%.3f", getKnotDeterminant().get());
+      } catch (Exception e) {
+        // Should be imposible to reach: the future is already done
+      }
+    } else if (knotDeterminantFuture != null) {
       return "Calculating...";
-    } else if (knotDeterminant == -2) {
-      return "Not Calculated";
     }
-    return "" + knotDeterminant;
+    return "Not Calculated";
   }
 }
