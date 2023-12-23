@@ -34,8 +34,8 @@ public class Matrix {
   // =================================================================================================================
 
   private static void subtractRows(Matrix matrix, int minuendRow, int subtrahendRow, double multiplier) {
-    for (int i = 0; i < matrix.height(); i++) {
-      matrix.set(minuendRow, i, matrix.get(minuendRow, i) - matrix.get(subtrahendRow, i) * multiplier);
+    for (int i = 0; i < matrix.width(); i++) {
+      matrix.set(i, minuendRow, matrix.get(i, minuendRow) - matrix.get(i, subtrahendRow) * multiplier);
     }
   }
 
@@ -69,12 +69,12 @@ public class Matrix {
     Matrix matrix = this.copy();
 
     for (int i = 0; i < matrix.width() - 1; i++) {
-      for (int j = i + 1; j < matrix.width(); j++) {
-        if (matrix.get(j, i) != 0) {
+      for (int j = i + 1; j < matrix.height(); j++) {
+        if (matrix.get(i, j) != 0) {
           if (matrix.get(i, i) == 0) {
             subtractRows(matrix, i, j, 1);
           }
-          subtractRows(matrix, j, i, matrix.get(j, i) / matrix.get(i, i));
+          subtractRows(matrix, j, i, matrix.get(i, j) / matrix.get(i, i));
         }
       }
     }

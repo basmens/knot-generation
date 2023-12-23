@@ -17,7 +17,7 @@ public class Knot {
 
   // Invariants
   private FutureTask<Boolean> tricolorabilityFuture;
-  private FutureTask<Double> knotDeterminantFuture;
+  private FutureTask<Integer> knotDeterminantFuture;
 
   // ===================================================================================================================
   // Constructor
@@ -96,7 +96,7 @@ public class Knot {
   }
 
   // KnotDeterminant
-  private double calculateKnotDeterminant() {
+  private int calculateKnotDeterminant() {
     if (intersections.size() < 3) {
       return 1;
     }
@@ -118,7 +118,8 @@ public class Knot {
       }
     }
 
-    return Math.abs(matrix.getDeterminant());
+    // round to get rid of precision loss
+    return (int)Math.round(Math.abs(matrix.getDeterminant()));
   }
 
   // ===================================================================================================================
@@ -162,7 +163,7 @@ public class Knot {
     return "Not Calculated";
   }
 
-  public Future<Double> getKnotDeterminant() {
+  public Future<Integer> getKnotDeterminant() {
     if (knotDeterminantFuture == null) {
       knotDeterminantFuture = new FutureTask<>(this::calculateKnotDeterminant);
       new Thread(knotDeterminantFuture::run).start();
@@ -177,7 +178,7 @@ public class Knot {
   public String getKnotDeterminantState() {
     if (hasCalculatedKnotDeterminant()) {
       try {
-        return "" + String.format(Locale.UK, "%.3f", getKnotDeterminant().get());
+        return "" + String.format(Locale.UK, "%d", getKnotDeterminant().get());
       } catch (Exception e) {
         // Should be imposible to reach: the future is already done
       }
