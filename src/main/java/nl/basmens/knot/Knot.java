@@ -16,7 +16,7 @@ public class Knot {
 
   // Invariants
   private FutureTask<Boolean> tricolorabilityFuture;
-  private FutureTask<Integer> knotDeterminantFuture;
+  private FutureTask<Long> knotDeterminantFuture;
 
   // ===================================================================================================================
   // Constructor
@@ -96,7 +96,7 @@ public class Knot {
   }
 
   // KnotDeterminant
-  private int calculateKnotDeterminant() {
+  private long calculateKnotDeterminant() {
     if (intersections.size() < 3) {
       return 1;
     }
@@ -119,7 +119,7 @@ public class Knot {
     }
 
     // round to get rid of precision loss
-    return (int) Math.round(Math.abs(matrix.getDeterminant()));
+    return Math.round(Math.abs(matrix.getDeterminant()));
   }
 
   // ===================================================================================================================
@@ -166,7 +166,7 @@ public class Knot {
     return "Not Calculated";
   }
 
-  public int getKnotDeterminant() {
+  public long getKnotDeterminant() {
     if (knotDeterminantFuture == null) {
       knotDeterminantFuture = new FutureTask<>(this::calculateKnotDeterminant);
       new Thread(knotDeterminantFuture::run).start();

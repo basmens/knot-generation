@@ -1,0 +1,130 @@
+{
+  "22": {
+    "count": 2,
+    "knot determinant": {"1": 2}
+  },
+  "44": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "24": {
+    "count": 5,
+    "knot determinant": {"1": 5}
+  },
+  "48": {
+    "count": 2,
+    "knot determinant": {"1": 2}
+  },
+  "26": {
+    "count": 4,
+    "knot determinant": {"1": 4}
+  },
+  "28": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "94": {
+    "count": 2,
+    "knot determinant": {"1": 2}
+  },
+  "50": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "30": {
+    "count": 3,
+    "knot determinant": {"1": 3}
+  },
+  "52": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "32": {
+    "count": 4,
+    "knot determinant": {"1": 4}
+  },
+  "54": {
+    "count": 2,
+    "knot determinant": {"1": 2}
+  },
+  "10": {
+    "count": 10,
+    "knot determinant": {"1": 10}
+  },
+  "76": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "34": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "12": {
+    "count": 5,
+    "knot determinant": {"1": 5}
+  },
+  "36": {
+    "count": 5,
+    "knot determinant": {"1": 5}
+  },
+  "14": {
+    "count": 5,
+    "knot determinant": {"1": 5}
+  },
+  "16": {
+    "count": 7,
+    "knot determinant": {"1": 7}
+  },
+  "38": {
+    "count": 4,
+    "knot determinant": {"1": 4}
+  },
+  "18": {
+    "count": 2,
+    "knot determinant": {"1": 2}
+  },
+  "2": {
+    "count": 180,
+    "knot determinant": {"1": 180}
+  },
+  "4": {
+    "count": 120,
+    "knot determinant": {"1": 120}
+  },
+  "6": {
+    "count": 49,
+    "knot determinant": {"1": 49}
+  },
+  "8": {
+    "count": 32,
+    "knot determinant": {"1": 32}
+  },
+  "108": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "60": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "82": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "62": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "40": {
+    "count": 3,
+    "knot determinant": {"1": 3}
+  },
+  "42": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "20": {
+    "count": 6,
+    "knot determinant": {"1": 6}
+  }
+}

@@ -32,10 +32,10 @@ public class Main extends PApplet {
   public static final boolean SAVE_TRICOLORABILITY = false;
   public static final boolean SAVE_KNOT_DETERMINANT = true;
   public static final boolean MULTI_THREAD = false;
-  private static final Tilesets TILESET = Tilesets.EXPANDED_UNWEIGHTED;
+  private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
 
   public final KnotRenderer knotRenderer = new KnotRenderer(true, true, false);
-  private int size = 30;
+  private int size = 1000;
   private int imgRes = 7;
 
   private enum Tilesets {

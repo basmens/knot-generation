@@ -1,0 +1,1240 @@
+{
+  "88": {
+    "count": 282,
+    "knot determinant": {
+      "11": 2,
+      "1": 270,
+      "3": 7,
+      "15": 1,
+      "7": 2
+    }
+  },
+  "190": {
+    "count": 12,
+    "knot determinant": {
+      "1": 11,
+      "3": 1
+    }
+  },
+  "192": {
+    "count": 20,
+    "knot determinant": {
+      "1": 17,
+      "3": 2,
+      "5": 1
+    }
+  },
+  "194": {
+    "count": 25,
+    "knot determinant": {
+      "1": 24,
+      "5": 1
+    }
+  },
+  "196": {
+    "count": 16,
+    "knot determinant": {
+      "0": 1,
+      "1": 11,
+      "3": 2,
+      "5": 1,
+      "7": 1
+    }
+  },
+  "350": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "230": {
+    "count": 10,
+    "knot determinant": {
+      "1": 8,
+      "15": 1,
+      "7": 1
+    }
+  },
+  "110": {
+    "count": 160,
+    "knot determinant": {
+      "1": 153,
+      "3": 5,
+      "5": 1,
+      "17": 1
+    }
+  },
+  "198": {
+    "count": 19,
+    "knot determinant": {"1": 19}
+  },
+  "232": {
+    "count": 4,
+    "knot determinant": {"1": 4}
+  },
+  "112": {
+    "count": 165,
+    "knot determinant": {
+      "1": 158,
+      "3": 4,
+      "15": 1,
+      "5": 1,
+      "7": 1
+    }
+  },
+  "354": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "234": {
+    "count": 9,
+    "knot determinant": {
+      "11": 1,
+      "1": 5,
+      "3": 1,
+      "5": 1,
+      "9": 1
+    }
+  },
+  "114": {
+    "count": 131,
+    "knot determinant": {
+      "1": 126,
+      "3": 3,
+      "15": 1,
+      "5": 1
+    }
+  },
+  "356": {
+    "count": 2,
+    "knot determinant": {
+      "1": 1,
+      "3": 1
+    }
+  },
+  "236": {
+    "count": 9,
+    "knot determinant": {
+      "1": 8,
+      "5": 1
+    }
+  },
+  "116": {
+    "count": 129,
+    "knot determinant": {
+      "1": 125,
+      "13": 1,
+      "3": 3
+    }
+  },
+  "358": {
+    "count": 2,
+    "knot determinant": {"1": 2}
+  },
+  "90": {
+    "count": 288,
+    "knot determinant": {
+      "1": 276,
+      "3": 7,
+      "5": 2,
+      "7": 3
+    }
+  },
+  "238": {
+    "count": 5,
+    "knot determinant": {"1": 5}
+  },
+  "118": {
+    "count": 122,
+    "knot determinant": {
+      "1": 117,
+      "3": 1,
+      "5": 4
+    }
+  },
+  "92": {
+    "count": 269,
+    "knot determinant": {
+      "1": 260,
+      "3": 5,
+      "7": 4
+    }
+  },
+  "94": {
+    "count": 247,
+    "knot determinant": {
+      "1": 237,
+      "3": 4,
+      "15": 1,
+      "5": 2,
+      "7": 3
+    }
+  },
+  "96": {
+    "count": 213,
+    "knot determinant": {
+      "1": 207,
+      "3": 3,
+      "5": 2,
+      "7": 1
+    }
+  },
+  "10": {
+    "count": 12853,
+    "knot determinant": {"1": 12853}
+  },
+  "98": {
+    "count": 202,
+    "knot determinant": {
+      "1": 193,
+      "3": 6,
+      "5": 1,
+      "7": 2
+    }
+  },
+  "12": {
+    "count": 10966,
+    "knot determinant": {"1": 10966}
+  },
+  "14": {
+    "count": 7600,
+    "knot determinant": {"1": 7600}
+  },
+  "16": {
+    "count": 7211,
+    "knot determinant": {"1": 7211}
+  },
+  "18": {
+    "count": 6265,
+    "knot determinant": {"1": 6265}
+  },
+  "360": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "240": {
+    "count": 3,
+    "knot determinant": {
+      "1": 2,
+      "3": 1
+    }
+  },
+  "120": {
+    "count": 106,
+    "knot determinant": {
+      "1": 99,
+      "3": 5,
+      "5": 1,
+      "7": 1
+    }
+  },
+  "242": {
+    "count": 7,
+    "knot determinant": {"1": 7}
+  },
+  "122": {
+    "count": 91,
+    "knot determinant": {
+      "1": 84,
+      "3": 6,
+      "7": 1
+    }
+  },
+  "2": {
+    "count": 220891,
+    "knot determinant": {"1": 220891}
+  },
+  "244": {
+    "count": 5,
+    "knot determinant": {"1": 5}
+  },
+  "124": {
+    "count": 107,
+    "knot determinant": {
+      "1": 103,
+      "3": 2,
+      "5": 1,
+      "7": 1
+    }
+  },
+  "366": {
+    "count": 2,
+    "knot determinant": {
+      "1": 1,
+      "3": 1
+    }
+  },
+  "4": {
+    "count": 123091,
+    "knot determinant": {"1": 123091}
+  },
+  "246": {
+    "count": 8,
+    "knot determinant": {
+      "1": 7,
+      "5": 1
+    }
+  },
+  "126": {
+    "count": 102,
+    "knot determinant": {
+      "1": 94,
+      "3": 5,
+      "5": 2,
+      "7": 1
+    }
+  },
+  "6": {
+    "count": 43788,
+    "knot determinant": {"1": 43788}
+  },
+  "248": {
+    "count": 4,
+    "knot determinant": {"1": 4}
+  },
+  "128": {
+    "count": 98,
+    "knot determinant": {
+      "1": 95,
+      "3": 1,
+      "5": 2
+    }
+  },
+  "8": {
+    "count": 29119,
+    "knot determinant": {"1": 29119}
+  },
+  "406": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "408": {
+    "count": 1,
+    "knot determinant": {"7": 1}
+  },
+  "20": {
+    "count": 6408,
+    "knot determinant": {"1": 6408}
+  },
+  "22": {
+    "count": 5533,
+    "knot determinant": {"1": 5533}
+  },
+  "24": {
+    "count": 4795,
+    "knot determinant": {"1": 4795}
+  },
+  "26": {
+    "count": 3806,
+    "knot determinant": {
+      "1": 3802,
+      "3": 4
+    }
+  },
+  "28": {
+    "count": 3256,
+    "knot determinant": {
+      "1": 3249,
+      "3": 7
+    }
+  },
+  "250": {
+    "count": 7,
+    "knot determinant": {
+      "1": 6,
+      "25": 1
+    }
+  },
+  "130": {
+    "count": 75,
+    "knot determinant": {
+      "1": 73,
+      "3": 2
+    }
+  },
+  "372": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "252": {
+    "count": 8,
+    "knot determinant": {"1": 8}
+  },
+  "494": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "132": {
+    "count": 77,
+    "knot determinant": {
+      "1": 69,
+      "3": 5,
+      "5": 1,
+      "7": 2
+    }
+  },
+  "254": {
+    "count": 3,
+    "knot determinant": {"1": 3}
+  },
+  "134": {
+    "count": 80,
+    "knot determinant": {
+      "11": 1,
+      "1": 76,
+      "3": 2,
+      "7": 1
+    }
+  },
+  "376": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "530": {
+    "count": 1,
+    "knot determinant": {"21": 1}
+  },
+  "256": {
+    "count": 6,
+    "knot determinant": {"1": 6}
+  },
+  "136": {
+    "count": 64,
+    "knot determinant": {
+      "1": 62,
+      "3": 1,
+      "5": 1
+    }
+  },
+  "258": {
+    "count": 3,
+    "knot determinant": {
+      "1": 2,
+      "3": 1
+    }
+  },
+  "138": {
+    "count": 72,
+    "knot determinant": {
+      "11": 1,
+      "1": 65,
+      "3": 4,
+      "7": 2
+    }
+  },
+  "30": {
+    "count": 2796,
+    "knot determinant": {
+      "1": 2791,
+      "3": 5
+    }
+  },
+  "32": {
+    "count": 2552,
+    "knot determinant": {
+      "1": 2546,
+      "3": 6
+    }
+  },
+  "34": {
+    "count": 2375,
+    "knot determinant": {
+      "1": 2366,
+      "3": 9
+    }
+  },
+  "36": {
+    "count": 2142,
+    "knot determinant": {
+      "1": 2139,
+      "3": 3
+    }
+  },
+  "38": {
+    "count": 1900,
+    "knot determinant": {
+      "1": 1894,
+      "3": 6
+    }
+  },
+  "260": {
+    "count": 7,
+    "knot determinant": {
+      "1": 5,
+      "3": 1,
+      "7": 1
+    }
+  },
+  "140": {
+    "count": 65,
+    "knot determinant": {
+      "1": 55,
+      "3": 7,
+      "15": 1,
+      "5": 1,
+      "9": 1
+    }
+  },
+  "262": {
+    "count": 6,
+    "knot determinant": {
+      "1": 5,
+      "7": 1
+    }
+  },
+  "142": {
+    "count": 62,
+    "knot determinant": {
+      "1": 61,
+      "3": 1
+    }
+  },
+  "384": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "264": {
+    "count": 4,
+    "knot determinant": {
+      "1": 3,
+      "3": 1
+    }
+  },
+  "144": {
+    "count": 69,
+    "knot determinant": {
+      "1": 65,
+      "3": 3,
+      "5": 1
+    }
+  },
+  "420": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "266": {
+    "count": 3,
+    "knot determinant": {
+      "1": 2,
+      "9": 1
+    }
+  },
+  "146": {
+    "count": 57,
+    "knot determinant": {
+      "1": 54,
+      "3": 1,
+      "7": 2
+    }
+  },
+  "300": {
+    "count": 2,
+    "knot determinant": {
+      "1": 1,
+      "5": 1
+    }
+  },
+  "388": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "422": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "268": {
+    "count": 4,
+    "knot determinant": {"1": 4}
+  },
+  "148": {
+    "count": 63,
+    "knot determinant": {
+      "11": 1,
+      "1": 58,
+      "3": 3,
+      "17": 1
+    }
+  },
+  "544": {
+    "count": 1,
+    "knot determinant": {"3": 1}
+  },
+  "304": {
+    "count": 3,
+    "knot determinant": {
+      "1": 2,
+      "9": 1
+    }
+  },
+  "546": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "306": {
+    "count": 2,
+    "knot determinant": {"1": 2}
+  },
+  "308": {
+    "count": 2,
+    "knot determinant": {"1": 2}
+  },
+  "40": {
+    "count": 1739,
+    "knot determinant": {
+      "1": 1736,
+      "3": 3
+    }
+  },
+  "42": {
+    "count": 1535,
+    "knot determinant": {
+      "1": 1527,
+      "3": 7,
+      "5": 1
+    }
+  },
+  "44": {
+    "count": 1395,
+    "knot determinant": {
+      "1": 1388,
+      "3": 7
+    }
+  },
+  "46": {
+    "count": 1255,
+    "knot determinant": {
+      "1": 1247,
+      "3": 7,
+      "5": 1
+    }
+  },
+  "48": {
+    "count": 1236,
+    "knot determinant": {
+      "1": 1224,
+      "3": 10,
+      "5": 2
+    }
+  },
+  "390": {
+    "count": 2,
+    "knot determinant": {
+      "1": 1,
+      "5": 1
+    }
+  },
+  "270": {
+    "count": 4,
+    "knot determinant": {
+      "1": 3,
+      "3": 1
+    }
+  },
+  "150": {
+    "count": 51,
+    "knot determinant": {
+      "11": 1,
+      "1": 48,
+      "3": 1,
+      "7": 1
+    }
+  },
+  "272": {
+    "count": 2,
+    "knot determinant": {"1": 2}
+  },
+  "152": {
+    "count": 50,
+    "knot determinant": {
+      "1": 47,
+      "3": 3
+    }
+  },
+  "394": {
+    "count": 1,
+    "knot determinant": {"11": 1}
+  },
+  "154": {
+    "count": 48,
+    "knot determinant": {
+      "1": 42,
+      "3": 3,
+      "5": 1,
+      "7": 1,
+      "9": 1
+    }
+  },
+  "396": {
+    "count": 1,
+    "knot determinant": {"7": 1}
+  },
+  "276": {
+    "count": 5,
+    "knot determinant": {
+      "1": 4,
+      "3": 1
+    }
+  },
+  "156": {
+    "count": 41,
+    "knot determinant": {
+      "1": 40,
+      "3": 1
+    }
+  },
+  "278": {
+    "count": 3,
+    "knot determinant": {
+      "11": 1,
+      "1": 1,
+      "3": 1
+    }
+  },
+  "158": {
+    "count": 34,
+    "knot determinant": {
+      "1": 31,
+      "3": 2,
+      "5": 1
+    }
+  },
+  "312": {
+    "count": 2,
+    "knot determinant": {"1": 2}
+  },
+  "314": {
+    "count": 3,
+    "knot determinant": {"1": 3}
+  },
+  "316": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "318": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "50": {
+    "count": 1136,
+    "knot determinant": {
+      "1": 1131,
+      "3": 5
+    }
+  },
+  "52": {
+    "count": 1020,
+    "knot determinant": {
+      "1": 1011,
+      "3": 6,
+      "5": 3
+    }
+  },
+  "54": {
+    "count": 920,
+    "knot determinant": {
+      "1": 912,
+      "3": 7,
+      "7": 1
+    }
+  },
+  "56": {
+    "count": 856,
+    "knot determinant": {
+      "1": 845,
+      "3": 6,
+      "5": 3,
+      "7": 1,
+      "9": 1
+    }
+  },
+  "58": {
+    "count": 748,
+    "knot determinant": {
+      "1": 741,
+      "3": 6,
+      "9": 1
+    }
+  },
+  "280": {
+    "count": 3,
+    "knot determinant": {"1": 3}
+  },
+  "160": {
+    "count": 41,
+    "knot determinant": {
+      "1": 38,
+      "5": 2,
+      "73": 1
+    }
+  },
+  "282": {
+    "count": 3,
+    "knot determinant": {"1": 3}
+  },
+  "162": {
+    "count": 41,
+    "knot determinant": {
+      "1": 35,
+      "3": 4,
+      "5": 1,
+      "7": 1
+    }
+  },
+  "284": {
+    "count": 3,
+    "knot determinant": {"1": 3}
+  },
+  "164": {
+    "count": 41,
+    "knot determinant": {
+      "1": 39,
+      "23": 1,
+      "15": 1
+    }
+  },
+  "166": {
+    "count": 33,
+    "knot determinant": {
+      "1": 30,
+      "3": 3
+    }
+  },
+  "288": {
+    "count": 4,
+    "knot determinant": {
+      "11": 1,
+      "1": 2,
+      "3": 1
+    }
+  },
+  "200": {
+    "count": 15,
+    "knot determinant": {
+      "1": 13,
+      "3": 1,
+      "5": 1
+    }
+  },
+  "168": {
+    "count": 29,
+    "knot determinant": {
+      "1": 27,
+      "3": 2
+    }
+  },
+  "202": {
+    "count": 21,
+    "knot determinant": {
+      "1": 16,
+      "3": 3,
+      "5": 1,
+      "7": 1
+    }
+  },
+  "204": {
+    "count": 12,
+    "knot determinant": {"1": 12}
+  },
+  "206": {
+    "count": 13,
+    "knot determinant": {
+      "1": 12,
+      "7": 1
+    }
+  },
+  "60": {
+    "count": 741,
+    "knot determinant": {
+      "1": 735,
+      "3": 3,
+      "5": 1,
+      "7": 2
+    }
+  },
+  "208": {
+    "count": 12,
+    "knot determinant": {"1": 12}
+  },
+  "62": {
+    "count": 712,
+    "knot determinant": {
+      "1": 696,
+      "3": 13,
+      "5": 2,
+      "7": 1
+    }
+  },
+  "64": {
+    "count": 677,
+    "knot determinant": {
+      "1": 664,
+      "3": 11,
+      "5": 1,
+      "7": 1
+    }
+  },
+  "66": {
+    "count": 624,
+    "knot determinant": {
+      "1": 618,
+      "3": 5,
+      "5": 1
+    }
+  },
+  "68": {
+    "count": 556,
+    "knot determinant": {
+      "1": 546,
+      "3": 6,
+      "5": 3,
+      "7": 1
+    }
+  },
+  "290": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "170": {
+    "count": 28,
+    "knot determinant": {
+      "1": 26,
+      "3": 1,
+      "7": 1
+    }
+  },
+  "292": {
+    "count": 3,
+    "knot determinant": {"1": 3}
+  },
+  "172": {
+    "count": 37,
+    "knot determinant": {
+      "1": 32,
+      "3": 2,
+      "15": 1,
+      "5": 1,
+      "7": 1
+    }
+  },
+  "294": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "174": {
+    "count": 37,
+    "knot determinant": {
+      "1": 34,
+      "13": 1,
+      "3": 1,
+      "5": 1
+    }
+  },
+  "296": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "176": {
+    "count": 29,
+    "knot determinant": {
+      "1": 28,
+      "7": 1
+    }
+  },
+  "330": {
+    "count": 3,
+    "knot determinant": {"1": 3}
+  },
+  "210": {
+    "count": 15,
+    "knot determinant": {
+      "1": 14,
+      "3": 1
+    }
+  },
+  "298": {
+    "count": 4,
+    "knot determinant": {"1": 4}
+  },
+  "178": {
+    "count": 35,
+    "knot determinant": {
+      "1": 31,
+      "3": 4
+    }
+  },
+  "332": {
+    "count": 2,
+    "knot determinant": {"1": 2}
+  },
+  "212": {
+    "count": 16,
+    "knot determinant": {"1": 16}
+  },
+  "214": {
+    "count": 10,
+    "knot determinant": {
+      "1": 7,
+      "3": 1,
+      "15": 1,
+      "7": 1
+    }
+  },
+  "336": {
+    "count": 2,
+    "knot determinant": {"1": 2}
+  },
+  "216": {
+    "count": 8,
+    "knot determinant": {
+      "1": 7,
+      "9": 1
+    }
+  },
+  "338": {
+    "count": 1,
+    "knot determinant": {"0": 1}
+  },
+  "70": {
+    "count": 523,
+    "knot determinant": {
+      "1": 511,
+      "3": 8,
+      "5": 3,
+      "7": 1
+    }
+  },
+  "218": {
+    "count": 19,
+    "knot determinant": {
+      "1": 14,
+      "3": 1,
+      "5": 1,
+      "7": 3
+    }
+  },
+  "72": {
+    "count": 493,
+    "knot determinant": {
+      "1": 482,
+      "3": 7,
+      "5": 1,
+      "7": 2,
+      "9": 1
+    }
+  },
+  "74": {
+    "count": 440,
+    "knot determinant": {
+      "11": 1,
+      "1": 430,
+      "3": 6,
+      "5": 1,
+      "7": 2
+    }
+  },
+  "76": {
+    "count": 405,
+    "knot determinant": {
+      "1": 393,
+      "3": 8,
+      "5": 3,
+      "7": 1
+    }
+  },
+  "78": {
+    "count": 418,
+    "knot determinant": {
+      "1": 407,
+      "3": 6,
+      "5": 1,
+      "7": 4
+    }
+  },
+  "180": {
+    "count": 29,
+    "knot determinant": {
+      "1": 27,
+      "5": 1,
+      "9": 1
+    }
+  },
+  "182": {
+    "count": 27,
+    "knot determinant": {
+      "1": 23,
+      "57": 1,
+      "3": 1,
+      "5": 1,
+      "7": 1
+    }
+  },
+  "184": {
+    "count": 36,
+    "knot determinant": {
+      "1": 34,
+      "3": 2
+    }
+  },
+  "340": {
+    "count": 4,
+    "knot determinant": {
+      "1": 3,
+      "3": 1
+    }
+  },
+  "186": {
+    "count": 27,
+    "knot determinant": {
+      "1": 23,
+      "3": 1,
+      "5": 1,
+      "7": 2
+    }
+  },
+  "220": {
+    "count": 11,
+    "knot determinant": {
+      "1": 9,
+      "3": 2
+    }
+  },
+  "100": {
+    "count": 220,
+    "knot determinant": {
+      "1": 214,
+      "3": 2,
+      "5": 2,
+      "7": 2
+    }
+  },
+  "188": {
+    "count": 26,
+    "knot determinant": {
+      "1": 24,
+      "3": 1,
+      "5": 1
+    }
+  },
+  "342": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "222": {
+    "count": 6,
+    "knot determinant": {
+      "1": 4,
+      "3": 2
+    }
+  },
+  "102": {
+    "count": 190,
+    "knot determinant": {
+      "1": 187,
+      "3": 3
+    }
+  },
+  "344": {
+    "count": 3,
+    "knot determinant": {
+      "1": 2,
+      "3": 1
+    }
+  },
+  "224": {
+    "count": 16,
+    "knot determinant": {
+      "1": 15,
+      "3": 1
+    }
+  },
+  "104": {
+    "count": 167,
+    "knot determinant": {
+      "1": 161,
+      "3": 5,
+      "7": 1
+    }
+  },
+  "346": {
+    "count": 3,
+    "knot determinant": {"1": 3}
+  },
+  "226": {
+    "count": 9,
+    "knot determinant": {
+      "1": 8,
+      "3": 1
+    }
+  },
+  "468": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "106": {
+    "count": 175,
+    "knot determinant": {
+      "1": 168,
+      "3": 3,
+      "5": 4
+    }
+  },
+  "348": {
+    "count": 1,
+    "knot determinant": {"1": 1}
+  },
+  "80": {
+    "count": 335,
+    "knot determinant": {
+      "1": 323,
+      "3": 10,
+      "5": 1,
+      "7": 1
+    }
+  },
+  "228": {
+    "count": 9,
+    "knot determinant": {
+      "1": 8,
+      "5": 1
+    }
+  },
+  "108": {
+    "count": 131,
+    "knot determinant": {
+      "1": 123,
+      "3": 3,
+      "5": 1,
+      "7": 4
+    }
+  },
+  "504": {
+    "count": 1,
+    "knot determinant": {"5": 1}
+  },
+  "82": {
+    "count": 347,
+    "knot determinant": {
+      "1": 339,
+      "3": 6,
+      "7": 1,
+      "9": 1
+    }
+  },
+  "84": {
+    "count": 329,
+    "knot determinant": {
+      "11": 1,
+      "1": 316,
+      "3": 8,
+      "5": 1,
+      "7": 3
+    }
+  },
+  "86": {
+    "count": 276,
+    "knot determinant": {
+      "1": 267,
+      "3": 7,
+      "5": 1,
+      "7": 1
+    }
+  }
+}
