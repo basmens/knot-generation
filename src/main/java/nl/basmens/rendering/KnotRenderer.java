@@ -104,6 +104,9 @@ public class KnotRenderer {
   }
 
   private void displayKnotInfo(KnotGenerationPipeline pipeLine, Knot knot) {
+    //knot.startCalculatingTricolorability();
+    knot.startCalculatingKnotDeterminant();
+
     // View knot info
     noStroke();
     fill(255);
@@ -111,11 +114,11 @@ public class KnotRenderer {
     textAlign(LEFT, TOP);
     text("Displaying knot " + (knotBeingViewed + 1) + "/" + pipeLine.getKnots().size(),
         2078, 30);
-    textSize(35);
+    textSize(30);
     text(" - Length : " + knot.getLength(), 2078, 90);
     text(" - Intersections : " + knot.getIntersections().size(), 2078, 130);
-    text(" - is Tricolorable : " + knot.isTricolorable(), 2078, 170);
-    text(" - Knot Determinant : " + knot.getKnotDeterminant(), 2078, 210);
+    text(" - is Tricolorable : " + knot.getTricolorabilityState(), 2078, 170);
+    text(" - Knot Determinant : " + knot.getKnotDeterminantState(), 2078, 210);
   }
 
   // ===================================================================================================================

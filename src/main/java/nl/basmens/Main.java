@@ -33,7 +33,7 @@ public class Main extends PApplet {
   public static final boolean SAVE_RESULTS = false;
   public static final boolean MULTI_THREAD = false;
   private static final Tilesets TILESET = Tilesets.EXPANDED_UNWEIGHTED;
-  private int size = 6;
+  private int size = 300;
   private int imgRes = 7;
 
   private enum Tilesets {

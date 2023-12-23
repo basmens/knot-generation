@@ -10,10 +10,14 @@ public class Knot {
   private ArrayList<Intersection> intersections = new ArrayList<>();
   private int length;
 
-  private boolean isTricolorableCalculated = false;
-  private boolean isTricolorable;
+  private boolean hasAsignedSectionIds = false;
 
-  private double knotDeterminant = -1;
+  private boolean isTricolorable;
+  private boolean isCalculatingTricolorability = false;
+  private boolean isTricolorabilityCalculated = false;
+
+  // -2 = Not calculating // -1 = Calculating...
+  private double knotDeterminant = -2;
 
   // ===================================================================================================================
   // Constructor
@@ -30,11 +34,13 @@ public class Knot {
       length++;
       current = current.getNext();
     } while (current != firstConnection);
-
-    asignSectionIds();
   }
 
   private void asignSectionIds() {
+    if (hasAsignedSectionIds) {
+      return;
+    }
+
     Connection firstIntersectedConnection = getFirstConnection();
     while (!firstIntersectedConnection.isUnder() && firstIntersectedConnection != getFirstConnection().getPrev()) {
       firstIntersectedConnection = firstIntersectedConnection.getNext();
@@ -57,17 +63,24 @@ public class Knot {
 
       connection = connection.getNext();
     } while (connection != firstIntersectedConnection);
+
+    hasAsignedSectionIds = true;
   }
 
   // ===================================================================================================================
   // Invariants
   // ===================================================================================================================
 
-  private void calculateTricolorability() {
-    if (isTricolorableCalculated) {
-      return;
-    }
+  // Tricolorability
 
+  public void startCalculatingTricolorability() {
+    if (!isCalculatingTricolorability) {
+      isCalculatingTricolorability = true;
+      new Thread(this::calculateTricolorability).start();
+    }
+  }
+
+  private void calculateTricolorability() {
     Connection connection = getFirstConnection();
     while (!connection.isUnder() && connection != getFirstConnection().getPrev()) {
       connection = connection.getNext();
@@ -85,7 +98,16 @@ public class Knot {
       connection = connection.getNext();
     } while (connection != getFirstConnection());
 
-    isTricolorableCalculated = true;
+    isTricolorabilityCalculated = true;
+  }
+
+  // KnotDeterminant
+
+  public void startCalculatingKnotDeterminant() {
+    if (knotDeterminant == -2) {
+      knotDeterminant = -1;
+      new Thread(this::calculateKnotDeterminant).start();
+    }
   }
 
   private void calculateKnotDeterminant() {
@@ -93,6 +115,8 @@ public class Knot {
       knotDeterminant = 1;
       return;
     }
+
+    asignSectionIds();
 
     Matrix matrix = new Matrix(intersections.size() - 1, intersections.size() - 1);
 
@@ -109,7 +133,7 @@ public class Knot {
       }
     }
 
-    knotDeterminant = Math.abs(matrix.getDeterminant()); 
+    knotDeterminant = Math.abs(matrix.getDeterminant());
   }
 
   // ===================================================================================================================
@@ -129,16 +153,38 @@ public class Knot {
   }
 
   public boolean isTricolorable() {
-    if (!isTricolorableCalculated) {
-      calculateTricolorability();
-    }
     return isTricolorable;
   }
 
-  public double getKnotDeterminant() {
-    if (knotDeterminant == -1) {
-      calculateKnotDeterminant();
+  public boolean isTricolorabilityCalculated() {
+    return isTricolorabilityCalculated;
+  }
+
+  public String getTricolorabilityState() {
+    if (isTricolorabilityCalculated) {
+      return "" + isTricolorable;
+    } else if (isCalculatingTricolorability) {
+      return "Calculating...";
     }
+    return "Not Calculated";
+  }
+
+  public double getKnotDeterminant() {
     return knotDeterminant;
+  }
+
+  public boolean isKnotDeterminantCalculated() {
+    return knotDeterminant != -2 && knotDeterminant != -1;
+  }
+
+  public String getKnotDeterminantState() {
+    if (knotDeterminant >= 0) {
+      return "" + String.format("%.3f", knotDeterminant);
+    } else if (knotDeterminant == -1) {
+      return "Calculating...";
+    } else if (knotDeterminant == -2) {
+      return "Not Calculated";
+    }
+    return "" + knotDeterminant;
   }
 }
