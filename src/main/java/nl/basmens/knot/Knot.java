@@ -17,7 +17,7 @@ public class Knot {
   private boolean isTricolorabilityCalculated = false;
 
   // -2 = Not calculating // -1 = Calculating...
-  private double knotDeterminant = -2;
+  private int knotDeterminant = -2;
 
   // ===================================================================================================================
   // Constructor
@@ -133,7 +133,8 @@ public class Knot {
       }
     }
 
-    knotDeterminant = Math.abs(matrix.getDeterminant());
+    // round to get rid of precision loss
+    knotDeterminant = (int)Math.round(Math.abs(matrix.getDeterminant()));
   }
 
   // ===================================================================================================================
@@ -169,7 +170,7 @@ public class Knot {
     return "Not Calculated";
   }
 
-  public double getKnotDeterminant() {
+  public int getKnotDeterminant() {
     return knotDeterminant;
   }
 
@@ -179,7 +180,7 @@ public class Knot {
 
   public String getKnotDeterminantState() {
     if (knotDeterminant >= 0) {
-      return "" + String.format("%.3f", knotDeterminant);
+      return "" + knotDeterminant;
     } else if (knotDeterminant == -1) {
       return "Calculating...";
     } else if (knotDeterminant == -2) {

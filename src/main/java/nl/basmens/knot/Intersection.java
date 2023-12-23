@@ -4,8 +4,8 @@ public class Intersection {
   public final Connection under;
   public final Connection over;
 
-  protected int underSectionId1;
-  protected int underSectionId2;
+  protected int underSectionId1; // to previous
+  protected int underSectionId2; // to next
   protected int overSectionId;
 
   // ===================================================================================================================
