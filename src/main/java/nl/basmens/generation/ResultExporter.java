@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.concurrent.Future;
 
 import nl.basmens.Main;
 import nl.basmens.knot.Knot;
@@ -59,10 +58,10 @@ public final class ResultExporter {
 
       // Save calculations
       if (Main.SAVE_TRICOLORABILITY) {
-        incrementCounter(jsonComputeIfAbsant(lengthJson, "tricolorability"), k.isTricolorable());
+        incrementCounter(jsonComputeIfAbsant(lengthJson, "tricolorability"), "" + k.isTricolorable());
       }
       if (Main.SAVE_KNOT_DETERMINANT) {
-        incrementCounter(jsonComputeIfAbsant(lengthJson, "knot determinant"), k.getKnotDeterminant());
+        incrementCounter(jsonComputeIfAbsant(lengthJson, "knot determinant"), "" + k.getKnotDeterminant());
       }
     }
 
@@ -88,12 +87,7 @@ public final class ResultExporter {
     return result;
   }
 
-  private static void incrementCounter(JSONObject json, Future<?> future) {
-    try {
-      String keyTricol = future.get().toString();
-      json.setLong(keyTricol, json.getLong(keyTricol, 0) + 1);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+  private static void incrementCounter(JSONObject json, String key) {
+    json.setLong(key, json.getLong(key, 0) + 1);
   }
 }

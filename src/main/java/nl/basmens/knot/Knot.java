@@ -3,7 +3,6 @@ package nl.basmens.knot;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 import nl.basmens.utils.Matrix;
@@ -70,6 +69,7 @@ public class Knot {
   // ===================================================================================================================
   // Invariants
   // ===================================================================================================================
+
   // Tricolorability
   private boolean calculateTricolorability() {
     if (intersections.size() < 3) {
@@ -119,7 +119,7 @@ public class Knot {
     }
 
     // round to get rid of precision loss
-    return (int)Math.round(Math.abs(matrix.getDeterminant()));
+    return (int) Math.round(Math.abs(matrix.getDeterminant()));
   }
 
   // ===================================================================================================================
@@ -142,33 +142,43 @@ public class Knot {
     return tricolorabilityFuture != null && tricolorabilityFuture.isDone();
   }
 
-  public synchronized Future<Boolean> isTricolorable() {
+  public synchronized boolean isTricolorable() {
     if (tricolorabilityFuture == null) {
       tricolorabilityFuture = new FutureTask<>(this::calculateTricolorability);
       new Thread(tricolorabilityFuture::run).start();
     }
-    return tricolorabilityFuture;
+
+    try {
+      return tricolorabilityFuture.get();
+    } catch (Exception e) {
+      // Should be imposible to reach: the future is already done
+      e.printStackTrace();
+      return false;
+    }
   }
 
   public String getTricolorabilityState() {
     if (hasCalculatedTricolorability()) {
-      try {
-        return "" + isTricolorable().get();
-      } catch (Exception e) {
-        // Should be imposible to reach: the future is already done
-      }
+      return "" + isTricolorable();
     } else if (tricolorabilityFuture != null) {
       return "Calculating...";
     }
     return "Not Calculated";
   }
 
-  public Future<Integer> getKnotDeterminant() {
+  public int getKnotDeterminant() {
     if (knotDeterminantFuture == null) {
       knotDeterminantFuture = new FutureTask<>(this::calculateKnotDeterminant);
       new Thread(knotDeterminantFuture::run).start();
     }
-    return knotDeterminantFuture;
+
+    try {
+      return knotDeterminantFuture.get();
+    } catch (Exception e) {
+      // Should be imposible to reach: the future is already done
+      e.printStackTrace();
+      return 0;
+    }
   }
 
   public boolean hasCalculatedKnotDeterminant() {
@@ -177,11 +187,7 @@ public class Knot {
 
   public String getKnotDeterminantState() {
     if (hasCalculatedKnotDeterminant()) {
-      try {
-        return "" + String.format(Locale.UK, "%d", getKnotDeterminant().get());
-      } catch (Exception e) {
-        // Should be imposible to reach: the future is already done
-      }
+      return "" + String.format(Locale.UK, "%d", getKnotDeterminant());
     } else if (knotDeterminantFuture != null) {
       return "Calculating...";
     }

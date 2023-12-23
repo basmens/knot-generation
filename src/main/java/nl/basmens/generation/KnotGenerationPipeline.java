@@ -1,10 +1,7 @@
 package nl.basmens.generation;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -12,8 +9,6 @@ import nl.basmens.Main;
 import nl.basmens.generation.analyzers.GridAnalyzer;
 import nl.basmens.generation.generators.GridGenerator;
 import nl.basmens.knot.Knot;
-import processing.core.PApplet;
-import processing.data.JSONObject;
 
 public class KnotGenerationPipeline implements Runnable {
   public final Tileset tileset;
@@ -82,7 +77,7 @@ public class KnotGenerationPipeline implements Runnable {
     return analyzer;
   }
 
-  public ArrayList<Knot> getKnots() {
+  public List<Knot> getKnots() {
     return knots;
   }
 }
