@@ -50,10 +50,10 @@ public final class ResultExporter {
 
       // Start calculations
       if (Main.SAVE_TRICOLORABILITY) {
-        k.isTricolorable();
+        k.startCalcTricolorability();
       }
       if (Main.SAVE_KNOT_DETERMINANT) {
-        k.getKnotDeterminant();
+        k.startCalcKnotDeterminant();
       }
 
       // Save calculations

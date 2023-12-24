@@ -28,7 +28,7 @@ import processing.opengl.PGraphicsOpenGL;
 
 public class Main extends PApplet {
   public static final String RESOURCE_PATH;
-  public static final boolean SAVE_RESULTS = true;
+  public static final boolean SAVE_RESULTS = false;
   public static final boolean SAVE_TRICOLORABILITY = false;
   public static final boolean SAVE_KNOT_DETERMINANT = true;
   public static final boolean MULTI_THREAD = false;

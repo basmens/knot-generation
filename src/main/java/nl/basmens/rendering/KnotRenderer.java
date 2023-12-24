@@ -104,8 +104,8 @@ public class KnotRenderer {
   }
 
   private void displayKnotInfo(KnotGenerationPipeline pipeLine, Knot knot) {
-    // knot.isTricolorable();
-    knot.getKnotDeterminant();
+    // knot.startCalcTricolorability();
+    knot.startCalcKnotDeterminant();
 
     // View knot info
     noStroke();

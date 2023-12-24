@@ -142,10 +142,16 @@ public class Knot {
     return tricolorabilityFuture != null && tricolorabilityFuture.isDone();
   }
 
-  public synchronized boolean isTricolorable() {
+  public synchronized void startCalcTricolorability() {
     if (tricolorabilityFuture == null) {
       tricolorabilityFuture = new FutureTask<>(this::calculateTricolorability);
       new Thread(tricolorabilityFuture::run).start();
+    }
+  }
+
+  public synchronized boolean isTricolorable() {
+    if (tricolorabilityFuture == null) {
+      startCalcTricolorability();
     }
 
     try {
@@ -166,10 +172,16 @@ public class Knot {
     return "Not Calculated";
   }
 
-  public long getKnotDeterminant() {
+  public synchronized void startCalcKnotDeterminant() {
     if (knotDeterminantFuture == null) {
       knotDeterminantFuture = new FutureTask<>(this::calculateKnotDeterminant);
       new Thread(knotDeterminantFuture::run).start();
+    }
+  }
+
+  public long getKnotDeterminant() {
+    if (knotDeterminantFuture == null) {
+      startCalcKnotDeterminant();
     }
 
     try {
