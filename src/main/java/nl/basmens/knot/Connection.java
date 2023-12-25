@@ -2,7 +2,7 @@ package nl.basmens.knot;
 
 import nl.basmens.utils.Vector;
 
-public class Connection {
+public class Connection implements Comparable<Connection> {
   private Connection prev;
   private Connection next;
 
@@ -16,12 +16,16 @@ public class Connection {
   // ===================================================================================================================
   // Constructor
   // ===================================================================================================================
-
   public Connection(Vector pos, double dir) {
     this.pos = pos.add(0.5, 0.5);
 
     double twoPi = Math.PI * 2;
     this.dir = ((dir % twoPi) + twoPi) % twoPi;
+  }
+
+  public Connection(Connection copy) {
+    this.pos = copy.getPos();
+    this.dir = copy.getDir();
   }
 
   // ===================================================================================================================
@@ -127,20 +131,6 @@ public class Connection {
     return next;
   }
 
-  public Connection getPrevIntersected() {
-    if (prev.isIntersected()) {
-      return prev;
-    }
-    return prev.getPrevIntersected();
-  }
-
-  public Connection getNextIntersected() {
-    if (next.isIntersected()) {
-      return next;
-    }
-    return next.getNextIntersected();
-  }
-
   public boolean isIntersected() {
     return intersection != null;
   }
@@ -209,5 +199,10 @@ public class Connection {
       this.next = next;
       next.setPrev(this);
     }
+  }
+
+  @Override
+  public int compareTo(Connection c) {
+    return this.equals(c) ? 0 : (dir > c.getDir() ? 1 : 0);
   }
 }

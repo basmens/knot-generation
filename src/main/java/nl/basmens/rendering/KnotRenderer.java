@@ -127,9 +127,8 @@ public class KnotRenderer {
 
   private void displayKnot(Knot knot, double tileW, double tileH) {
     noFill();
-    strokeJoin(ROUND);
 
-    Connection connection = knot.getFirstConnection();
+    Connection connection = knot.getDrawableFirstConnection();
     do {
       if ((connection.isIntersected() && connection.isUnder())) {
         drawConnection(connection, tileW, tileH);
@@ -140,14 +139,14 @@ public class KnotRenderer {
       }
 
       connection = connection.getNext();
-    } while (connection != knot.getFirstConnection());
+    } while (connection != knot.getDrawableFirstConnection());
 
     if (doDebugMode) {
       do {
         drawDebug(connection, tileW, tileH);
 
         connection = connection.getNext();
-      } while (connection != knot.getFirstConnection());
+      } while (connection != knot.getDrawableFirstConnection());
     }
   }
 
