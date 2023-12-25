@@ -33,9 +33,24 @@ public class Matrix {
   // Functions
   // =================================================================================================================
 
-  private static void subtractRows(Matrix matrix, int minuendRow, int subtrahendRow, double multiplier) {
-    for (int i = 0; i < matrix.width(); i++) {
-      matrix.set(i, minuendRow, matrix.get(i, minuendRow) - matrix.get(i, subtrahendRow) * multiplier);
+  private static void subtractRows(Matrix matrix, int minuendRow, int subtrahendRow, double multiplier,
+      int startIndex) {
+    for (int i = startIndex; i < matrix.width(); i++) {
+      matrix.values[i][minuendRow] -= matrix.values[i][subtrahendRow] * multiplier;
+    }
+  }
+
+  public void resize(int newW, int newH) {
+    int oldW = width();
+    if (height() != newH) {
+      for (int i = 0; i < oldW; i++) {
+        values[i] = Arrays.copyOf(values[i], newH);
+      }
+    }
+
+    values = Arrays.copyOf(values, newW);
+    for (int i = oldW; i < newW; i++) {
+      values[i] = new double[newH];
     }
   }
 
@@ -67,23 +82,21 @@ public class Matrix {
     }
 
     Matrix matrix = this.copy();
-
     for (int i = 0; i < matrix.width() - 1; i++) {
       for (int j = i + 1; j < matrix.height(); j++) {
-        if (matrix.get(i, j) != 0) {
-          if (matrix.get(i, i) == 0) {
-            subtractRows(matrix, i, j, 1);
+        if (values[i][j] != 0) {
+          if (values[i][i] == 0) {
+            subtractRows(matrix, i, j, 1, i);
           }
-          subtractRows(matrix, j, i, matrix.get(i, j) / matrix.get(i, i));
+          subtractRows(matrix, j, i, matrix.get(i, j) / matrix.get(i, i), i + 1);
         }
       }
     }
 
-    double result = matrix.get(0, 0);
-    for (int i = 1; i < matrix.width(); i++) {
-      result *= matrix.get(i, i);
+    double result = 1;
+    for (int i = 0; i < matrix.width(); i++) {
+      result *= values[i][i];
     }
-
     return -result;
   }
 

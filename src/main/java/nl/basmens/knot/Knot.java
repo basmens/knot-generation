@@ -12,8 +12,10 @@ import nl.basmens.utils.Vector;
 
 public class Knot {
   // Unknot
-  private static final FutureTask<Boolean> FUTURE_UNKNOT_TRICOLORABILITY = new FutureTask<>(() ->{}, false);
-  private static final FutureTask<Long> FUTURE_UNKNOT_KNOT_DETERMINANT = new FutureTask<>(() ->{}, 1L);
+  private static final FutureTask<Boolean> FUTURE_UNKNOT_TRICOLORABILITY = new FutureTask<>(() -> {
+  }, false);
+  private static final FutureTask<Long> FUTURE_UNKNOT_KNOT_DETERMINANT = new FutureTask<>(() -> {
+  }, 1L);
   static {
     FUTURE_UNKNOT_TRICOLORABILITY.run();
     FUTURE_UNKNOT_KNOT_DETERMINANT.run();
@@ -22,9 +24,9 @@ public class Knot {
   // Reduced
   private Connection reducedFirstConnection;
   private ArrayList<Intersection> intersections = new ArrayList<>();
-  
+
   private boolean hasAsignedSectionIds;
-  
+
   // Drawable
   private Connection drawableFirstConnection;
   private int length;
@@ -132,7 +134,6 @@ public class Knot {
     hasAsignedSectionIds = true;
   }
 
-
   // ===================================================================================================================
   // Asign section id's
   // ===================================================================================================================
@@ -187,20 +188,14 @@ public class Knot {
   private long calculateKnotDeterminant() {
     asignSectionIds();
 
-    Matrix matrix = new Matrix(intersections.size() - 1, intersections.size() - 1);
-
+    Matrix matrix = new Matrix(intersections.size() + 1, intersections.size() - 1);
     for (int i = 0; i < intersections.size() - 1; i++) {
       Intersection intersection = intersections.get(i);
-      if (intersection.overSectionId < intersections.size() - 1) {
-        matrix.set(intersection.overSectionId, i, matrix.get(intersection.overSectionId, i) + 2);
-      }
-      if (intersection.underSectionId1 < intersections.size() - 1) {
-        matrix.set(intersection.underSectionId1, i, matrix.get(intersection.underSectionId1, i) - 1);
-      }
-      if (intersection.underSectionId2 < intersections.size() - 1) {
-        matrix.set(intersection.underSectionId2, i, matrix.get(intersection.underSectionId2, i) - 1);
-      }
+      matrix.set(intersection.overSectionId, i, matrix.get(intersection.overSectionId, i) + 2);
+      matrix.set(intersection.underSectionId1, i, matrix.get(intersection.underSectionId1, i) - 1);
+      matrix.set(intersection.underSectionId2, i, matrix.get(intersection.underSectionId2, i) - 1);
     }
+    matrix.resize(intersections.size() - 1, intersections.size() - 1);
 
     // round to get rid of precision loss
     return Math.round(Math.abs(matrix.getDeterminant()));
@@ -262,7 +257,8 @@ public class Knot {
   public synchronized void startCalcKnotDeterminant() {
     if (knotDeterminantFuture == null) {
       knotDeterminantFuture = new FutureTask<>(this::calculateKnotDeterminant);
-      new Thread(knotDeterminantFuture::run).start();
+      knotDeterminantFuture.run();
+      // new Thread(knotDeterminantFuture::run).start();
     }
   }
 
