@@ -17,7 +17,7 @@ public class Connection implements Comparable<Connection> {
   // Constructor
   // ===================================================================================================================
   public Connection(Vector pos, double dir) {
-    this.pos = pos.add(0.5, 0.5);
+    this.pos = pos;
 
     double twoPi = Math.PI * 2;
     this.dir = ((dir % twoPi) + twoPi) % twoPi;

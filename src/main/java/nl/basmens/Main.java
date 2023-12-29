@@ -25,12 +25,12 @@ public class Main extends PApplet {
   public static final String RESOURCE_PATH;
   public static final boolean SAVE_RESULTS = true;
   public static final boolean SAVE_TRICOLORABILITY = false;
-  public static final boolean SAVE_KNOT_DETERMINANT = true;
+  public static final boolean SAVE_KNOT_DETERMINANT = false;
   public static final boolean MULTI_THREAD = false;
-  private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
-  public static final boolean KEEP_DRAWABLE_KNOTS = false; // Preformance
+  private static final Tilesets TILESET = Tilesets.EXPANDED_UNWEIGHTED;
+  public static final boolean KEEP_DRAWABLE_KNOTS = true; // Preformance
 
-  public final KnotRenderer knotRenderer = new KnotRenderer(true, true, false);
+  public final KnotRenderer knotRenderer = new KnotRenderer(true, true, true);
   private int size = 20;
   private int imgRes = 7;
 

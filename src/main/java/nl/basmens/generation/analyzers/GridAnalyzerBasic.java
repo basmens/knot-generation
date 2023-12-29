@@ -25,7 +25,7 @@ public class GridAnalyzerBasic implements GridAnalyzer {
         if ((y == 0 || y == gridH - 1) && x % 2 == 0) {
           continue;
         }
-        horizontalConnections[x][y] = new IndexAnalyzerConnection(new Vector(x + 0.5D, y), 0, x, y);
+        horizontalConnections[x][y] = new IndexAnalyzerConnection(new Vector(x + 0.5D, y).add(0.5, 0.5), 0, x, y);
         allConnections.add(horizontalConnections[x][y]);
       }
     }
@@ -34,7 +34,7 @@ public class GridAnalyzerBasic implements GridAnalyzer {
         if ((x == 0 || x == gridW - 1) && y % 2 == 0) {
           continue;
         }
-        verticalConnections[x][y] = new IndexAnalyzerConnection(new Vector(x, y + 0.5D), Math.PI / 2, x, y);
+        verticalConnections[x][y] = new IndexAnalyzerConnection(new Vector(x, y + 0.5D).add(0.5, 0.5), Math.PI / 2, x, y);
         allConnections.add(verticalConnections[x][y]);
       }
     }
@@ -94,6 +94,7 @@ public class GridAnalyzerBasic implements GridAnalyzer {
       allConnections.remove(current);
       while (current.getNext().isIntersected()) {
         current = current.getNext();
+        current.setPos(current.getPos().add(0.5, 0.5));
 
         // If new intersection, queue remove. If not new, it is double and thus belongs
         // to the loop
