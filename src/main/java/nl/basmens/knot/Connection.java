@@ -116,7 +116,7 @@ public class Connection implements Comparable<Connection> {
   // ===================================================================================================================
 
   public Vector getPos() {
-    return pos;
+    return pos.copy();
   }
 
   public double getDir() {

@@ -40,20 +40,6 @@ public class Matrix {
     }
   }
 
-  public void resize(int newW, int newH) {
-    int oldW = width();
-    if (height() != newH) {
-      for (int i = 0; i < oldW; i++) {
-        values[i] = Arrays.copyOf(values[i], newH);
-      }
-    }
-
-    values = Arrays.copyOf(values, newW);
-    for (int i = oldW; i < newW; i++) {
-      values[i] = new double[newH];
-    }
-  }
-
   // =================================================================================================================
   // Getters
   // =================================================================================================================

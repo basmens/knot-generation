@@ -15,7 +15,6 @@ import static nl.benmens.processing.PAppletProxy.point;
 import static nl.benmens.processing.PAppletProxy.scale;
 import static nl.benmens.processing.PAppletProxy.stroke;
 import static nl.benmens.processing.PAppletProxy.strokeCap;
-import static nl.benmens.processing.PAppletProxy.strokeJoin;
 import static nl.benmens.processing.PAppletProxy.strokeWeight;
 import static nl.benmens.processing.PAppletProxy.text;
 import static nl.benmens.processing.PAppletProxy.textAlign;

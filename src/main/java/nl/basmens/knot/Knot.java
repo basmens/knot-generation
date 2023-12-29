@@ -186,19 +186,29 @@ public class Knot {
 
   // KnotDeterminant
   private long calculateKnotDeterminant() {
+    if (intersections.size() < 3) {
+      return 1;
+    }
+
     asignSectionIds();
 
-    Matrix matrix = new Matrix(intersections.size() + 1, intersections.size() - 1);
+    Matrix matrix = new Matrix(intersections.size() - 1, intersections.size() - 1);
+
     for (int i = 0; i < intersections.size() - 1; i++) {
       Intersection intersection = intersections.get(i);
-      matrix.set(intersection.overSectionId, i, matrix.get(intersection.overSectionId, i) + 2);
-      matrix.set(intersection.underSectionId1, i, matrix.get(intersection.underSectionId1, i) - 1);
-      matrix.set(intersection.underSectionId2, i, matrix.get(intersection.underSectionId2, i) - 1);
+      if (intersection.overSectionId < intersections.size() - 1) {
+        matrix.set(intersection.overSectionId, i, matrix.get(intersection.overSectionId, i) + 2);
+      }
+      if (intersection.underSectionId1 < intersections.size() - 1) {
+        matrix.set(intersection.underSectionId1, i, matrix.get(intersection.underSectionId1, i) - 1);
+      }
+      if (intersection.underSectionId2 < intersections.size() - 1) {
+        matrix.set(intersection.underSectionId2, i, matrix.get(intersection.underSectionId2, i) - 1);
+      }
     }
-    matrix.resize(intersections.size() - 1, intersections.size() - 1);
 
     // round to get rid of precision loss
-    return Math.round(Math.abs(matrix.getDeterminant()));
+    return (long)Math.round(Math.abs(matrix.getDeterminant()));
   }
 
   // ===================================================================================================================
