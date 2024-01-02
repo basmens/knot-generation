@@ -13,7 +13,7 @@ public class GridGeneratorBasic implements GridGenerator {
   public static final Tile tileEmpty;
   private static final Tile[] tileCurve = new Tile[4];
 
-  private final Random random = new Random();
+  private final Random random = Main.RANDOM_FACTORY.get();
   private final Tileset tileset;
 
   private int gridW;

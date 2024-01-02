@@ -5,6 +5,7 @@ import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.Locale;
+import java.util.Random;
 import java.util.function.Supplier;
 
 import nl.basmens.generation.KnotGenerationPipeline;
@@ -23,14 +24,16 @@ import processing.opengl.PGraphicsOpenGL;
 
 public class Main extends PApplet {
   public static final String RESOURCE_PATH;
-  public static final boolean SAVE_RESULTS = true;
+  public static final boolean SAVE_RESULTS = false;
   public static final boolean SAVE_TRICOLORABILITY = false;
   public static final boolean SAVE_KNOT_DETERMINANT = false;
   public static final boolean MULTI_THREAD = false;
   private static final Tilesets TILESET = Tilesets.EXPANDED_UNWEIGHTED;
   public static final boolean KEEP_DRAWABLE_KNOTS = true; // Preformance
+  // Used to set the seed; ignore warning if no seed is given
+  public static final Supplier<Random> RANDOM_FACTORY = () -> new Random(10);
 
-  public final KnotRenderer knotRenderer = new KnotRenderer(true, true, true);
+  public final KnotRenderer knotRenderer = new KnotRenderer(true, true, false);
   private int size = 20;
   private int imgRes = 7;
 

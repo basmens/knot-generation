@@ -3,12 +3,13 @@ package nl.basmens.generation;
 import java.util.ArrayList;
 import java.util.Random;
 
+import nl.basmens.Main;
 import nl.basmens.generation.analyzers.GridAnalyzer;
 import nl.basmens.knot.Connection;
 import nl.basmens.utils.Vector;
 
 public class IntersectedConnectionsFactory {
-  private static Random random = new Random();
+  private static Random random = Main.RANDOM_FACTORY.get();
   private ArrayList<ArrayList<Connection>> connectionsA = new ArrayList<>();
   private ArrayList<ArrayList<Connection>> connectionsB = new ArrayList<>();
 
