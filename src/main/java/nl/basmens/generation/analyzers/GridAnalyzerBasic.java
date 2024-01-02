@@ -20,21 +20,23 @@ public class GridAnalyzerBasic implements GridAnalyzer {
     IndexAnalyzerConnection[][] horizontalConnections = new IndexAnalyzerConnection[gridW - 1][gridH];
     IndexAnalyzerConnection[][] verticalConnections = new IndexAnalyzerConnection[gridW][gridH - 1];
     IndexedSet<IndexAnalyzerConnection> allConnections = new IndexedSet<>();
+    // Hor
     for (int x = 0; x < gridW - 1; x++) {
       for (int y = 0; y < gridH; y++) {
         if ((y == 0 || y == gridH - 1) && x % 2 == 0) {
           continue;
         }
-        horizontalConnections[x][y] = new IndexAnalyzerConnection(new Vector(x + 0.5D, y).add(0.5, 0.5), 0, x, y);
+        horizontalConnections[x][y] = new IndexAnalyzerConnection(new Vector(x + 1D, y + 0.5D), 0, x, y, 1);
         allConnections.add(horizontalConnections[x][y]);
       }
     }
+    // Vert
     for (int x = 0; x < gridW; x++) {
       for (int y = 0; y < gridH - 1; y++) {
         if ((x == 0 || x == gridW - 1) && y % 2 == 0) {
           continue;
         }
-        verticalConnections[x][y] = new IndexAnalyzerConnection(new Vector(x, y + 0.5D).add(0.5, 0.5), Math.PI / 2, x, y);
+        verticalConnections[x][y] = new IndexAnalyzerConnection(new Vector(x + 0.5D, y + 1D), Math.PI / 2, x, y, 2);
         allConnections.add(verticalConnections[x][y]);
       }
     }
@@ -58,7 +60,7 @@ public class GridAnalyzerBasic implements GridAnalyzer {
     Connection current = firstConnection;
     int x = ((IndexAnalyzerConnection) current).indexX;
     int y = ((IndexAnalyzerConnection) current).indexY;
-    int dir = (current.getPos().getX() % 1 > 0.1) ? 1 : 2; // If horizontal connection, then dir = right, else dir = down
+    int dir = ((IndexAnalyzerConnection) current).analyzerInitialDir;
 
     // Loop through the knot
     do {
@@ -140,11 +142,13 @@ public class GridAnalyzerBasic implements GridAnalyzer {
   private static class IndexAnalyzerConnection extends AnalyzerConnection {
     public final int indexX;
     public final int indexY;
+    public final int analyzerInitialDir;
 
-    public IndexAnalyzerConnection(Vector pos, double dir, int indexX, int indexY) {
+    public IndexAnalyzerConnection(Vector pos, double dir, int indexX, int indexY, int analyzerInitialDir) {
       super(pos, dir);
       this.indexX = indexX;
       this.indexY = indexY;
+      this.analyzerInitialDir = analyzerInitialDir;
     }
   }
 }
