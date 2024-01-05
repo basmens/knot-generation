@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Polynomial {
   private ArrayList<Monomial> monomials = new ArrayList<>();
-  private int index0Power = 0;
+  private int index0Power;
 
   // =================================================================================================================
   // Constructor
@@ -15,7 +15,7 @@ public class Polynomial {
 
   public Polynomial(Monomial... inputMonomials) {
     for (Monomial m : inputMonomials) {
-      if (m == null || m.getCoefficient() == 0) {
+      if (m == null || m.getNumerator() == 0) {
         continue;
       }
 
@@ -26,7 +26,7 @@ public class Polynomial {
   public Polynomial copy() {
     Polynomial result = new Polynomial();
     for (Monomial m : monomials) {
-      if (m == null || m.getCoefficient() == 0) {
+      if (m == null || m.getNumerator() == 0) {
         continue;
       }
 
@@ -41,7 +41,7 @@ public class Polynomial {
 
   public Polynomial add(Polynomial otherPolynomial) {
     for (Monomial m : otherPolynomial.monomials) {
-      if (m == null || m.getCoefficient() == 0) {
+      if (m == null || m.getNumerator() == 0) {
         continue;
       }
 
@@ -52,7 +52,7 @@ public class Polynomial {
 
   public Polynomial sub(Polynomial otherPolynomial) {
     for (Monomial m : otherPolynomial.monomials) {
-      if (m == null || m.getCoefficient() == 0) {
+      if (m == null || m.getNumerator() == 0) {
         continue;
       }
 
@@ -65,12 +65,12 @@ public class Polynomial {
     Polynomial result = new Polynomial();
 
     for (Monomial monomial1 : polynomial1.monomials) {
-      if (monomial1 == null || monomial1.getCoefficient() == 0) {
+      if (monomial1 == null || monomial1.getNumerator() == 0) {
         continue;
       }
 
       for (Monomial monomial2 : polynomial2.monomials) {
-        if (monomial2 == null || monomial2.getCoefficient() == 0) {
+        if (monomial2 == null || monomial2.getNumerator() == 0) {
           continue;
         }
 
@@ -86,12 +86,12 @@ public class Polynomial {
   public static Polynomial div(Polynomial polynomial1, Monomial monomial2) {
     Polynomial result = new Polynomial();
 
-    if (monomial2 == null || monomial2.getCoefficient() == 0) {
+    if (monomial2 == null || monomial2.getNumerator() == 0) {
       throw new IllegalArgumentException("ERROR: cannot divide by 0");
     }
 
     for (Monomial monomial1 : polynomial1.monomials) {
-      if (monomial1 == null || monomial1.getCoefficient() == 0) {
+      if (monomial1 == null || monomial1.getNumerator() == 0) {
         continue;
       }
 
@@ -112,7 +112,7 @@ public class Polynomial {
       return result;
     }
 
-    int iterationCount = polynomial1.getHighestPower().getPower() - polynomial1.getLowestPower().getPower() + 1;
+    int iterationCount = polynomial1.getHighestPower().getPower() - polynomial2.getHighestPower().getPower() + 1;
     Polynomial rest = polynomial1.copy();
 
     for (int i = 0; i < iterationCount; i++) {
@@ -159,7 +159,7 @@ public class Polynomial {
   public double getValue(double unknown) {
     double value = 0;
     for (Monomial m: monomials) {
-      if (m != null && m.getCoefficient() != 0) {
+      if (m != null && m.getNumerator() != 0) {
         value += m.getValue(unknown);
       }
     }
@@ -187,7 +187,7 @@ public class Polynomial {
   public int getMonomialCount() {
     int count = 0;
     for (Monomial m: monomials) {
-      if (m != null && m.getCoefficient() != 0) {
+      if (m != null && m.getNumerator() != 0) {
         count++;
       }
     }
@@ -197,7 +197,7 @@ public class Polynomial {
   public Monomial getLowestPower() {
     for (int i = 0; i < monomials.size(); i++) {
       Monomial monomial = monomials.get(i);
-      if (monomial != null && monomial.getCoefficient() != 0) {
+      if (monomial != null && monomial.getNumerator() != 0) {
         return monomial;
       }
     }
@@ -207,7 +207,7 @@ public class Polynomial {
   public Monomial getHighestPower() {
     for (int i = monomials.size() - 1; i >= 0; i--) {
       Monomial monomial = monomials.get(i);
-      if (monomial != null && monomial.getCoefficient() != 0) {
+      if (monomial != null && monomial.getNumerator() != 0) {
         return monomial;
       }
     }
@@ -222,7 +222,7 @@ public class Polynomial {
 
     StringBuilder stringBuilder = new StringBuilder();
     for (Monomial m : monomials) {
-      if (m == null || m.getCoefficient() == 0) {
+      if (m == null || m.getNumerator() == 0) {
         continue;
       }
 
