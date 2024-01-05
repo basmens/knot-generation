@@ -27,14 +27,15 @@ public class Main extends PApplet {
   public static final boolean SAVE_RESULTS = false;
   public static final boolean SAVE_TRICOLORABILITY = false;
   public static final boolean SAVE_KNOT_DETERMINANT = false;
+  public static final boolean SAVE_ALEXANDER_POLYNOMIAL = false;
   public static final boolean MULTI_THREAD = false;
   private static final Tilesets TILESET = Tilesets.EXPANDED_UNWEIGHTED;
   public static final boolean KEEP_DRAWABLE_KNOTS = true; // Preformance
   // Used to set the seed; ignore warning if no seed is given
   public static final Supplier<Random> RANDOM_FACTORY = () -> new Random(10);
 
-  public final KnotRenderer knotRenderer = new KnotRenderer(true, true, false);
-  private int size = 20;
+  public final KnotRenderer knotRenderer = new KnotRenderer(true, true, true);
+  private int size = 6;
   private int imgRes = 7;
 
   private enum Tilesets {

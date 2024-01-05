@@ -8,6 +8,9 @@ import java.util.concurrent.FutureTask;
 
 import nl.basmens.Main;
 import nl.basmens.utils.Matrix;
+import nl.basmens.utils.Monomial;
+import nl.basmens.utils.Polynomial;
+import nl.basmens.utils.PolynomialMatrix;
 import nl.basmens.utils.Vector;
 
 public class Knot {
@@ -16,9 +19,12 @@ public class Knot {
   }, false);
   private static final FutureTask<Long> FUTURE_UNKNOT_KNOT_DETERMINANT = new FutureTask<>(() -> {
   }, 1L);
+  private static final FutureTask<Polynomial> FUTURE_UNKNOT_ALEXANDER_POLYNOMIAL = new FutureTask<>(() -> {
+  }, new Polynomial(new Monomial(1, 0)));
   static {
     FUTURE_UNKNOT_TRICOLORABILITY.run();
     FUTURE_UNKNOT_KNOT_DETERMINANT.run();
+    FUTURE_UNKNOT_ALEXANDER_POLYNOMIAL.run();
   }
 
   // Reduced
@@ -26,6 +32,7 @@ public class Knot {
   private ArrayList<Intersection> intersections = new ArrayList<>();
 
   private boolean hasAsignedSectionIds;
+  private boolean hasAsignedAreaIds;
 
   // Drawable
   private Connection drawableFirstConnection;
@@ -34,6 +41,7 @@ public class Knot {
   // Invariants
   private FutureTask<Boolean> tricolorabilityFuture;
   private FutureTask<Long> knotDeterminantFuture;
+  private FutureTask<Polynomial> alexanderPolynomialFuture;
 
   // ===================================================================================================================
   // Constructor
@@ -130,33 +138,130 @@ public class Knot {
 
     tricolorabilityFuture = FUTURE_UNKNOT_TRICOLORABILITY;
     knotDeterminantFuture = FUTURE_UNKNOT_KNOT_DETERMINANT;
+    alexanderPolynomialFuture = FUTURE_UNKNOT_ALEXANDER_POLYNOMIAL;
 
     hasAsignedSectionIds = true;
+    hasAsignedAreaIds = true;
   }
 
   // ===================================================================================================================
   // Asign section id's
   // ===================================================================================================================
+
   private void asignSectionIds() {
     if (hasAsignedSectionIds) {
       return;
     }
 
-    int currentSectionid = 0;
+    int currentSectionId = 0;
     Connection connection = reducedFirstConnection;
     do {
       if (connection.isUnder()) {
-        connection.getIntersection().underSectionId1 = currentSectionid;
-        currentSectionid = (currentSectionid + 1) % intersections.size();
-        connection.getIntersection().underSectionId2 = currentSectionid;
+        connection.getIntersection().underSectionId1 = currentSectionId;
+        currentSectionId = (currentSectionId + 1) % intersections.size();
+        connection.getIntersection().underSectionId2 = currentSectionId;
       } else {
-        connection.getIntersection().overSectionId = currentSectionid;
+        connection.getIntersection().overSectionId = currentSectionId;
       }
 
       connection = connection.getNext();
     } while (connection != reducedFirstConnection);
 
     hasAsignedSectionIds = true;
+  }
+
+  // ===================================================================================================================
+  // Asign area id's
+  // ===================================================================================================================
+  private void asignAreaIds() {
+    if (hasAsignedAreaIds) {
+      return;
+    }
+
+    int currentAreaId = 0;
+
+    for (Intersection intersection : intersections) {
+      for (int i = 0; i < 4; i++) {
+        if (intersection.areaIds[i] == -1) {
+          intersection.areaIds[i] = currentAreaId;
+          spreadAreaId(currentAreaId, intersection, i);
+          currentAreaId++;
+        }
+      }
+    }
+    hasAsignedAreaIds = true;
+  }
+
+  private void spreadAreaId(int areaId, Intersection prevIntersection, int prevAreaIdIndex) {
+    Connection nextConnection;
+    boolean isBackwards;
+
+    double twoPi = Math.PI * 2;
+    boolean isUnderAngleLeft = ((prevIntersection.under.getDir() - prevIntersection.over.getDir()) % twoPi + twoPi)
+        % twoPi < Math.PI;
+
+    // find connection to continue on
+    switch (prevAreaIdIndex) {
+      case 0:
+        nextConnection = prevIntersection.over.getNext();
+        isBackwards = false;
+        break;
+      case 1:
+        isBackwards = isUnderAngleLeft;
+        if (isUnderAngleLeft) {
+          nextConnection = prevIntersection.under.getPrev();
+        } else {
+          nextConnection = prevIntersection.under.getNext();
+        }
+        break;
+      case 2:
+        nextConnection = prevIntersection.over.getPrev();
+        isBackwards = true;
+        break;
+
+      default:
+        isBackwards = !isUnderAngleLeft;
+        if (isUnderAngleLeft) {
+          nextConnection = prevIntersection.under.getNext();
+        } else {
+          nextConnection = prevIntersection.under.getPrev();
+        }
+        break;
+    }
+
+    Intersection nextIntersection = nextConnection.getIntersection();
+
+    isUnderAngleLeft = ((nextIntersection.under.getDir() - nextIntersection.over.getDir()) % twoPi + twoPi)
+        % twoPi < Math.PI;
+
+    int nextAreaIdIndex;
+    // find areaIdIndex based on where the intersection got entered
+    if (nextConnection == nextIntersection.over) {
+      if (isBackwards) {
+        nextAreaIdIndex = 1;
+      } else {
+        nextAreaIdIndex = 3;
+      }
+    } else {
+      if (isBackwards) {
+        if (isUnderAngleLeft) {
+          nextAreaIdIndex = 0;
+        } else {
+          nextAreaIdIndex = 2;
+        }
+      } else {
+        if (isUnderAngleLeft) {
+          nextAreaIdIndex = 2;
+        } else {
+          nextAreaIdIndex = 0;
+        }
+      }
+    }
+
+    if (nextIntersection.areaIds[nextAreaIdIndex] == -1) {
+      nextIntersection.areaIds[nextAreaIdIndex] = areaId;
+      spreadAreaId(areaId, nextIntersection, nextAreaIdIndex);
+    }
   }
 
   // ===================================================================================================================
@@ -208,7 +313,48 @@ public class Knot {
     }
 
     // round to get rid of precision loss
-    return (long)Math.round(Math.abs(matrix.getDeterminant()));
+    return Math.round(Math.abs(matrix.getDeterminant()));
+  }
+
+  // AlexanderPolynomial
+  private Polynomial calculateAlexanderPolynomial() {
+    if (intersections.size() < 3) {
+      return new Polynomial(new Monomial(1, 0));
+    }
+
+    asignAreaIds();
+
+    PolynomialMatrix matrix = new PolynomialMatrix(intersections.size(), intersections.size());
+
+    for (int i = 0; i < intersections.size(); i++) {
+      Intersection intersection = intersections.get(i);
+      for (int j = 0; j < 4; j++) {
+        if (intersection.areaIds[j] < 2) {
+          continue;
+        }
+
+        // / / | / /
+        // / t |-1 /
+        // >------->
+        // /-t | 1 /
+        // / / | / /
+        matrix.get(intersection.areaIds[j] - 2, i).add(switch (j) {
+          case 0:
+            yield new Polynomial(new Monomial(1, 0));
+          case 1:
+            yield new Polynomial(new Monomial(-1, 0));
+          case 2:
+            yield new Polynomial(new Monomial(1, 1));
+          default:
+            yield new Polynomial(new Monomial(-1, 1));
+        });
+      }
+    }
+
+    Polynomial determinant = matrix.getDeterminant();
+    Monomial smallestTerm = determinant.getLowestPower();
+    determinant = Polynomial.div(determinant, new Monomial((long)Math.signum(smallestTerm.getCoefficient()), smallestTerm.getPower()));
+    return determinant;
   }
 
   // ===================================================================================================================
@@ -250,8 +396,8 @@ public class Knot {
       return tricolorabilityFuture.get();
     } catch (Exception e) {
       // Should be imposible to reach: the future is already done
-      e.printStackTrace();
-      return false;
+      Thread.currentThread().interrupt();
+      throw new IllegalStateException();
     }
   }
 
@@ -264,11 +410,14 @@ public class Knot {
     return "Not Calculated";
   }
 
+  public boolean hasCalculatedKnotDeterminant() {
+    return knotDeterminantFuture != null && knotDeterminantFuture.isDone();
+  }
+
   public synchronized void startCalcKnotDeterminant() {
     if (knotDeterminantFuture == null) {
       knotDeterminantFuture = new FutureTask<>(this::calculateKnotDeterminant);
       knotDeterminantFuture.run();
-      // new Thread(knotDeterminantFuture::run).start();
     }
   }
 
@@ -281,18 +430,48 @@ public class Knot {
       return knotDeterminantFuture.get();
     } catch (Exception e) {
       // Should be imposible to reach: the future is already done
-      e.printStackTrace();
-      return 0;
+      Thread.currentThread().interrupt();
+      throw new IllegalStateException();
     }
-  }
-
-  public boolean hasCalculatedKnotDeterminant() {
-    return knotDeterminantFuture != null && knotDeterminantFuture.isDone();
   }
 
   public String getKnotDeterminantState() {
     if (hasCalculatedKnotDeterminant()) {
       return "" + String.format(Locale.UK, "%d", getKnotDeterminant());
+    } else if (knotDeterminantFuture != null) {
+      return "Calculating...";
+    }
+    return "Not Calculated";
+  }
+
+  public boolean hasCalculatedAlexanderPolynomial() {
+    return alexanderPolynomialFuture != null && alexanderPolynomialFuture.isDone();
+  }
+
+  public synchronized void startCalcAlexanderPolynomial() {
+    if (alexanderPolynomialFuture == null) {
+      alexanderPolynomialFuture = new FutureTask<>(this::calculateAlexanderPolynomial);
+      alexanderPolynomialFuture.run();
+    }
+  }
+
+  public Polynomial getAlexanderPolynomial() {
+    if (alexanderPolynomialFuture == null) {
+      startCalcAlexanderPolynomial();
+    }
+
+    try {
+      return alexanderPolynomialFuture.get();
+    } catch (Exception e) {
+      // Should be imposible to reach: the future is already done
+      Thread.currentThread().interrupt();
+      throw new IllegalStateException();
+    }
+  }
+
+  public String getAlexanderPolynomialState() {
+    if (hasCalculatedAlexanderPolynomial()) {
+      return getAlexanderPolynomial().toString();
     } else if (knotDeterminantFuture != null) {
       return "Calculating...";
     }

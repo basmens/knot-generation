@@ -41,33 +41,43 @@ public final class ResultExporter {
     exporters.forEach((String k, ResultExporter v) -> v.flush());
   }
 
-  public synchronized void save(Iterable<Knot> knots) {
+  public void save(Iterable<Knot> knots) {
+    // Start calculations
     for (Knot k : knots) {
-      // Increment length counter
-      String keyLength = Integer.toString(k.getLength());
-      JSONObject lengthJson = jsonComputeIfAbsant(json, keyLength);
-      lengthJson.setLong("count", lengthJson.getLong("count", 0) + 1);
-
-      // Start calculations
       if (Main.SAVE_TRICOLORABILITY) {
         k.startCalcTricolorability();
       }
       if (Main.SAVE_KNOT_DETERMINANT) {
         k.startCalcKnotDeterminant();
       }
-
-      // Save calculations
-      if (Main.SAVE_TRICOLORABILITY) {
-        incrementCounter(jsonComputeIfAbsant(lengthJson, "tricolorability"), "" + k.isTricolorable());
-      }
-      if (Main.SAVE_KNOT_DETERMINANT) {
-        incrementCounter(jsonComputeIfAbsant(lengthJson, "knot determinant"), "" + k.getKnotDeterminant());
+      if (Main.SAVE_ALEXANDER_POLYNOMIAL) {
+        k.startCalcAlexanderPolynomial();
       }
     }
 
-    savesSinceLastFlush++;
-    if (savesSinceLastFlush > 5) {
-      flush();
+    // Update Json and increment counter
+    synchronized (this) {
+      for (Knot k : knots) {
+        // Increment length counter
+        JSONObject lengthJson = jsonComputeIfAbsant(json, Integer.toString(k.getLength()));
+        incrementCounter(lengthJson, "count");
+
+        // Save calculations
+        if (Main.SAVE_TRICOLORABILITY) {
+          incrementCounter(jsonComputeIfAbsant(lengthJson, "tricolorability"), "" + k.isTricolorable());
+        }
+        if (Main.SAVE_KNOT_DETERMINANT) {
+          incrementCounter(jsonComputeIfAbsant(lengthJson, "knot determinant"), "" + k.getKnotDeterminant());
+        }
+        if (Main.SAVE_ALEXANDER_POLYNOMIAL) {
+          incrementCounter(jsonComputeIfAbsant(lengthJson, "alexander polynomial"), "" + k.getAlexanderPolynomial());
+        }
+      }
+
+      savesSinceLastFlush++;
+      if (savesSinceLastFlush > 5) {
+        flush();
+      }
     }
   }
 

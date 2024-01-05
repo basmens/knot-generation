@@ -123,6 +123,11 @@ public class Connection implements Comparable<Connection> {
     return dir;
   }
 
+  public double getBackwardsDir() {
+    double twoPi = Math.PI * 2;
+    return (((dir - Math.PI) % twoPi) + twoPi) % twoPi;
+  }
+
   public Connection getPrev() {
     return prev;
   }

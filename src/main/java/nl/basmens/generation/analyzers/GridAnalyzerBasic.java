@@ -25,7 +25,7 @@ public class GridAnalyzerBasic implements GridAnalyzer {
         if ((y == 0 || y == gridH - 1) && x % 2 == 0) {
           continue;
         }
-        horizontalConnections[x][y] = new IndexAnalyzerConnection(new Vector(x + 0.5D, y).add(0.5, 0.5), 0, x, y);
+        horizontalConnections[x][y] = new IndexAnalyzerConnection(new Vector(x + 0.5, y).add(0.5, 0.5), 0, x, y);
         allConnections.add(horizontalConnections[x][y]);
       }
     }

@@ -1,22 +1,27 @@
 package nl.basmens.utils;
 
-public class Matrix {
-  private double[][] values;
+public class PolynomialMatrix {
+  private Polynomial[][] polynomials;
 
   // =================================================================================================================
   // Constructor
   // =================================================================================================================
 
-  public Matrix(int width, int height) {
-    values = new double[width][height];
+  public PolynomialMatrix(int width, int height) {
+    polynomials = new Polynomial[width][height];
+    for (int i = 0; i < width(); i++) {
+      for (int j = 0; j < height; j++) {
+        polynomials[i][j] = new Polynomial();
+      }
+    }
   }
 
-  public Matrix copy() {
-    Matrix result = new Matrix(0, 0);
+  public PolynomialMatrix copy() {
+    PolynomialMatrix result = new PolynomialMatrix(0, 0);
 
-    result.values = new double[width()][];
+    result.polynomials = new Polynomial[width()][];
     for (int i = 0; i < width(); i++) {
-      result.values[i] = values[i].clone();
+      result.polynomials[i] = polynomials[i].clone();
     }
 
     return result;
@@ -30,7 +35,7 @@ public class Matrix {
       stringBuilder.append(",\n[");
 
       for (int c = 0; c < width(); c++) {
-        String p = String.valueOf(get(c, r));
+        String p = get(c, r).toString();
 
         if (p.length() == 1) {
           stringBuilder.append(" ");
@@ -51,67 +56,77 @@ public class Matrix {
   // Functions
   // =================================================================================================================
 
-  private static void subtractRows(Matrix matrix, int minuendRow, int subtrahendRow, double multiplier) {
-    for (int i = 0; i < matrix.height(); i++) {
-      matrix.set(minuendRow, i, matrix.get(minuendRow, i) - matrix.get(subtrahendRow, i) * multiplier);
+  private void subtractRows(int minuendRow, int subtrahendRow, Polynomial multiplier) {
+    for (int i = 0; i < width(); i++) {
+      set(i, minuendRow, get(i, minuendRow).sub(Polynomial.mult(get(i, subtrahendRow), multiplier)));
     }
   }
 
-  // R1 * A2/A1
+  private void multiplyRow(int row, Polynomial multiplier) {
+    for (int i = 0; i < width(); i++) {
+      set(i, row, Polynomial.mult(get(i, row), multiplier));
+    }
+  }
 
   // =================================================================================================================
   // Getters
   // =================================================================================================================
 
-  public double get(int column, int row) {
-    return values[column][row];
+  public Polynomial get(int column, int row) {
+    return polynomials[column][row];
   }
 
   public int width() {
-    return values.length;
+    return polynomials.length;
   }
 
   public int height() {
     if (width() == 0) {
       return 0;
     }
-    return values[0].length;
+    return polynomials[0].length;
   }
 
-  public double getDeterminant() {
+  public Polynomial getDeterminant() {
     if (width() != height()) {
       throw new IllegalArgumentException("ERROR: cannot calculate determinant, width and height are not the same");
     }
     if (width() == 0) {
-      return 0;
+      return new Polynomial();
     }
 
-    Matrix matrix = this.copy();
+    PolynomialMatrix matrix = this.copy();
+    Polynomial finalDivisor = new Polynomial(new Monomial(1, 0));
 
     for (int i = 0; i < matrix.width() - 1; i++) {
-      for (int j = i + 1; j < matrix.width(); j++) {
-        if (matrix.get(j, i) != 0) {
-          if (matrix.get(i, i) == 0) {
-            subtractRows(matrix, i, j, 1);
+      for (int j = i + 1; j < matrix.height(); j++) {
+        if (!matrix.get(i, j).isZero()) {
+          if (matrix.get(i, i).isZero()) {
+            matrix.subtractRows(i, j, new Polynomial(new Monomial(1, 0)));
+            matrix.subtractRows(j, i, new Polynomial(new Monomial(-1, 0)));
+          } else {
+            Polynomial multiplier = matrix.get(i, j);
+            matrix.multiplyRow(j, matrix.get(i, i));
+            matrix.subtractRows(j, i, multiplier);
+            finalDivisor = Polynomial.mult(finalDivisor, matrix.get(i, i));
           }
-          subtractRows(matrix, j, i, matrix.get(j, i) / matrix.get(i, i));
         }
       }
     }
 
-    double result = matrix.get(0, 0);
+    Polynomial result = matrix.get(0, 0);
     for (int i = 1; i < matrix.width(); i++) {
-      result *= matrix.get(i, i);
+      result = Polynomial.mult(result, matrix.get(i, i));
     }
 
-    return -result;
+    return Polynomial.div(result, finalDivisor);
   }
 
   // =================================================================================================================
   // Setters
   // =================================================================================================================
 
-  public void set(int column, int row, double value) {
-    values[column][row] = value;
+  public void set(int column, int row, Polynomial polynomial) {
+    polynomials[column][row] = polynomial;
   }
 }

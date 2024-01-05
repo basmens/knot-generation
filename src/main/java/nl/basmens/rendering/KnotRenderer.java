@@ -20,6 +20,8 @@ import static nl.benmens.processing.PAppletProxy.text;
 import static nl.benmens.processing.PAppletProxy.textAlign;
 import static nl.benmens.processing.PAppletProxy.textSize;
 import static nl.benmens.processing.PAppletProxy.translate;
+import static processing.core.PConstants.BASELINE;
+import static processing.core.PConstants.CENTER;
 import static processing.core.PConstants.CORNER;
 import static processing.core.PConstants.LEFT;
 import static processing.core.PConstants.ROUND;
@@ -28,6 +30,7 @@ import static processing.core.PConstants.TOP;
 
 import nl.basmens.generation.KnotGenerationPipeline;
 import nl.basmens.knot.Connection;
+import nl.basmens.knot.Intersection;
 import nl.basmens.knot.Knot;
 import nl.basmens.utils.Vector;
 
@@ -44,9 +47,9 @@ public class KnotRenderer {
   private float lineWidth = 60;
   private float strokeWidth = 40;
 
-  private int debugPrimairyColor = color(255, 190, 20, 200);
-  private int debugSecondairyColor = color(20, 50, 190, 200);
-  private int debugTertairyColor = color(190, 20, 50, 200);
+  private int debugPrimairyColor = color(50, 190, 20, 230);
+  private int debugSecondairyColor = color(20, 50, 190, 230);
+  private int debugTertairyColor = color(190, 20, 50, 230);
 
   private int knotBeingViewed = 0;
 
@@ -105,6 +108,7 @@ public class KnotRenderer {
   private void displayKnotInfo(KnotGenerationPipeline pipeLine, Knot knot) {
     // knot.startCalcTricolorability();
     knot.startCalcKnotDeterminant();
+    knot.startCalcAlexanderPolynomial();
 
     // View knot info
     noStroke();
@@ -118,6 +122,7 @@ public class KnotRenderer {
     text(" - Intersections : " + knot.getIntersections().size(), 2078, 130);
     text(" - is Tricolorable : " + knot.getTricolorabilityState(), 2078, 170);
     text(" - Knot Determinant : " + knot.getKnotDeterminantState(), 2078, 210);
+    text(" - Alexander Polynomial : " + knot.getAlexanderPolynomialState(), 2078, 250);
   }
 
   // ===================================================================================================================
@@ -146,6 +151,10 @@ public class KnotRenderer {
 
         connection = connection.getNext();
       } while (connection != knot.getDrawableFirstConnection());
+
+      for (Intersection i : knot.getIntersections()) {
+        drawAreaDebug(i, tileW, tileH);
+      }
     }
   }
 
@@ -262,6 +271,50 @@ public class KnotRenderer {
       stroke(debugTertairyColor);
     }
     point((float) pos.getX(), (float) pos.getY());
+  }
+
+  private void drawAreaDebug(Intersection intersection, double tileW, double tileH) {
+    Vector pos = intersection.over.getPos().copy().mult(tileW, tileH);
+    Vector textPos;
+    for (int i = 0; i < 4; i++) {
+      int areaId = intersection.getAreaId(i);
+
+      double twoPi = Math.PI * 2;
+      double underAngleLeft = ((intersection.under.getDir() - intersection.over.getDir()) % twoPi + twoPi)
+              % twoPi < Math.PI ? intersection.under.getDir() : intersection.under.getBackwardsDir();
+
+      switch (i) {
+        case 0:
+          textPos = Vector.fromAngle(getAvarageAngle(intersection.over.getDir(), underAngleLeft))
+              .mult(35).add(pos);
+          break;
+        case 1:
+          textPos = Vector.fromAngle(getAvarageAngle(intersection.over.getDir(), underAngleLeft + Math.PI))
+              .mult(35).add(pos);
+          break;
+        case 2:
+          textPos = Vector
+              .fromAngle(getAvarageAngle(intersection.over.getBackwardsDir(), underAngleLeft + Math.PI))
+              .mult(35).add(pos);
+          break;
+        case 3:
+          textPos = Vector.fromAngle(getAvarageAngle(intersection.over.getBackwardsDir(), underAngleLeft))
+              .mult(35).add(pos);
+          break;
+
+        default:
+          throw new IllegalStateException();
+      }
+
+      textAlign(CENTER, BASELINE);
+      textSize(35);
+      fill(debugPrimairyColor);
+      text(areaId, (float) textPos.getX(), (float) textPos.getY());
+    }
+  }
+
+  private double getAvarageAngle(double angle1, double angle2) {
+    return Vector.fromAngle(angle1).add(Vector.fromAngle(angle2)).getAngle();
   }
 
   // ===================================================================================================================
