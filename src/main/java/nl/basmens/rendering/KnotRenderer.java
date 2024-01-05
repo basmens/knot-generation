@@ -122,7 +122,9 @@ public class KnotRenderer {
     text(" - Intersections : " + knot.getIntersections().size(), 2078, 130);
     text(" - is Tricolorable : " + knot.getTricolorabilityState(), 2078, 170);
     text(" - Knot Determinant : " + knot.getKnotDeterminantState(), 2078, 210);
-    text(" - Alexander Polynomial : " + knot.getAlexanderPolynomialState(), 2078, 250);
+    text(" - Alexander Polynomial", 2078, 250);
+    text("   " + knot.getAlexanderPolynomialState(), 2078, 290);
+    text("   " + Math.abs(knot.getAlexanderPolynomial().getValue(-1)), 2078, 330);
   }
 
   // ===================================================================================================================
@@ -281,7 +283,7 @@ public class KnotRenderer {
 
       double twoPi = Math.PI * 2;
       double underAngleLeft = ((intersection.under.getDir() - intersection.over.getDir()) % twoPi + twoPi)
-              % twoPi < Math.PI ? intersection.under.getDir() : intersection.under.getBackwardsDir();
+          % twoPi < Math.PI ? intersection.under.getDir() : intersection.under.getBackwardsDir();
 
       switch (i) {
         case 0:

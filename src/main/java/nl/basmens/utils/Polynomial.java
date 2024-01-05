@@ -156,6 +156,16 @@ public class Polynomial {
   // Getters
   // =================================================================================================================
 
+  public double getValue(double unknown) {
+    double value = 0;
+    for (Monomial m: monomials) {
+      if (m != null && m.getCoefficient() != 0) {
+        value += m.getValue(unknown);
+      }
+    }
+    return value;
+  }
+
   private Monomial getMonomial(int power) {
     ensureCapacity(power);
 
