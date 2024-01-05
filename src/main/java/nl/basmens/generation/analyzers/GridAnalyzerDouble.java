@@ -24,7 +24,7 @@ public class GridAnalyzerDouble implements GridAnalyzer {
         if ((y == 0 || y == gridH - 1) && x % 2 == 0) {
           continue;
         }
-        horizontalConnections[x][y * 2] = new AnalyzerConnection(new Vector(x + 1D, y - 0.65D), Math.PI);
+        horizontalConnections[x][y * 2] = new AnalyzerConnection(new Vector(x + 1D, y + 0.35D), Math.PI);
         horizontalConnections[x][y * 2 + 1] = new AnalyzerConnection(new Vector(x + 1D, y + 0.65D), 0);
         allConnections.add(horizontalConnections[x][y * 2 + 1]);
       }
@@ -34,7 +34,7 @@ public class GridAnalyzerDouble implements GridAnalyzer {
         if ((x == 0 || x == gridW - 1) && y % 2 == 0) {
           continue;
         }
-        verticalConnections[x * 2][y] = new AnalyzerConnection(new Vector(x - 0.65D, y + 1D), Math.PI / 2);
+        verticalConnections[x * 2][y] = new AnalyzerConnection(new Vector(x + 0.35D, y + 1D), Math.PI / 2);
         verticalConnections[x * 2 + 1][y] = new AnalyzerConnection(new Vector(x + 0.65D, y + 1D), Math.PI * 1.5);
         allConnections.add(verticalConnections[x * 2][y]);
       }
