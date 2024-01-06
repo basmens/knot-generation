@@ -105,10 +105,14 @@ public class PolynomialMatrix {
             matrix.subtractRows(i, j, new Polynomial(new Monomial(1, 0)));
             matrix.subtractRows(j, i, new Polynomial(new Monomial(-1, 0)));
           } else {
-            Polynomial multiplier = matrix.get(i, j);
-            matrix.multiplyRow(j, matrix.get(i, i));
-            matrix.subtractRows(j, i, multiplier);
-            finalDivisor = Polynomial.mult(finalDivisor, matrix.get(i, i));
+            try {
+              matrix.subtractRows(j, i, Polynomial.div(matrix.get(i, j), matrix.get(i, i)));
+            } catch (IllegalArgumentException e) {
+              Polynomial multiplier = matrix.get(i, j);
+              matrix.multiplyRow(j, matrix.get(i, i));
+              matrix.subtractRows(j, i, multiplier);
+              finalDivisor = Polynomial.mult(finalDivisor, matrix.get(i, i));
+            }
           }
         }
       }

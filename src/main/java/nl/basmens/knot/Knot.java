@@ -353,7 +353,8 @@ public class Knot {
 
     Polynomial determinant = matrix.getDeterminant();
     Monomial smallestTerm = determinant.getLowestPower();
-    determinant = Polynomial.div(determinant, new Monomial((long)Math.signum(smallestTerm.getCoefficient()), smallestTerm.getPower()));
+    determinant = Polynomial.div(determinant,
+        new Monomial((long) Math.signum(smallestTerm.getCoefficient()), smallestTerm.getPower()));
     return determinant;
   }
 
@@ -397,6 +398,7 @@ public class Knot {
     } catch (Exception e) {
       // Should be imposible to reach: the future is already done
       Thread.currentThread().interrupt();
+      e.printStackTrace();
       throw new IllegalStateException();
     }
   }
@@ -431,6 +433,7 @@ public class Knot {
     } catch (Exception e) {
       // Should be imposible to reach: the future is already done
       Thread.currentThread().interrupt();
+      e.printStackTrace();
       throw new IllegalStateException();
     }
   }
@@ -465,6 +468,7 @@ public class Knot {
     } catch (Exception e) {
       // Should be imposible to reach: the future is already done
       Thread.currentThread().interrupt();
+      e.printStackTrace();
       throw new IllegalStateException();
     }
   }
