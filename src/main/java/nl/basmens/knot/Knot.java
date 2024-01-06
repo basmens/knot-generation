@@ -400,6 +400,7 @@ public class Knot {
     } catch (Exception e) {
       // Should be imposible to reach: the future is already done
       Thread.currentThread().interrupt();
+      e.printStackTrace();
       throw new IllegalStateException();
     }
   }
@@ -434,6 +435,7 @@ public class Knot {
     } catch (Exception e) {
       // Should be imposible to reach: the future is already done
       Thread.currentThread().interrupt();
+      e.printStackTrace();
       throw new IllegalStateException();
     }
   }
@@ -468,6 +470,7 @@ public class Knot {
     } catch (Exception e) {
       // Should be imposible to reach: the future is already done
       Thread.currentThread().interrupt();
+      e.printStackTrace();
       throw new IllegalStateException();
     }
   }
