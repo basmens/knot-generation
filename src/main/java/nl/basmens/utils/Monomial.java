@@ -24,6 +24,8 @@ public class Monomial {
     this.numerator = numerator;
     this.denominator = denominator;
     this.power = power;
+
+    simplifyFraction();
   }
 
   public Monomial copy() {
@@ -43,6 +45,8 @@ public class Monomial {
     numerator *= otherMonomial.denominator;
     denominator *= otherMonomial.denominator;
     numerator += otherMonomial.numerator * oldDenominator;
+
+    simplifyFraction();
     return this;
   }
 
@@ -55,6 +59,8 @@ public class Monomial {
     numerator *= otherMonomial.denominator;
     denominator *= otherMonomial.denominator;
     numerator -= otherMonomial.numerator * oldDenominator;
+
+    simplifyFraction();
     return this;
   }
 
@@ -63,6 +69,8 @@ public class Monomial {
     denominator *= otherMonomial.denominator;
 
     power += otherMonomial.power;
+
+    simplifyFraction();
     return this;
   }
 
@@ -71,7 +79,19 @@ public class Monomial {
     denominator *= otherMonomial.numerator;
 
     power -= otherMonomial.power;
+
+    simplifyFraction();
     return this;
+  }
+
+  private void simplifyFraction() {
+    final long primeNumbers[] = {2, 3, 5, 7, 11};
+    for (long p : primeNumbers) {
+      while (numerator % p == 0 && denominator % p == 0) {
+        numerator /= p;
+        denominator /= p;
+      }
+    }
   }
 
   // =================================================================================================================
@@ -80,6 +100,14 @@ public class Monomial {
 
   public double getCoefficient() {
     return numerator / (double) denominator;
+  }
+
+  public long getNumerator() {
+    return numerator;
+  }
+
+  public long getDenominator() {
+    return denominator;
   }
 
   public int getPower() {
