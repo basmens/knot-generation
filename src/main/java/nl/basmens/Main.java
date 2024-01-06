@@ -35,7 +35,7 @@ public class Main extends PApplet {
   public static final Supplier<Random> RANDOM_FACTORY = () -> new Random(10);
 
   public final KnotRenderer knotRenderer = new KnotRenderer(true, true, true);
-  private int size = 6;
+  private int size = 30;
   private int imgRes = 7;
 
   private enum Tilesets {

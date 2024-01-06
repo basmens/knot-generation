@@ -4,6 +4,11 @@ public class Polynomial {
   private Monomial[] monomials = new Monomial[0];
   private int index0Power;
 
+  private Monomial lowestMonomial;
+  private Monomial highestMonomial;
+  private boolean isLowestMonomialOutdated = true;
+  private boolean isHighestMonomialOutdated = true;
+
   // =================================================================================================================
   // Constructor
   // =================================================================================================================
@@ -43,6 +48,15 @@ public class Polynomial {
     }
   }
 
+  private void moveSemanticOperation(Polynomial toMove) {
+    monomials = toMove.monomials;
+    index0Power = toMove.index0Power;
+    lowestMonomial = toMove.lowestMonomial;
+    highestMonomial = toMove.highestMonomial;
+    isLowestMonomialOutdated = toMove.isLowestMonomialOutdated;
+    isHighestMonomialOutdated = toMove.isHighestMonomialOutdated;
+  }
+
   // =================================================================================================================
   // Math instance
   // =================================================================================================================
@@ -57,6 +71,9 @@ public class Polynomial {
         getMonomial(m.getPower()).add(m);
       }
     }
+
+    isLowestMonomialOutdated = true;
+    isHighestMonomialOutdated = true;
     return this;
   }
 
@@ -71,6 +88,9 @@ public class Polynomial {
         getMonomial(m.getPower()).sub(m);
       }
     }
+
+    isLowestMonomialOutdated = true;
+    isHighestMonomialOutdated = true;
     return this;
   }
 
@@ -86,6 +106,9 @@ public class Polynomial {
       }
     }
     index0Power += other.getPower();
+    
+    isLowestMonomialOutdated = true;
+    isHighestMonomialOutdated = true;
     return this;
   }
 
@@ -96,8 +119,7 @@ public class Polynomial {
     }
 
     Polynomial result = Polynomial.mult(this, other);
-    monomials = result.monomials;
-    index0Power = result.index0Power;
+    moveSemanticOperation(result);
     return this;
   }
 
@@ -117,8 +139,7 @@ public class Polynomial {
 
   public Polynomial div(Polynomial other) {
     Polynomial result = Polynomial.div(this, other);
-    monomials = result.monomials;
-    index0Power = result.index0Power;
+    moveSemanticOperation(result);
     return this;
   }
 
@@ -167,15 +188,15 @@ public class Polynomial {
       return new Polynomial();
     }
 
-    Monomial denominatorHighestMonomial = denominator.getHighestMonomial();
-    int differenceHighestPowers = numerator.getHighestMonomial().getPower() - denominatorHighestMonomial.getPower();
+    int differenceHighestPowers = numerator.getHighestMonomial().getPower()
+        - denominator.getHighestMonomial().getPower();
 
     Polynomial result = new Polynomial();
     result.ensureCapacityRange(0, differenceHighestPowers);
     Polynomial rest = new Polynomial(numerator);
 
     for (int i = 0; i <= differenceHighestPowers; i++) {
-      Monomial multiplier = Monomial.div(rest.getHighestMonomial(), denominatorHighestMonomial);
+      Monomial multiplier = Monomial.div(rest.getHighestMonomial(), denominator.getHighestMonomial());
       rest.sub(Polynomial.mult(denominator, multiplier));
 
       result.getMonomial(multiplier.getPower()).add(multiplier);
@@ -262,22 +283,32 @@ public class Polynomial {
   }
 
   public Monomial getLowestMonomial() {
-    for (Monomial m : monomials) {
-      if (!Monomial.isZero(m)) {
-        return m;
+    if (isLowestMonomialOutdated) {
+      lowestMonomial = null;
+      for (Monomial m : monomials) {
+        if (!Monomial.isZero(m)) {
+          lowestMonomial = m;
+          break;
+        }
       }
+      isLowestMonomialOutdated = false;
     }
-    return null;
+    return lowestMonomial;
   }
 
   public Monomial getHighestMonomial() {
-    for (int i = monomials.length - 1; i >= 0; i--) {
-      Monomial m = monomials[i];
-      if (!Monomial.isZero(m)) {
-        return m;
+    if (isHighestMonomialOutdated) {
+      highestMonomial = null;
+      for (int i = monomials.length - 1; i >= 0; i--) {
+        Monomial m = monomials[i];
+        if (!Monomial.isZero(m)) {
+          highestMonomial = m;
+          break;
+        }
       }
+      isHighestMonomialOutdated = false;
     }
-    return null;
+    return highestMonomial;
   }
 
   @Override

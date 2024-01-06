@@ -208,24 +208,15 @@ public class Knot {
         break;
       case 1:
         isBackwards = isUnderAngleLeft;
-        if (isUnderAngleLeft) {
-          nextConnection = prevIntersection.under.getPrev();
-        } else {
-          nextConnection = prevIntersection.under.getNext();
-        }
+        nextConnection = isUnderAngleLeft ? prevIntersection.under.getPrev() : prevIntersection.under.getNext();
         break;
       case 2:
         nextConnection = prevIntersection.over.getPrev();
         isBackwards = true;
         break;
-
       default:
         isBackwards = !isUnderAngleLeft;
-        if (isUnderAngleLeft) {
-          nextConnection = prevIntersection.under.getNext();
-        } else {
-          nextConnection = prevIntersection.under.getPrev();
-        }
+        nextConnection = isUnderAngleLeft ? prevIntersection.under.getNext() : prevIntersection.under.getPrev();
         break;
     }
 
