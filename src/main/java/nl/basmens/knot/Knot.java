@@ -352,8 +352,11 @@ public class Knot {
     }
 
     Polynomial determinant = matrix.getDeterminant();
-    Monomial smallestTerm = determinant.getLowestPower();
-    determinant = Polynomial.div(determinant, new Monomial((long)Math.signum(smallestTerm.getCoefficient()), smallestTerm.getPower()));
+    Monomial smallestTerm = determinant.getLowestMonomial();
+    if (smallestTerm != null) {
+      determinant = Polynomial.div(determinant,
+          new Monomial((long) Math.signum(smallestTerm.getCoefficient()), smallestTerm.getPower()));
+    }
     return determinant;
   }
 

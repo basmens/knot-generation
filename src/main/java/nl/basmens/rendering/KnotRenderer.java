@@ -124,7 +124,7 @@ public class KnotRenderer {
     text(" - Knot Determinant : " + knot.getKnotDeterminantState(), 2078, 210);
     text(" - Alexander Polynomial", 2078, 250);
     text("   " + knot.getAlexanderPolynomialState(), 2078, 290);
-    text("   " + Math.abs(knot.getAlexanderPolynomial().getValue(-1)), 2078, 330);
+    text("   " + Math.abs(knot.getAlexanderPolynomial().evaluateOnT(-1)), 2078, 330);
   }
 
   // ===================================================================================================================

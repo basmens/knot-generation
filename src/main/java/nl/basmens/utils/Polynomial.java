@@ -1,214 +1,280 @@
 package nl.basmens.utils;
 
-import java.util.ArrayList;
-
 public class Polynomial {
-  private ArrayList<Monomial> monomials = new ArrayList<>();
+  private Monomial[] monomials = new Monomial[0];
   private int index0Power;
 
   // =================================================================================================================
   // Constructor
   // =================================================================================================================
-
   public Polynomial() {
   }
 
   public Polynomial(Monomial... inputMonomials) {
+    // Ensure range
+    int lowest = Integer.MAX_VALUE;
+    int highest = Integer.MIN_VALUE;
     for (Monomial m : inputMonomials) {
-      if (m == null || m.getNumerator() == 0) {
-        continue;
+      if (!Monomial.isZero(m)) {
+        lowest = Math.min(lowest, m.getPower());
+        highest = Math.max(highest, m.getPower());
       }
+    }
+    ensureCapacityRange(lowest, highest);
 
-      getMonomial(m.getPower()).add(m);
+    // Copy values into destination
+    for (Monomial m : inputMonomials) {
+      if (!Monomial.isZero(m)) {
+        monomials[m.getPower() - index0Power] = m;
+      }
     }
   }
 
-  public Polynomial copy() {
-    Polynomial result = new Polynomial();
-    for (Monomial m : monomials) {
-      if (m == null || m.getNumerator() == 0) {
-        continue;
-      }
-
-      result.getMonomial(m.getPower()).add(m);
-    }
-    return result;
-  }
-
-  // =================================================================================================================
-  // Math
-  // =================================================================================================================
-
-  public Polynomial add(Polynomial otherPolynomial) {
-    for (Monomial m : otherPolynomial.monomials) {
-      if (m == null || m.getNumerator() == 0) {
-        continue;
-      }
-
-      getMonomial(m.getPower()).add(m);
-    }
-    return this;
-  }
-
-  public Polynomial sub(Polynomial otherPolynomial) {
-    for (Monomial m : otherPolynomial.monomials) {
-      if (m == null || m.getNumerator() == 0) {
-        continue;
-      }
-
-      getMonomial(m.getPower()).sub(m);
-    }
-    return this;
-  }
-
-  public static Polynomial mult(Polynomial polynomial1, Polynomial polynomial2) {
-    Polynomial result = new Polynomial();
-
-    for (Monomial monomial1 : polynomial1.monomials) {
-      if (monomial1 == null || monomial1.getNumerator() == 0) {
-        continue;
-      }
-
-      for (Monomial monomial2 : polynomial2.monomials) {
-        if (monomial2 == null || monomial2.getNumerator() == 0) {
-          continue;
-        }
-
-        Monomial resultMonomial = monomial1.copy().mult(monomial2);
-
-        result.getMonomial(resultMonomial.getPower()).add(resultMonomial);
-      }
-    }
-
-    return result;
-  }
-
-  public static Polynomial div(Polynomial polynomial1, Monomial monomial2) {
-    Polynomial result = new Polynomial();
-
-    if (monomial2 == null || monomial2.getNumerator() == 0) {
-      throw new IllegalArgumentException("ERROR: cannot divide by 0");
-    }
-
-    for (Monomial monomial1 : polynomial1.monomials) {
-      if (monomial1 == null || monomial1.getNumerator() == 0) {
-        continue;
-      }
-
-      Monomial resultMonomial = monomial1.copy().div(monomial2);
-
-      result.getMonomial(resultMonomial.getPower()).add(resultMonomial);
-    }
-
-    return result;
-  }
-
-  public static Polynomial div(Polynomial polynomial1, Polynomial polynomial2) {
-    Polynomial result = new Polynomial();
-    if (polynomial2.isZero()) {
-      throw new IllegalArgumentException("ERROR: cannot divide by 0");
-    }
-    if (polynomial1.isZero()) {
-      return result;
-    }
-
-    int iterationCount = polynomial1.getHighestPower().getPower() - polynomial2.getHighestPower().getPower() + 1;
-    Polynomial rest = polynomial1.copy();
-
-    for (int i = 0; i < iterationCount; i++) {
-      if (rest.isZero()) {
-        break;
-      }
-
-      Monomial multiplier = rest.getHighestPower().copy().div(polynomial2.getHighestPower());
-      rest.sub(Polynomial.mult(polynomial2, new Polynomial(multiplier)));
-
-      result.getMonomial(multiplier.getPower()).add(multiplier);
-    }
-
-    if (!rest.isZero()) {
-      throw new IllegalArgumentException(
-          "ERROR: division results in " + result + " with " + rest + " / " + polynomial2 + " as rest");
-    }
-
-    return result;
-  }
-
-  private void ensureCapacity(int power) {
-    if (hasMonomial(power)) {
+  public Polynomial(Polynomial toCopy) {
+    if (toCopy.isZero()) {
       return;
     }
 
-    if (power < index0Power) {
-      for (int i = 0; i < index0Power - power; i++) {
-        monomials.add(0, null);
-      }
-      index0Power = power;
-    } else {
-      int arraySize = monomials.size();
-      for (int i = 0; i < power - arraySize - index0Power + 1; i++) {
-        monomials.add(null);
+    ensureCapacityRange(toCopy.getLowestMonomial().getPower(), toCopy.getHighestMonomial().getPower());
+    for (Monomial m : toCopy.monomials) {
+      if (!Monomial.isZero(m)) {
+        monomials[m.getPower() - index0Power] = new Monomial(m);
       }
     }
+  }
+
+  // =================================================================================================================
+  // Math instance
+  // =================================================================================================================
+  public Polynomial add(Polynomial other) {
+    if (other.isZero()) {
+      return this;
+    }
+
+    ensureCapacityRange(other.getLowestMonomial().getPower(), other.getHighestMonomial().getPower());
+    for (Monomial m : other.monomials) {
+      if (!Monomial.isZero(m)) {
+        getMonomial(m.getPower()).add(m);
+      }
+    }
+    return this;
+  }
+
+  public Polynomial sub(Polynomial other) {
+    if (other.isZero()) {
+      return this;
+    }
+
+    ensureCapacityRange(other.getLowestMonomial().getPower(), other.getHighestMonomial().getPower());
+    for (Monomial m : other.monomials) {
+      if (!Monomial.isZero(m)) {
+        getMonomial(m.getPower()).sub(m);
+      }
+    }
+    return this;
+  }
+
+  public Polynomial mult(Monomial other) {
+    if (Monomial.isZero(other)) {
+      monomials = new Monomial[0];
+      return this;
+    }
+
+    for (Monomial m : monomials) {
+      if (!Monomial.isZero(m)) {
+        m.mult(other);
+      }
+    }
+    index0Power += other.getPower();
+    return this;
+  }
+
+  public Polynomial mult(Polynomial other) {
+    if (other.isZero()) {
+      monomials = new Monomial[0];
+      return this;
+    }
+
+    Polynomial result = Polynomial.mult(this, other);
+    monomials = result.monomials;
+    index0Power = result.index0Power;
+    return this;
+  }
+
+  public Polynomial div(Monomial other) {
+    if (Monomial.isZero(other)) {
+      throw new IllegalArgumentException("ERROR: cannot divide by 0");
+    }
+
+    for (Monomial m : monomials) {
+      if (!Monomial.isZero(m)) {
+        m.div(other);
+      }
+    }
+    index0Power -= other.getPower();
+    return this;
+  }
+
+  public Polynomial div(Polynomial other) {
+    Polynomial result = Polynomial.div(this, other);
+    monomials = result.monomials;
+    index0Power = result.index0Power;
+    return this;
+  }
+
+  // =================================================================================================================
+  // Math static
+  // =================================================================================================================
+  public static Polynomial mult(Polynomial p, Monomial m) {
+    return new Polynomial(p).mult(m);
+  }
+
+  public static Polynomial mult(Polynomial p1, Polynomial p2) {
+    if (p1.isZero() || p2.isZero()) {
+      return new Polynomial();
+    }
+
+    // Create new Polynomial for the result with the required capacity
+    Polynomial result = new Polynomial();
+    result.ensureCapacityRange(p1.getLowestMonomial().getPower() + p2.getLowestMonomial().getPower(),
+        p1.getHighestMonomial().getPower() + p2.getHighestMonomial().getPower());
+
+    // Do the multiplication
+    for (Monomial m1 : p1.monomials) {
+      if (Monomial.isZero(m1)) {
+        continue;
+      }
+
+      for (Monomial m2 : p2.monomials) {
+        if (!Monomial.isZero(m2)) {
+          Monomial product = Monomial.mult(m1, m2);
+          result.getMonomial(product.getPower()).add(product);
+        }
+      }
+    }
+    return result;
+  }
+
+  public static Polynomial div(Polynomial p, Monomial m) {
+    return new Polynomial(p).div(m);
+  }
+
+  public static Polynomial div(Polynomial numerator, Polynomial denominator) {
+    if (denominator.isZero()) {
+      throw new IllegalArgumentException("ERROR: cannot divide by 0");
+    }
+    if (numerator.isZero()) {
+      return new Polynomial();
+    }
+
+    Monomial denominatorHighestMonomial = denominator.getHighestMonomial();
+    int differenceHighestPowers = numerator.getHighestMonomial().getPower() - denominatorHighestMonomial.getPower();
+
+    Polynomial result = new Polynomial();
+    result.ensureCapacityRange(0, differenceHighestPowers);
+    Polynomial rest = new Polynomial(numerator);
+
+    for (int i = 0; i <= differenceHighestPowers; i++) {
+      Monomial multiplier = Monomial.div(rest.getHighestMonomial(), denominatorHighestMonomial);
+      rest.sub(Polynomial.mult(denominator, multiplier));
+
+      result.getMonomial(multiplier.getPower()).add(multiplier);
+
+      if (rest.isZero()) {
+        break;
+      }
+    }
+
+    if (!rest.isZero()) {
+      throw new IllegalArgumentException("ERROR: division results in " + result + " with " + rest + " / " + denominator
+          + " as rest. No rest value is permitted");
+    }
+
+    return result;
+  }
+
+  // =================================================================================================================
+  // Functionality
+  // =================================================================================================================
+  private void ensureCapacityRange(int lowerPower, int higherPower) {
+    if (index0Power <= lowerPower && monomials.length + index0Power > higherPower) {
+      return;
+    }
+
+    // Expand requested range
+    for (int i = 0; i < Math.min(lowerPower - index0Power, monomials.length); i++) {
+      if (!Monomial.isZero(monomials[i])) {
+        lowerPower = i + index0Power;
+        break;
+      }
+    }
+    for (int i = monomials.length - 1; i >= Math.max(higherPower - index0Power, 0); i--) {
+      if (!Monomial.isZero(monomials[i])) {
+        higherPower = i + index0Power;
+        break;
+      }
+    }
+
+    // Create new array with enough capacity
+    Monomial[] result = new Monomial[higherPower - lowerPower + 1];
+
+    // Copy old values into new array
+    int shift = index0Power - lowerPower;
+    for (int i = Math.max(lowerPower - index0Power, 0); i < Math.min(higherPower - index0Power + 1,
+        monomials.length); i++) {
+      result[i + shift] = monomials[i];
+    }
+
+    index0Power = lowerPower;
+    monomials = result;
   }
 
   // =================================================================================================================
   // Getters
   // =================================================================================================================
-
-  public double getValue(double unknown) {
-    double value = 0;
-    for (Monomial m: monomials) {
-      if (m != null && m.getNumerator() != 0) {
-        value += m.getValue(unknown);
+  public double evaluateOnT(double t) {
+    double result = 0;
+    for (Monomial m : monomials) {
+      if (!Monomial.isZero(m)) {
+        result += m.evaluateOnT(t);
       }
     }
-    return value;
+    return result;
   }
 
   private Monomial getMonomial(int power) {
-    ensureCapacity(power);
-
-    if (monomials.get(power - index0Power) == null) {
-      monomials.set(power - index0Power, new Monomial(0, power));
+    if (hasMonomial(power)) {
+      if (monomials[power - index0Power] == null) {
+        monomials[power - index0Power] = new Monomial(0, power);
+      }
+      return monomials[power - index0Power];
     }
-
-    return monomials.get(power - index0Power);
+    throw new IndexOutOfBoundsException("Power " + power + "is outside of the polynomials range of []" + index0Power
+        + ", " + (monomials.length + index0Power - 1) + "]");
   }
 
   public boolean hasMonomial(int power) {
-    return power >= index0Power && power - index0Power < monomials.size();
+    return power - index0Power < monomials.length;
   }
 
   public boolean isZero() {
-    return getLowestPower() == null;
+    return getLowestMonomial() == null;
   }
 
-  public int getMonomialCount() {
-    int count = 0;
-    for (Monomial m: monomials) {
-      if (m != null && m.getNumerator() != 0) {
-        count++;
-      }
-    }
-    return count;
-  }
-
-  public Monomial getLowestPower() {
-    for (int i = 0; i < monomials.size(); i++) {
-      Monomial monomial = monomials.get(i);
-      if (monomial != null && monomial.getNumerator() != 0) {
-        return monomial;
+  public Monomial getLowestMonomial() {
+    for (Monomial m : monomials) {
+      if (!Monomial.isZero(m)) {
+        return m;
       }
     }
     return null;
   }
 
-  public Monomial getHighestPower() {
-    for (int i = monomials.size() - 1; i >= 0; i--) {
-      Monomial monomial = monomials.get(i);
-      if (monomial != null && monomial.getNumerator() != 0) {
-        return monomial;
+  public Monomial getHighestMonomial() {
+    for (int i = monomials.length - 1; i >= 0; i--) {
+      Monomial m = monomials[i];
+      if (!Monomial.isZero(m)) {
+        return m;
       }
     }
     return null;
@@ -222,12 +288,10 @@ public class Polynomial {
 
     StringBuilder stringBuilder = new StringBuilder();
     for (Monomial m : monomials) {
-      if (m == null || m.getNumerator() == 0) {
-        continue;
+      if (!Monomial.isZero(m)) {
+        stringBuilder.insert(0, m.toString());
+        stringBuilder.insert(0, " + ");
       }
-
-      stringBuilder.insert(0, m.toString());
-      stringBuilder.insert(0, " + ");
     }
     return stringBuilder.toString().substring(" + ".length()).replace("+ -", "- ");
   }

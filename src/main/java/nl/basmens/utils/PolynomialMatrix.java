@@ -6,50 +6,22 @@ public class PolynomialMatrix {
   // =================================================================================================================
   // Constructor
   // =================================================================================================================
-
   public PolynomialMatrix(int width, int height) {
     polynomials = new Polynomial[width][height];
-    for (int i = 0; i < width(); i++) {
+    for (int i = 0; i < width; i++) {
       for (int j = 0; j < height; j++) {
         polynomials[i][j] = new Polynomial();
       }
     }
   }
 
-  public PolynomialMatrix copy() {
-    PolynomialMatrix result = new PolynomialMatrix(0, 0);
-
-    result.polynomials = new Polynomial[width()][];
-    for (int i = 0; i < width(); i++) {
-      result.polynomials[i] = polynomials[i].clone();
-    }
-
-    return result;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder stringBuilder = new StringBuilder();
-
-    for (int r = 0; r < height(); r++) {
-      stringBuilder.append(",\n[");
-
-      for (int c = 0; c < width(); c++) {
-        String p = get(c, r).toString();
-
-        if (p.length() == 1) {
-          stringBuilder.append(" ");
-        }
-
-        stringBuilder.append(p);
-        stringBuilder.append(", ");
+  public PolynomialMatrix(PolynomialMatrix toCopy) {
+    polynomials = new Polynomial[toCopy.width()][toCopy.height()];
+    for (int i = 0; i < toCopy.width(); i++) {
+      for (int j = 0; j < toCopy.height(); j++) {
+        polynomials[i][j] = new Polynomial(toCopy.polynomials[i][j]);
       }
-
-      stringBuilder.setLength(stringBuilder.length() - 2);
-      stringBuilder.append("]");
     }
-
-    return stringBuilder.substring(2);
   }
 
   // =================================================================================================================
@@ -95,7 +67,7 @@ public class PolynomialMatrix {
       return new Polynomial();
     }
 
-    PolynomialMatrix matrix = this.copy();
+    PolynomialMatrix matrix = new PolynomialMatrix(this);
     Polynomial finalDivisor = new Polynomial(new Monomial(1, 0));
 
     for (int i = 0; i < matrix.width() - 1; i++) {
@@ -108,7 +80,7 @@ public class PolynomialMatrix {
             Polynomial multiplier = matrix.get(i, j);
             matrix.multiplyRow(j, matrix.get(i, i));
             matrix.subtractRows(j, i, multiplier);
-            finalDivisor = Polynomial.mult(finalDivisor, matrix.get(i, i));
+            finalDivisor.mult(matrix.get(i, i));
           }
         }
       }
@@ -120,6 +92,31 @@ public class PolynomialMatrix {
     }
 
     return Polynomial.div(result, finalDivisor);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder stringBuilder = new StringBuilder();
+
+    for (int r = 0; r < height(); r++) {
+      stringBuilder.append(",\n[");
+
+      for (int c = 0; c < width(); c++) {
+        String p = get(c, r).toString();
+
+        if (p.length() == 1) {
+          stringBuilder.append(" ");
+        }
+
+        stringBuilder.append(p);
+        stringBuilder.append(", ");
+      }
+
+      stringBuilder.setLength(stringBuilder.length() - 2);
+      stringBuilder.append("]");
+    }
+
+    return stringBuilder.substring(2);
   }
 
   // =================================================================================================================
