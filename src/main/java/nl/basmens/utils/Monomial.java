@@ -118,6 +118,10 @@ public class Monomial {
     return m == null || m.numerator == 0;
   }
 
+  public static boolean isOne(Monomial m) {
+    return m != null && m.power == 0 && m.numerator == m.denominator;
+  }
+
   public double getCoefficient() {
     return numerator / (double) denominator;
   }

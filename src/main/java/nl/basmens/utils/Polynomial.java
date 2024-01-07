@@ -106,7 +106,7 @@ public class Polynomial {
       }
     }
     index0Power += other.getPower();
-    
+
     isLowestMonomialOutdated = true;
     isHighestMonomialOutdated = true;
     return this;
@@ -138,8 +138,12 @@ public class Polynomial {
   }
 
   public Polynomial div(Polynomial other) {
-    Polynomial result = Polynomial.div(this, other);
-    moveSemanticOperation(result);
+    moveSemanticOperation(Polynomial.div(this, other));
+    return this;
+  }
+
+  public Polynomial divWithRemainder(Polynomial other, Polynomial outRemainder) {
+    moveSemanticOperation(Polynomial.divWithRemainder(this, other, outRemainder));
     return this;
   }
 
@@ -181,34 +185,49 @@ public class Polynomial {
   }
 
   public static Polynomial div(Polynomial numerator, Polynomial denominator) {
+    Polynomial remainder = new Polynomial();
+    Polynomial result = divWithRemainder(numerator, denominator, remainder);
+    if (!remainder.isZero()) {
+      throw new IllegalArgumentException(
+          "ERROR: division results in " + result + " with " + remainder + " / " + denominator
+              + " as rest. No rest value is permitted. If you want a remainder, use the divWithRemainder function");
+    }
+    return result;
+  }
+
+  public static Polynomial divWithRemainder(Polynomial numerator, Polynomial denominator, Polynomial outRemainder) {
     if (denominator.isZero()) {
       throw new IllegalArgumentException("ERROR: cannot divide by 0");
     }
     if (numerator.isZero()) {
+      outRemainder.moveSemanticOperation(new Polynomial());
       return new Polynomial();
     }
+    if (denominator.isOne()) {
+      outRemainder.moveSemanticOperation(new Polynomial());
+      return new Polynomial(numerator);
+    }
 
-    int differenceHighestPowers = numerator.getHighestMonomial().getPower()
-        - denominator.getHighestMonomial().getPower();
-
+    // Init result
     Polynomial result = new Polynomial();
-    result.ensureCapacityRange(0, differenceHighestPowers);
-    Polynomial rest = new Polynomial(numerator);
+    result.ensureCapacityRange(0,
+        numerator.getHighestMonomial().getPower() - denominator.getHighestMonomial().getPower());
 
-    for (int i = 0; i <= differenceHighestPowers; i++) {
-      Monomial multiplier = Monomial.div(rest.getHighestMonomial(), denominator.getHighestMonomial());
-      rest.sub(Polynomial.mult(denominator, multiplier));
+    // Init outRemainder into the given reference
+    outRemainder.moveSemanticOperation(new Polynomial(numerator));
+
+    // Make a copy in case denominator and outRemainder point to the same instance
+    denominator = new Polynomial(denominator);
+
+    while (outRemainder.getHighestMonomial().getPower() - denominator.getHighestMonomial().getPower() >= 0) {
+      Monomial multiplier = Monomial.div(outRemainder.getHighestMonomial(), denominator.getHighestMonomial());
+      outRemainder.sub(Polynomial.mult(denominator, multiplier));
 
       result.getMonomial(multiplier.getPower()).add(multiplier);
 
-      if (rest.isZero()) {
+      if (outRemainder.isZero()) {
         break;
       }
-    }
-
-    if (!rest.isZero()) {
-      throw new IllegalArgumentException("ERROR: division results in " + result + " with " + rest + " / " + denominator
-          + " as rest. No rest value is permitted");
     }
 
     return result;
@@ -280,6 +299,11 @@ public class Polynomial {
 
   public boolean isZero() {
     return getLowestMonomial() == null;
+  }
+
+  public boolean isOne() {
+    return getLowestMonomial() != null && getLowestMonomial() == getHighestMonomial()
+        && Monomial.isOne(getLowestMonomial());
   }
 
   public Monomial getLowestMonomial() {

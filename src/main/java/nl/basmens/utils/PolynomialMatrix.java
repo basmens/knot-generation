@@ -1,5 +1,7 @@
 package nl.basmens.utils;
 
+import java.util.ArrayList;
+
 public class PolynomialMatrix {
   private Polynomial[][] polynomials;
 
@@ -67,31 +69,70 @@ public class PolynomialMatrix {
       return new Polynomial();
     }
 
+    // Arithmetic to set lower left corner to 0, so that the resulting determinant
+    // equals the product of the diagonal:
+    // [n00, n10, n20, n30, n40],
+    // [0, n11, n21, n31, n41],
+    // [0, 0, n22, n32, n42],
+    // [0, 0, 0, n33, n43],
+    // [0, 0, 0, 0, n44]
+    // det = n00 * n11 * n22 * n33 * n44
     PolynomialMatrix matrix = new PolynomialMatrix(this);
-    Polynomial finalDivisor = new Polynomial(new Monomial(1, 0));
+    ArrayList<Polynomial> finalDivisor = new ArrayList<>();
+    System.out.println();
+    System.out.println();
+    System.out.println();
+    System.out.println(matrix);
 
-    for (int i = 0; i < matrix.width() - 1; i++) {
-      for (int j = i + 1; j < matrix.height(); j++) {
-        if (!matrix.get(i, j).isZero()) {
-          if (matrix.get(i, i).isZero()) {
-            matrix.subtractRows(i, j, new Polynomial(new Monomial(1, 0)));
-            matrix.subtractRows(j, i, new Polynomial(new Monomial(-1, 0)));
+    for (int col = 0; col < matrix.width() - 1; col++) {
+      boolean isDiagonalZero = matrix.get(col, col).isZero();
+
+      for (int row = col + 1; row < matrix.height(); row++) {
+        if (!matrix.get(col, row).isZero()) {
+          if (isDiagonalZero) {
+            matrix.subtractRows(col, row, new Polynomial(new Monomial(1, 0)));
+            matrix.subtractRows(row, col, new Polynomial(new Monomial(-1, 0)));
+            isDiagonalZero = false;
           } else {
-            Polynomial multiplier = matrix.get(i, j);
-            matrix.multiplyRow(j, matrix.get(i, i));
-            matrix.subtractRows(j, i, multiplier);
-            finalDivisor.mult(matrix.get(i, i));
+            Monomial lowestMonomial = matrix.get(col, col).getLowestMonomial();
+            Polynomial multiplier = Polynomial.div(matrix.get(col, col), lowestMonomial);
+            Polynomial ratio = Polynomial.div(matrix.get(col, row), lowestMonomial);
+            if (!multiplier.isOne()) {
+              matrix.multiplyRow(row, multiplier);
+              finalDivisor.add(multiplier);
+            }
+            matrix.subtractRows(row, col, ratio);
           }
+
+          // System.out.println();
+          // System.out.println();
+          // System.out.println();
+          // System.out.println(matrix);
         }
       }
     }
 
-    Polynomial result = matrix.get(0, 0);
-    for (int i = 1; i < matrix.width(); i++) {
-      result = Polynomial.mult(result, matrix.get(i, i));
+    Polynomial result = new Polynomial(new Monomial(1, 0));
+    Polynomial remainder = new Polynomial();
+    Polynomial denominator = new Polynomial(new Monomial(1, 0));
+    int dividerIndex = 0;
+    for (int i = 0; i < matrix.width(); i++) {
+      result.mult(matrix.get(i, i));
+      remainder.mult(matrix.get(i, i));
+      result.add(Polynomial.divWithRemainder(remainder, denominator, remainder));
+      // System.out.println("result: " + result);
+      // System.out.println("remainder: " + remainder);
+
+      while (remainder.isZero() && dividerIndex < finalDivisor.size()) {
+        denominator = finalDivisor.get(dividerIndex);
+        result.divWithRemainder(denominator, remainder);
+        dividerIndex++;
+        // System.out.println("result: " + result);
+        // System.out.println("remainder: " + remainder);
+      }
     }
 
-    return Polynomial.div(result, finalDivisor);
+    return result;
   }
 
   @Override
@@ -117,6 +158,22 @@ public class PolynomialMatrix {
     }
 
     return stringBuilder.substring(2);
+    // StringBuilder stringBuilder = new StringBuilder();
+
+    // for (int r = 0; r < height(); r++) {
+    // stringBuilder.append(",{");
+
+    // for (int c = 0; c < width(); c++) {
+    // String p = get(c, r).toString();
+    // stringBuilder.append(p);
+    // stringBuilder.append(",");
+    // }
+
+    // stringBuilder.setLength(stringBuilder.length() - 1);
+    // stringBuilder.append("}");
+    // }
+
+    // return "{" + stringBuilder.substring(1) + "}";
   }
 
   // =================================================================================================================

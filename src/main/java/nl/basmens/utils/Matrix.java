@@ -1,22 +1,32 @@
 package nl.basmens.utils;
 
 public class Matrix {
-  private double[][] values;
+  private long[][] numerators;
+  private long[][] denominators;
 
   // =================================================================================================================
   // Constructor
   // =================================================================================================================
 
   public Matrix(int width, int height) {
-    values = new double[width][height];
+    numerators = new long[width][height];
+    denominators = new long[width][height];
+
+    for (int x = 0; x < width; x++) {
+      for (int y = 0; y < height; y++) {
+        denominators[x][y] = 1;
+      }
+    }
   }
 
   public Matrix copy() {
     Matrix result = new Matrix(0, 0);
 
-    result.values = new double[width()][];
+    result.numerators = new long[width()][];
+    result.denominators = new long[width()][];
     for (int i = 0; i < width(); i++) {
-      result.values[i] = values[i].clone();
+      result.numerators[i] = numerators[i].clone();
+      result.denominators[i] = denominators[i].clone();
     }
 
     return result;
@@ -30,7 +40,7 @@ public class Matrix {
       stringBuilder.append(",\n[");
 
       for (int c = 0; c < width(); c++) {
-        String p = String.valueOf(get(c, r));
+        String p = String.valueOf(getCoefficient(c, r));
 
         if (p.length() == 1) {
           stringBuilder.append(" ");
@@ -51,9 +61,27 @@ public class Matrix {
   // Functions
   // =================================================================================================================
 
-  private static void subtractRows(Matrix matrix, int minuendRow, int subtrahendRow, double multiplier) {
+  private static void subtractRows(Matrix matrix, int minuendRow, int subtrahendRow, long multiplierNum,
+      long multiplierDenum) {
+    long[][] nums = matrix.numerators;
+    long[][] denoms = matrix.denominators;
     for (int i = 0; i < matrix.height(); i++) {
-      matrix.set(minuendRow, i, matrix.get(minuendRow, i) - matrix.get(subtrahendRow, i) * multiplier);
+      nums[minuendRow][i] *= denoms[subtrahendRow][i] * multiplierDenum;
+      nums[minuendRow][i] -= nums[subtrahendRow][i] * denoms[minuendRow][i] * multiplierNum;
+      denoms[minuendRow][i] *= denoms[subtrahendRow][i] * multiplierDenum;
+      simplifyFraction(matrix, minuendRow, i);
+    }
+  }
+
+  private static void simplifyFraction(Matrix matrix, int col, int row) {
+    final long[] primeNumbers = { 2, 3, 5 };
+    long[][] nums = matrix.numerators;
+    long[][] denoms = matrix.denominators;
+    for (long p : primeNumbers) {
+      while (nums[col][row] % p == 0 && denoms[col][row] % p == 0) {
+        nums[col][row] /= p;
+        denoms[col][row] /= p;
+      }
     }
   }
 
@@ -63,19 +91,19 @@ public class Matrix {
   // Getters
   // =================================================================================================================
 
-  public double get(int column, int row) {
-    return values[column][row];
+  public double getCoefficient(int column, int row) {
+    return numerators[column][row] / (double) denominators[column][row];
   }
 
   public int width() {
-    return values.length;
+    return numerators.length;
   }
 
   public int height() {
     if (width() == 0) {
       return 0;
     }
-    return values[0].length;
+    return numerators[0].length;
   }
 
   public double getDeterminant() {
@@ -90,18 +118,19 @@ public class Matrix {
 
     for (int i = 0; i < matrix.width() - 1; i++) {
       for (int j = i + 1; j < matrix.width(); j++) {
-        if (matrix.get(j, i) != 0) {
-          if (matrix.get(i, i) == 0) {
-            subtractRows(matrix, i, j, 1);
+        if (matrix.numerators[j][i] != 0) {
+          if (matrix.numerators[i][i] == 0) {
+            subtractRows(matrix, i, j, 1, 1);
           }
-          subtractRows(matrix, j, i, matrix.get(j, i) / matrix.get(i, i));
+          subtractRows(matrix, j, i, matrix.numerators[j][i] * matrix.denominators[i][i],
+              matrix.denominators[j][i] * matrix.numerators[i][i]);
         }
       }
     }
 
-    double result = matrix.get(0, 0);
+    double result = matrix.getCoefficient(0, 0);
     for (int i = 1; i < matrix.width(); i++) {
-      result *= matrix.get(i, i);
+      result *= matrix.getCoefficient(i, i);
     }
 
     return -result;
@@ -111,7 +140,17 @@ public class Matrix {
   // Setters
   // =================================================================================================================
 
-  public void set(int column, int row, double value) {
-    values[column][row] = value;
+  public void set(int column, int row, long value) {
+    numerators[column][row] = value;
+    denominators[column][row] = 1;
+  }
+
+  public void set(int column, int row, long numerator, long denominator) {
+    numerators[column][row] = numerator;
+    denominators[column][row] = denominator;
+  }
+
+  public void add(int column, int row, long value) {
+    numerators[column][row] += value * denominators[column][row];
   }
 }
