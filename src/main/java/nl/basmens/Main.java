@@ -32,10 +32,10 @@ public class Main extends PApplet {
   private static final Tilesets TILESET = Tilesets.EXPANDED_UNWEIGHTED;
   public static final boolean KEEP_DRAWABLE_KNOTS = false; // Preformance
   // Used to set the seed; ignore warning if no seed is given
-  public static final Supplier<Random> RANDOM_FACTORY = () -> new Random(12);
+  public static final Supplier<Random> RANDOM_FACTORY = () -> new Random(10);
 
   public final KnotRenderer knotRenderer = new KnotRenderer(true, true, true);
-  private int size = 12;
+  private int size = 30;
   private int imgRes = 7;
 
   private enum Tilesets {

@@ -79,10 +79,10 @@ public class PolynomialMatrix {
     // det = n00 * n11 * n22 * n33 * n44
     PolynomialMatrix matrix = new PolynomialMatrix(this);
     ArrayList<Polynomial> finalDivisor = new ArrayList<>();
-    System.out.println();
-    System.out.println();
-    System.out.println();
-    System.out.println(matrix);
+    // System.out.println();
+    // System.out.println();
+    // System.out.println();
+    // System.out.println(matrix);
 
     for (int col = 0; col < matrix.width() - 1; col++) {
       boolean isDiagonalZero = matrix.get(col, col).isZero();
@@ -120,6 +120,7 @@ public class PolynomialMatrix {
       result.mult(matrix.get(i, i));
       remainder.mult(matrix.get(i, i));
       result.add(Polynomial.divWithRemainder(remainder, denominator, remainder));
+      // System.out.println("matrix: " + matrix.get(i, i));
       // System.out.println("result: " + result);
       // System.out.println("remainder: " + remainder);
 
@@ -130,6 +131,10 @@ public class PolynomialMatrix {
         // System.out.println("result: " + result);
         // System.out.println("remainder: " + remainder);
       }
+    }
+
+    if (!remainder.isZero()) {
+      throw new RuntimeException("Determinant calculation in PolynomialMatrix resulted in a remainder");
     }
 
     return result;

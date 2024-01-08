@@ -153,42 +153,42 @@ public class Knot {
       return;
     }
 
-    // for (int index = intersections.size() - 1; index >= 0; index--) {
-    //   // Simplify using reidemeister move two
-    //   Intersection i = intersections.get(index);
-    //   Connection otherUnder = i.under.getNext();
-    //   if (otherUnder.isOver()) {
-    //     continue;
-    //   }
+    for (int index = intersections.size() - 1; index >= 0; index--) {
+      // Simplify using reidemeister move two
+      Intersection i = intersections.get(index);
+      Connection otherUnder = i.under.getNext();
+      if (otherUnder.isOver()) {
+        continue;
+      }
 
-    //   Connection otherOver = otherUnder.getIntersection().over;
-    //   if (i.over.getNext() == otherOver) {
-    //     i.over.getPrev().setNext(otherOver.getNext());
-    //   } else if (i.over.getPrev() == otherOver) {
-    //     i.over.getNext().setPrev(otherOver.getPrev());
-    //   } else {
-    //     continue;
-    //   }
+      Connection otherOver = otherUnder.getIntersection().over;
+      if (i.over.getNext() == otherOver) {
+        i.over.getPrev().setNext(otherOver.getNext());
+      } else if (i.over.getPrev() == otherOver) {
+        i.over.getNext().setPrev(otherOver.getPrev());
+      } else {
+        continue;
+      }
 
-    //   i.under.getPrev().setNext(otherUnder.getNext());
-    //   intersections.remove(index);
-    //   intersections.remove(otherUnder.getIntersection());
+      i.under.getPrev().setNext(otherUnder.getNext());
+      intersections.remove(index);
+      intersections.remove(otherUnder.getIntersection());
       
-    //   // Check if unknot
-    //   if (intersections.size() < 3) {
-    //     initToUnknot(reducedFirstConnection.getPos());
-    //     return;
-    //   }
+      // Check if unknot
+      if (intersections.size() < 3) {
+        initToUnknot(reducedFirstConnection.getPos());
+        return;
+      }
       
-    //   // Simplify using reidemeister move one
-    //   simplifyUsingReidemeisterMoveOne();
-    //   if (intersections.isEmpty()) {
-    //     return;
-    //   }
+      // Simplify using reidemeister move one
+      simplifyUsingReidemeisterMoveOne();
+      if (intersections.isEmpty()) {
+        return;
+      }
       
-    //   index = intersections.size();
-    // }
-    // reducedFirstConnection = intersections.get(0).under;
+      index = intersections.size();
+    }
+    reducedFirstConnection = intersections.get(0).under;
   }
 
   private void simplifyUsingReidemeisterMoveOne() {

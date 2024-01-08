@@ -219,7 +219,8 @@ public class Polynomial {
     // Make a copy in case denominator and outRemainder point to the same instance
     denominator = new Polynomial(denominator);
 
-    while (outRemainder.getHighestMonomial().getPower() - denominator.getHighestMonomial().getPower() >= 0) {
+    while (outRemainder.getHighestMonomial().getPower() - outRemainder.getLowestMonomial().getPower() >= denominator
+        .getHighestMonomial().getPower() - denominator.getLowestMonomial().getPower()) {
       Monomial multiplier = Monomial.div(outRemainder.getHighestMonomial(), denominator.getHighestMonomial());
       outRemainder.sub(Polynomial.mult(denominator, multiplier));
 
