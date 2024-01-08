@@ -11,7 +11,7 @@ public class Intersection {
   // indexes of areaIds
   // / / | / /
   // / 2 | 1 /
-  // >------->
+  // >---|--->
   // / 3 | 0 /
   // / / | / /
   protected int[] areaIds = new int[] { -1, -1, -1, -1 };

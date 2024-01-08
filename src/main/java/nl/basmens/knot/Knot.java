@@ -262,42 +262,49 @@ public class Knot {
     hasAsignedAreaIds = true;
   }
 
+  // indexes of areaIds
+  // / / | / /
+  // / 2 | 1 /
+  // >---|--->
+  // / 3 | 0 /
+  // / / | / /
+
   private void spreadAreaId(int areaId, Intersection prevIntersection, int prevAreaIdIndex) {
     Connection nextConnection;
     boolean isBackwards;
 
     double twoPi = Math.PI * 2;
-    boolean isUnderAngleLeft = ((prevIntersection.under.getDir() - prevIntersection.over.getDir()) % twoPi + twoPi)
+    boolean isOverAngleRight = ((prevIntersection.over.getDir() - prevIntersection.under.getDir()) % twoPi + twoPi)
         % twoPi < Math.PI;
 
     // find connection to continue on
     switch (prevAreaIdIndex) {
       case 0:
-        nextConnection = prevIntersection.over.getNext();
+        nextConnection = prevIntersection.under.getNext();
         isBackwards = false;
         break;
       case 1:
-        isBackwards = isUnderAngleLeft;
-        nextConnection = isUnderAngleLeft ? prevIntersection.under.getPrev() : prevIntersection.under.getNext();
+        isBackwards = isOverAngleRight;
+        nextConnection = isOverAngleRight ? prevIntersection.over.getPrev() : prevIntersection.over.getNext();
         break;
       case 2:
-        nextConnection = prevIntersection.over.getPrev();
+        nextConnection = prevIntersection.under.getPrev();
         isBackwards = true;
         break;
       default:
-        isBackwards = !isUnderAngleLeft;
-        nextConnection = isUnderAngleLeft ? prevIntersection.under.getNext() : prevIntersection.under.getPrev();
+        isBackwards = !isOverAngleRight;
+        nextConnection = isOverAngleRight ? prevIntersection.over.getNext() : prevIntersection.over.getPrev();
         break;
     }
 
     Intersection nextIntersection = nextConnection.getIntersection();
 
-    isUnderAngleLeft = ((nextIntersection.under.getDir() - nextIntersection.over.getDir()) % twoPi + twoPi)
+    isOverAngleRight = ((nextIntersection.over.getDir() - nextIntersection.under.getDir()) % twoPi + twoPi)
         % twoPi < Math.PI;
 
     int nextAreaIdIndex;
     // find areaIdIndex based on where the intersection got entered
-    if (nextConnection == nextIntersection.over) {
+    if (nextConnection == nextIntersection.under) {
       if (isBackwards) {
         nextAreaIdIndex = 1;
       } else {
@@ -305,13 +312,13 @@ public class Knot {
       }
     } else {
       if (isBackwards) {
-        if (isUnderAngleLeft) {
+        if (isOverAngleRight) {
           nextAreaIdIndex = 0;
         } else {
           nextAreaIdIndex = 2;
         }
       } else {
-        if (isUnderAngleLeft) {
+        if (isOverAngleRight) {
           nextAreaIdIndex = 2;
         } else {
           nextAreaIdIndex = 0;
@@ -394,23 +401,23 @@ public class Knot {
           continue;
         }
 
-        // / / ^ / /
-        // / t |-1 /
-        // ---------
-        // /-t | 1 /
+        // / / | / /
+        // /-t | t /
+        // >---|--->
+        // / 1 | -1 /
         // / / | / /
 
         // Also take the transpose of the matrix, because the right top tends to have
         // more zeros
         matrix.get(i, intersection.areaIds[j] - 2).add(switch (j) {
           case 0:
-            yield new Polynomial(new Monomial(1, 0));
-          case 1:
             yield new Polynomial(new Monomial(-1, 0));
-          case 2:
+          case 1:
             yield new Polynomial(new Monomial(1, 1));
-          default:
+          case 2:
             yield new Polynomial(new Monomial(-1, 1));
+          default:
+            yield new Polynomial(new Monomial(1, 0));
         });
       }
     }
