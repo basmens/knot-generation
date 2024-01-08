@@ -14,13 +14,13 @@ import nl.basmens.utils.PolynomialMatrix;
 import nl.basmens.utils.Vector;
 
 public class Knot {
-  // Unknot
-  private static final FutureTask<Boolean> FUTURE_UNKNOT_TRICOLORABILITY = new FutureTask<>(() -> {
-  }, false);
-  private static final FutureTask<Long> FUTURE_UNKNOT_KNOT_DETERMINANT = new FutureTask<>(() -> {
-  }, 1L);
-  private static final FutureTask<Polynomial> FUTURE_UNKNOT_ALEXANDER_POLYNOMIAL = new FutureTask<>(() -> {
-  }, new Polynomial(new Monomial(1, 0)));
+  // Predefined values
+  private static final FutureTask<Boolean> FUTURE_UNKNOT_TRICOLORABILITY = new FutureTask<>(() -> false);
+  private static final FutureTask<Long> FUTURE_UNKNOT_KNOT_DETERMINANT = new FutureTask<>(() -> 1L);
+  private static final FutureTask<Polynomial> FUTURE_UNKNOT_ALEXANDER_POLYNOMIAL = new FutureTask<>(
+      () -> new Polynomial(new Monomial(1, 0)));
+  private static final Polynomial ERROR_VALUE_ALEXANDER_POLYNOMIAL = new Polynomial(new Monomial(-1, 0));
+
   static {
     FUTURE_UNKNOT_TRICOLORABILITY.run();
     FUTURE_UNKNOT_KNOT_DETERMINANT.run();
@@ -173,19 +173,19 @@ public class Knot {
       i.under.getPrev().setNext(otherUnder.getNext());
       intersections.remove(index);
       intersections.remove(otherUnder.getIntersection());
-      
+
       // Check if unknot
       if (intersections.size() < 3) {
         initToUnknot(reducedFirstConnection.getPos());
         return;
       }
-      
+
       // Simplify using reidemeister move one
       simplifyUsingReidemeisterMoveOne();
       if (intersections.isEmpty()) {
         return;
       }
-      
+
       index = intersections.size();
     }
     reducedFirstConnection = intersections.get(0).under;
@@ -205,7 +205,7 @@ public class Knot {
 
       intersections.remove(index);
       index = intersections.size();
-      
+
       if (intersections.size() < 3) {
         initToUnknot(reducedFirstConnection.getPos());
         return;
@@ -422,13 +422,19 @@ public class Knot {
       }
     }
 
-    Polynomial determinant = matrix.getDeterminant();
-    Monomial smallestTerm = determinant.getLowestMonomial();
-    if (smallestTerm != null) {
-      determinant = Polynomial.div(determinant,
-          new Monomial((long) Math.signum(smallestTerm.getCoefficient()), smallestTerm.getPower()));
+    try {
+      Polynomial determinant = matrix.getDeterminant();
+      Monomial smallestTerm = determinant.getLowestMonomial();
+      if (smallestTerm != null) {
+        determinant = Polynomial.div(determinant,
+            new Monomial((long) Math.signum(smallestTerm.getCoefficient()), smallestTerm.getPower()));
+      }
+      return determinant;
+    } catch (ArithmeticException e) {
+      System.out.println("Alexander polynomial failed to calculate due to a long overflow");
+      e.printStackTrace();
+      return ERROR_VALUE_ALEXANDER_POLYNOMIAL;
     }
-    return determinant;
   }
 
   // ===================================================================================================================

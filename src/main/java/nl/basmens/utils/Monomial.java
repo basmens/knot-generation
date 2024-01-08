@@ -40,9 +40,10 @@ public class Monomial {
       throw new IllegalArgumentException("ERROR: cant add Monomial because power is not the same");
     }
 
-    numerator *= other.denominator;
-    numerator += other.numerator * denominator;
-    denominator *= other.denominator;
+    // Math exact functions throw an ArithmeticException in case of an overflow
+    numerator = Math.multiplyExact(numerator, other.denominator);
+    numerator = Math.addExact(numerator, Math.multiplyExact(other.numerator, denominator));
+    denominator = Math.multiplyExact(denominator, other.denominator);
 
     simplifyFraction();
     return this;
@@ -53,17 +54,19 @@ public class Monomial {
       throw new IllegalArgumentException("ERROR: cant subtract Monomial because power is not the same");
     }
 
-    numerator *= other.denominator;
-    numerator -= other.numerator * denominator;
-    denominator *= other.denominator;
+    // Math exact functions throw an ArithmeticException in case of an overflow
+    numerator = Math.multiplyExact(numerator, other.denominator);
+    numerator = Math.subtractExact(numerator, Math.multiplyExact(other.numerator, denominator));
+    denominator = Math.multiplyExact(denominator, other.denominator);
 
     simplifyFraction();
     return this;
   }
 
   public Monomial mult(Monomial other) {
-    numerator *= other.numerator;
-    denominator *= other.denominator;
+    // Math exact functions throw an ArithmeticException in case of an overflow
+    numerator = Math.multiplyExact(numerator, other.numerator);
+    denominator = Math.multiplyExact(denominator, other.denominator);
     power += other.power;
 
     simplifyFraction();
@@ -71,14 +74,15 @@ public class Monomial {
   }
 
   public Monomial div(Monomial other) {
-    numerator *= other.denominator;
-    denominator *= other.numerator;
+    // Math exact functions throw an ArithmeticException in case of an overflow
+    numerator = Math.multiplyExact(numerator, other.denominator);
+    denominator = Math.multiplyExact(denominator, other.numerator);
     power -= other.power;
 
     simplifyFraction();
     return this;
   }
-  
+
   // =================================================================================================================
   // Math static
   // =================================================================================================================

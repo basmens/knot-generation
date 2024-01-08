@@ -30,14 +30,14 @@ public class PolynomialMatrix {
   // Functions
   // =================================================================================================================
 
-  private void subtractRows(int minuendRow, int subtrahendRow, Polynomial multiplier) {
-    for (int i = 0; i < width(); i++) {
+  private void subtractRows(int minuendRow, int subtrahendRow, int beginColumn, Polynomial multiplier) {
+    for (int i = beginColumn; i < width(); i++) {
       set(i, minuendRow, get(i, minuendRow).sub(Polynomial.mult(get(i, subtrahendRow), multiplier)));
     }
   }
 
-  private void multiplyRow(int row, Polynomial multiplier) {
-    for (int i = 0; i < width(); i++) {
+  private void multiplyRow(int row, int beginColumn, Polynomial multiplier) {
+    for (int i = beginColumn; i < width(); i++) {
       set(i, row, Polynomial.mult(get(i, row), multiplier));
     }
   }
@@ -78,7 +78,7 @@ public class PolynomialMatrix {
     // [0, 0, 0, 0, n44]
     // det = n00 * n11 * n22 * n33 * n44
     PolynomialMatrix matrix = new PolynomialMatrix(this);
-    ArrayList<Polynomial> finalDivisor = new ArrayList<>();
+    ArrayList<Polynomial> finalDivisors = new ArrayList<>();
     // System.out.println();
     // System.out.println();
     // System.out.println();
@@ -90,18 +90,18 @@ public class PolynomialMatrix {
       for (int row = col + 1; row < matrix.height(); row++) {
         if (!matrix.get(col, row).isZero()) {
           if (isDiagonalZero) {
-            matrix.subtractRows(col, row, new Polynomial(new Monomial(1, 0)));
-            matrix.subtractRows(row, col, new Polynomial(new Monomial(-1, 0)));
+            matrix.subtractRows(col, row, 0, new Polynomial(new Monomial(1, 0)));
+            matrix.subtractRows(row, col, 0, new Polynomial(new Monomial(-1, 0)));
             isDiagonalZero = false;
           } else {
             Monomial lowestMonomial = matrix.get(col, col).getLowestMonomial();
             Polynomial multiplier = Polynomial.div(matrix.get(col, col), lowestMonomial);
             Polynomial ratio = Polynomial.div(matrix.get(col, row), lowestMonomial);
             if (!multiplier.isOne()) {
-              matrix.multiplyRow(row, multiplier);
-              finalDivisor.add(multiplier);
+              matrix.multiplyRow(row, col + 1, multiplier);
+              finalDivisors.add(multiplier);
             }
-            matrix.subtractRows(row, col, ratio);
+            matrix.subtractRows(row, col, col + 1, ratio);
           }
 
           // System.out.println();
@@ -112,21 +112,22 @@ public class PolynomialMatrix {
       }
     }
 
+    // Multiply the diagonal and divide by the final divisors in parts to make long overflows less likely to occur
     Polynomial result = new Polynomial(new Monomial(1, 0));
     Polynomial remainder = new Polynomial();
-    Polynomial denominator = new Polynomial(new Monomial(1, 0));
+    Polynomial devisor = new Polynomial(new Monomial(1, 0));
     int dividerIndex = 0;
     for (int i = 0; i < matrix.width(); i++) {
       result.mult(matrix.get(i, i));
       remainder.mult(matrix.get(i, i));
-      result.add(Polynomial.divWithRemainder(remainder, denominator, remainder));
+      result.add(Polynomial.divWithRemainder(remainder, devisor, remainder));
       // System.out.println("matrix: " + matrix.get(i, i));
       // System.out.println("result: " + result);
       // System.out.println("remainder: " + remainder);
 
-      while (remainder.isZero() && dividerIndex < finalDivisor.size()) {
-        denominator = finalDivisor.get(dividerIndex);
-        result.divWithRemainder(denominator, remainder);
+      while (remainder.isZero() && dividerIndex < finalDivisors.size()) {
+        devisor = finalDivisors.get(dividerIndex);
+        result.divWithRemainder(devisor, remainder);
         dividerIndex++;
         // System.out.println("result: " + result);
         // System.out.println("remainder: " + remainder);
