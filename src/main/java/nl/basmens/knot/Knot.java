@@ -463,7 +463,7 @@ public class Knot {
   public synchronized void startCalcTricolorability() {
     if (tricolorabilityFuture == null) {
       tricolorabilityFuture = new FutureTask<>(this::calculateTricolorability);
-      new Thread(tricolorabilityFuture::run).start();
+      tricolorabilityFuture.run();
     }
   }
 
@@ -498,8 +498,7 @@ public class Knot {
   public synchronized void startCalcKnotDeterminant() {
     if (knotDeterminantFuture == null) {
       knotDeterminantFuture = new FutureTask<>(this::calculateKnotDeterminant);
-      new Thread(knotDeterminantFuture::run).start();
-      // knotDeterminantFuture.run();
+      knotDeterminantFuture.run();
     }
   }
 
@@ -534,8 +533,7 @@ public class Knot {
   public synchronized void startCalcAlexanderPolynomial() {
     if (alexanderPolynomialFuture == null) {
       alexanderPolynomialFuture = new FutureTask<>(this::calculateAlexanderPolynomial);
-      new Thread(alexanderPolynomialFuture::run).start();
-      // alexanderPolynomialFuture.run();
+      alexanderPolynomialFuture.run();
     }
   }
 

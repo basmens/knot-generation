@@ -47,7 +47,7 @@ public class KnotGenerationPipeline implements Runnable {
       generator.generateGrid();
       knots = analyzer.extractKnots(generator.getGrid());
 
-      knots.forEach((Knot k) -> {k.startCalcAlexanderPolynomial(); k.startCalcKnotDeterminant();});
+      new Thread(() -> knots.forEach((Knot k) -> {k.startCalcAlexanderPolynomial(); k.startCalcKnotDeterminant();})).start();
       // for (int i = 0; i < knots.size(); i++) {
       //   Knot k = knots.get(i);
       //   if ((long) k.getAlexanderPolynomial().evaluateOnT(-1) != k.getKnotDeterminant()) {

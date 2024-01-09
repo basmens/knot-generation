@@ -106,7 +106,7 @@ public class KnotRenderer {
   }
 
   private void displayKnotInfo(KnotGenerationPipeline pipeLine, Knot knot) {
-    // knot.startCalcTricolorability();
+    //new Thread(knot::startCalcTricolorability).start();
     new Thread(knot::startCalcKnotDeterminant).start();
     new Thread(knot::startCalcAlexanderPolynomial).start();
 
