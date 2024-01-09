@@ -460,10 +460,19 @@ public class Knot {
     return tricolorabilityFuture != null && tricolorabilityFuture.isDone();
   }
 
-  public synchronized void startCalcTricolorability() {
-    if (tricolorabilityFuture == null) {
-      tricolorabilityFuture = new FutureTask<>(this::calculateTricolorability);
-      tricolorabilityFuture.run();
+  public void startCalcTricolorability() {
+    FutureTask<Boolean> f = tricolorabilityFuture;
+    if (f != null) {
+      return;
+    }
+
+    // Double check for thread safety, without potentially blocking all the thread
+    // that enter the function
+    synchronized (this) {
+      if (tricolorabilityFuture == null) {
+        tricolorabilityFuture = new FutureTask<>(this::calculateTricolorability);
+        tricolorabilityFuture.run();
+      }
     }
   }
 
@@ -495,10 +504,19 @@ public class Knot {
     return knotDeterminantFuture != null && knotDeterminantFuture.isDone();
   }
 
-  public synchronized void startCalcKnotDeterminant() {
-    if (knotDeterminantFuture == null) {
-      knotDeterminantFuture = new FutureTask<>(this::calculateKnotDeterminant);
-      knotDeterminantFuture.run();
+  public void startCalcKnotDeterminant() {
+    FutureTask<Long> f = knotDeterminantFuture;
+    if (f != null) {
+      return;
+    }
+
+    // Double check for thread safety, without potentially blocking all the thread
+    // that enter the function
+    synchronized (this) {
+      if (knotDeterminantFuture == null) {
+        knotDeterminantFuture = new FutureTask<>(this::calculateKnotDeterminant);
+        knotDeterminantFuture.run();
+      }
     }
   }
 
@@ -530,10 +548,19 @@ public class Knot {
     return alexanderPolynomialFuture != null && alexanderPolynomialFuture.isDone();
   }
 
-  public synchronized void startCalcAlexanderPolynomial() {
-    if (alexanderPolynomialFuture == null) {
-      alexanderPolynomialFuture = new FutureTask<>(this::calculateAlexanderPolynomial);
-      alexanderPolynomialFuture.run();
+  public void startCalcAlexanderPolynomial() {
+    FutureTask<Polynomial> f = alexanderPolynomialFuture;
+    if (f != null) {
+      return;
+    }
+
+    // Double check for thread safety, without potentially blocking all the thread
+    // that enter the function
+    synchronized (this) {
+      if (alexanderPolynomialFuture == null) {
+        alexanderPolynomialFuture = new FutureTask<>(this::calculateAlexanderPolynomial);
+        alexanderPolynomialFuture.run();
+      }
     }
   }
 
