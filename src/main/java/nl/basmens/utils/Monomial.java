@@ -1,4 +1,5 @@
 package nl.basmens.utils;
+
 import java.math.BigInteger;
 import java.util.Locale;
 
@@ -19,7 +20,7 @@ public class Monomial {
   }
 
   public Monomial(long numerator, long denominator, int power) {
-    this.numerator =  BigInteger.valueOf(numerator);
+    this.numerator = BigInteger.valueOf(numerator);
     this.denominator = denominator;
     this.power = power;
 
@@ -76,7 +77,19 @@ public class Monomial {
   public Monomial div(Monomial other) {
     // Math exact functions throw an ArithmeticException in case of an overflow
     numerator = numerator.multiply(BigInteger.valueOf(other.denominator));
-    denominator = Math.multiplyExact(denominator, other.numerator.longValueExact());
+
+    BigInteger newDenominator = other.numerator.multiply(BigInteger.valueOf(denominator));
+    BigInteger gcd = newDenominator.gcd(numerator);
+    numerator = numerator.divide(gcd);
+    newDenominator = newDenominator.divide(gcd);
+
+    if (newDenominator.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0
+        || newDenominator.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) < 0) {
+      throw new ArithmeticException("Denominator in Monomial is outside the range of a long");
+    }
+    
+    denominator = newDenominator.longValue();
+
     power -= other.power;
 
     simplifyFraction();

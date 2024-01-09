@@ -431,7 +431,6 @@ public class Knot {
       }
       return determinant;
     } catch (ArithmeticException e) {
-      System.out.println("Alexander polynomial failed to calculate due to a long overflow");
       e.printStackTrace();
       return ERROR_VALUE_ALEXANDER_POLYNOMIAL;
     }
