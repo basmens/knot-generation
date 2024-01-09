@@ -1,9 +1,9 @@
 package nl.basmens.utils;
-
+import java.math.BigInteger;
 import java.util.Locale;
 
 public class Monomial {
-  private long numerator;
+  private BigInteger numerator;
   private long denominator = 1;
   private int power = 1;
 
@@ -14,12 +14,12 @@ public class Monomial {
   }
 
   public Monomial(long coefficient, int power) {
-    this.numerator = coefficient;
+    this.numerator = BigInteger.valueOf(coefficient);
     this.power = power;
   }
 
   public Monomial(long numerator, long denominator, int power) {
-    this.numerator = numerator;
+    this.numerator =  BigInteger.valueOf(numerator);
     this.denominator = denominator;
     this.power = power;
 
@@ -41,8 +41,8 @@ public class Monomial {
     }
 
     // Math exact functions throw an ArithmeticException in case of an overflow
-    numerator = Math.multiplyExact(numerator, other.denominator);
-    numerator = Math.addExact(numerator, Math.multiplyExact(other.numerator, denominator));
+    numerator = numerator.multiply(BigInteger.valueOf(other.denominator));
+    numerator = numerator.add(other.numerator.multiply(BigInteger.valueOf(denominator)));
     denominator = Math.multiplyExact(denominator, other.denominator);
 
     simplifyFraction();
@@ -55,8 +55,8 @@ public class Monomial {
     }
 
     // Math exact functions throw an ArithmeticException in case of an overflow
-    numerator = Math.multiplyExact(numerator, other.denominator);
-    numerator = Math.subtractExact(numerator, Math.multiplyExact(other.numerator, denominator));
+    numerator = numerator.multiply(BigInteger.valueOf(other.denominator));
+    numerator = numerator.subtract(other.numerator.multiply(BigInteger.valueOf(denominator)));
     denominator = Math.multiplyExact(denominator, other.denominator);
 
     simplifyFraction();
@@ -65,7 +65,7 @@ public class Monomial {
 
   public Monomial mult(Monomial other) {
     // Math exact functions throw an ArithmeticException in case of an overflow
-    numerator = Math.multiplyExact(numerator, other.numerator);
+    numerator = numerator.multiply(other.numerator);
     denominator = Math.multiplyExact(denominator, other.denominator);
     power += other.power;
 
@@ -75,8 +75,8 @@ public class Monomial {
 
   public Monomial div(Monomial other) {
     // Math exact functions throw an ArithmeticException in case of an overflow
-    numerator = Math.multiplyExact(numerator, other.denominator);
-    denominator = Math.multiplyExact(denominator, other.numerator);
+    numerator = numerator.multiply(BigInteger.valueOf(other.denominator));
+    denominator = Math.multiplyExact(denominator, other.numerator.longValueExact());
     power -= other.power;
 
     simplifyFraction();
@@ -108,8 +108,8 @@ public class Monomial {
   private void simplifyFraction() {
     final long[] primeNumbers = { 2, 3, 5, 7, 11 };
     for (long p : primeNumbers) {
-      while (numerator % p == 0 && denominator % p == 0) {
-        numerator /= p;
+      while (numerator.mod(BigInteger.valueOf(p)).intValueExact() == 0 && denominator % p == 0) {
+        numerator = numerator.divide(BigInteger.valueOf(p));
         denominator /= p;
       }
     }
@@ -119,15 +119,19 @@ public class Monomial {
   // Getters
   // =================================================================================================================
   public static boolean isZero(Monomial m) {
-    return m == null || m.numerator == 0;
+    return m == null || m.numerator.equals(BigInteger.ZERO);
   }
 
   public static boolean isOne(Monomial m) {
-    return m != null && m.power == 0 && m.numerator == m.denominator;
+    return m != null && m.power == 0 && m.numerator.equals(BigInteger.valueOf(m.denominator));
+  }
+
+  public static boolean isMinusOne(Monomial m) {
+    return m != null && m.power == 0 && m.numerator.equals(BigInteger.valueOf(-m.denominator));
   }
 
   public double getCoefficient() {
-    return numerator / (double) denominator;
+    return numerator.divide(BigInteger.valueOf(denominator)).doubleValue();
   }
 
   public int getPower() {
@@ -140,7 +144,7 @@ public class Monomial {
 
   @Override
   public String toString() {
-    if (numerator == 0) {
+    if (isZero(this)) {
       return "0";
     }
 
@@ -149,19 +153,15 @@ public class Monomial {
 
   private String getCoefficientString() {
     if (power != 0) {
-      if (numerator == denominator) {
+      if (isOne(this)) {
         return "";
       }
-      if (numerator == -denominator) {
+      if (isMinusOne(this)) {
         return "-";
       }
     }
 
-    if (numerator % denominator == 0) {
-      return String.format(Locale.ENGLISH, "%d", numerator / denominator);
-    } else {
-      return String.format(Locale.ENGLISH, "%.4f", getCoefficient()).replaceAll("(,*)(0+)$", "");
-    }
+    return String.format(Locale.ENGLISH, "%.4f", getCoefficient()).replaceAll("(,*)(0+)$", "");
   }
 
   private String getPowerString() {
