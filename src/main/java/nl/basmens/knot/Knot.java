@@ -19,6 +19,8 @@ public class Knot {
   private static final FutureTask<Long> FUTURE_UNKNOT_KNOT_DETERMINANT = new FutureTask<>(() -> 1L);
   private static final FutureTask<Polynomial> FUTURE_UNKNOT_ALEXANDER_POLYNOMIAL = new FutureTask<>(
       () -> new Polynomial(new Monomial(1, 0)));
+  private static final boolean ERROR_VALUE_TRICOLORABILITY = false; // Not really an error value tbh...
+  private static final long ERROR_VALUE_KNOT_DETERMINANT = -1;
   private static final Polynomial ERROR_VALUE_ALEXANDER_POLYNOMIAL = new Polynomial(new Monomial(-1, 0));
 
   static {
@@ -338,99 +340,113 @@ public class Knot {
 
   // Tricolorability
   private boolean calculateTricolorability() {
-    Connection connection = reducedFirstConnection;
-    while (!connection.isUnder() && connection != reducedFirstConnection.getPrev()) {
-      connection = connection.getNext();
-    }
-    connection.propagateTricolorability(1);
-
-    connection = reducedFirstConnection;
-    int firstSectionValue = connection.getSectionValue();
-    do {
-      int sectionValue = connection.getSectionValue();
-      if (firstSectionValue != sectionValue) {
-        return true;
+    long startTime = System.nanoTime();
+    try {
+      Connection connection = reducedFirstConnection;
+      while (!connection.isUnder() && connection != reducedFirstConnection.getPrev()) {
+        connection = connection.getNext();
       }
-      connection = connection.getNext();
-    } while (connection != reducedFirstConnection);
+      connection.propagateTricolorability(1, startTime);
 
-    return false;
+      connection = reducedFirstConnection;
+      int firstSectionValue = connection.getSectionValue();
+      do {
+        int sectionValue = connection.getSectionValue();
+        if (firstSectionValue != sectionValue) {
+          return true;
+        }
+        connection = connection.getNext();
+      } while (connection != reducedFirstConnection);
+
+      return false;
+    } catch (RuntimeException e) {
+      e.printStackTrace();
+      return ERROR_VALUE_TRICOLORABILITY;
+    }
   }
 
   // KnotDeterminant
   private long calculateKnotDeterminant() {
-    if (intersections.size() < 3) {
-      return 1;
+    long startTime = System.nanoTime();
+    try {
+      if (intersections.size() < 3) {
+        return 1;
+      }
+
+      asignSectionIds();
+
+      Matrix matrix = new Matrix(intersections.size() - 1, intersections.size() - 1);
+
+      for (int i = 0; i < intersections.size() - 1; i++) {
+        Intersection intersection = intersections.get(i);
+        if (intersection.overSectionId < intersections.size() - 1) {
+          matrix.add(intersection.overSectionId, i, 2);
+        }
+        if (intersection.underSectionId1 < intersections.size() - 1) {
+          matrix.add(intersection.underSectionId1, i, -1);
+        }
+        if (intersection.underSectionId2 < intersections.size() - 1) {
+          matrix.add(intersection.underSectionId2, i, -1);
+        }
+      }
+
+      // round to get rid of precision loss
+      return Math.round(Math.abs(matrix.getDeterminant(startTime)));
+    } catch (RuntimeException e) {
+      e.printStackTrace();
+      return ERROR_VALUE_KNOT_DETERMINANT;
     }
 
-    asignSectionIds();
-
-    Matrix matrix = new Matrix(intersections.size() - 1, intersections.size() - 1);
-
-    for (int i = 0; i < intersections.size() - 1; i++) {
-      Intersection intersection = intersections.get(i);
-      if (intersection.overSectionId < intersections.size() - 1) {
-        matrix.add(intersection.overSectionId, i, 2);
-      }
-      if (intersection.underSectionId1 < intersections.size() - 1) {
-        matrix.add(intersection.underSectionId1, i, -1);
-      }
-      if (intersection.underSectionId2 < intersections.size() - 1) {
-        matrix.add(intersection.underSectionId2, i, -1);
-      }
-    }
-
-    // round to get rid of precision loss
-    return Math.round(Math.abs(matrix.getDeterminant()));
   }
 
   // AlexanderPolynomial
   private Polynomial calculateAlexanderPolynomial() {
-    if (intersections.size() < 3) {
-      return new Polynomial(new Monomial(1, 0));
-    }
-
-    asignAreaIds();
-
-    int s = intersections.size();
-    PolynomialMatrix matrix = new PolynomialMatrix(s, s);
-    for (int i = 0; i < s; i++) {
-      Intersection intersection = intersections.get(i);
-      for (int j = 0; j < 4; j++) {
-        if (intersection.areaIds[j] < 2) {
-          continue;
-        }
-
-        // / / | / /
-        // /-t | t /
-        // >---|--->
-        // / 1 | -1 /
-        // / / | / /
-
-        // Also take the transpose of the matrix, because the right top tends to have
-        // more zeros
-        matrix.get(i, intersection.areaIds[j] - 2).add(switch (j) {
-          case 0:
-            yield new Polynomial(new Monomial(-1, 0));
-          case 1:
-            yield new Polynomial(new Monomial(1, 1));
-          case 2:
-            yield new Polynomial(new Monomial(-1, 1));
-          default:
-            yield new Polynomial(new Monomial(1, 0));
-        });
-      }
-    }
-
+    long startTime = System.nanoTime();
     try {
-      Polynomial determinant = matrix.getDeterminant();
+      if (intersections.size() < 3) {
+        return new Polynomial(new Monomial(1, 0));
+      }
+
+      asignAreaIds();
+
+      int s = intersections.size();
+      PolynomialMatrix matrix = new PolynomialMatrix(s, s);
+      for (int i = 0; i < s; i++) {
+        Intersection intersection = intersections.get(i);
+        for (int j = 0; j < 4; j++) {
+          if (intersection.areaIds[j] < 2) {
+            continue;
+          }
+
+          // / / | / /
+          // /-t | t /
+          // >---|--->
+          // / 1 | -1 /
+          // / / | / /
+
+          // Also take the transpose of the matrix, because the right top tends to have
+          // more zeros
+          matrix.get(i, intersection.areaIds[j] - 2).add(switch (j) {
+            case 0:
+              yield new Polynomial(new Monomial(-1, 0));
+            case 1:
+              yield new Polynomial(new Monomial(1, 1));
+            case 2:
+              yield new Polynomial(new Monomial(-1, 1));
+            default:
+              yield new Polynomial(new Monomial(1, 0));
+          });
+        }
+      }
+
+      Polynomial determinant = matrix.getDeterminant(startTime);
       Monomial smallestTerm = determinant.getLowestMonomial();
       if (smallestTerm != null) {
         determinant = Polynomial.div(determinant,
             new Monomial((long) Math.signum(smallestTerm.getCoefficient()), smallestTerm.getPower()));
       }
       return determinant;
-    } catch (ArithmeticException e) {
+    } catch (RuntimeException e) {
       e.printStackTrace();
       return ERROR_VALUE_ALEXANDER_POLYNOMIAL;
     }

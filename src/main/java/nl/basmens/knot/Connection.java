@@ -1,5 +1,6 @@
 package nl.basmens.knot;
 
+import nl.basmens.Main;
 import nl.basmens.utils.Vector;
 
 public class Connection implements Comparable<Connection> {
@@ -32,7 +33,11 @@ public class Connection implements Comparable<Connection> {
   // Tricolorability
   // ===================================================================================================================
 
-  protected boolean propagateTricolorability(int sectionValue) {
+  protected boolean propagateTricolorability(int sectionValue, long startTime) {
+    if (System.nanoTime() - startTime > Main.MAX_CALC_TIME_PER_INVARIANT) {
+      throw new RuntimeException("Max calculation time exceeded in tricolorability");
+    }
+
     if (this.sectionValue != 0) {
       return true;
     }
@@ -40,7 +45,7 @@ public class Connection implements Comparable<Connection> {
     if (!isIntersected()) {
       this.sectionValue = sectionValue;
 
-      if (next.propagateTricolorability(sectionValue)) {
+      if (next.propagateTricolorability(sectionValue, startTime)) {
         return true;
       } else {
         this.sectionValue = 0;
@@ -54,7 +59,7 @@ public class Connection implements Comparable<Connection> {
         return false;
       }
 
-      if (next.propagateTricolorability(sectionValue)) {
+      if (next.propagateTricolorability(sectionValue, startTime)) {
         return true;
       } else {
         this.sectionValue = 0;
@@ -62,7 +67,7 @@ public class Connection implements Comparable<Connection> {
       }
     } else {
 
-      if (propagateNextValue(sectionValue)) {
+      if (propagateNextValue(sectionValue, startTime)) {
         return true;
       } else {
         this.sectionValue = 0;
@@ -87,7 +92,7 @@ public class Connection implements Comparable<Connection> {
             getIntersection().under.getSectionValue() != getIntersection().under.getPrev().getSectionValue());
   }
 
-  private boolean propagateNextValue(int lastValue) {
+  private boolean propagateNextValue(int lastValue, long startTime) {
     for (int i = 1; i < 4; i++) {
       if (i == lastValue) {
         continue;
@@ -97,13 +102,13 @@ public class Connection implements Comparable<Connection> {
       if (!isFollowingTricolorability()) {
         continue;
       }
-      if (getNext().propagateTricolorability(this.sectionValue)) {
+      if (getNext().propagateTricolorability(this.sectionValue, startTime)) {
         return true;
       }
     }
 
     this.sectionValue = lastValue;
-    if (isFollowingTricolorability() && getNext().propagateTricolorability(this.sectionValue)) {
+    if (isFollowingTricolorability() && getNext().propagateTricolorability(this.sectionValue, startTime)) {
       return true;
     }
 

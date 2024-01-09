@@ -174,7 +174,7 @@ public class Monomial {
       }
     }
 
-    return String.format(Locale.ENGLISH, "%.4f", getCoefficient()).replaceAll("(,*)(0+)$", "");
+    return String.format(Locale.ENGLISH, "%.4f", getCoefficient()).replaceAll("(\\.?)(0+)$", "");
   }
 
   private String getPowerString() {

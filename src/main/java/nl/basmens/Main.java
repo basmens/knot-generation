@@ -31,6 +31,7 @@ public class Main extends PApplet {
   public static final boolean MULTI_THREAD = false;
   private static final Tilesets TILESET = Tilesets.EXPANDED_UNWEIGHTED;
   public static final boolean KEEP_DRAWABLE_KNOTS = false; // Preformance
+  public static final long MAX_CALC_TIME_PER_INVARIANT = 3_000_000_000L;// In nanos
   // Used to set the seed; ignore warning if no seed is given
   public static final Supplier<Random> RANDOM_FACTORY = () -> new Random(10);
 

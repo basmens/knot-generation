@@ -1,5 +1,7 @@
 package nl.basmens.utils;
 
+import nl.basmens.Main;
+
 public class Matrix {
   private long[][] numerators;
   private long[][] denominators;
@@ -106,7 +108,7 @@ public class Matrix {
     return numerators[0].length;
   }
 
-  public double getDeterminant() {
+  public double getDeterminant(long startTime) {
     if (width() != height()) {
       throw new IllegalArgumentException("ERROR: cannot calculate determinant, width and height are not the same");
     }
@@ -118,6 +120,10 @@ public class Matrix {
 
     for (int i = 0; i < matrix.width() - 1; i++) {
       for (int j = i + 1; j < matrix.width(); j++) {
+        if (System.nanoTime() - startTime > Main.MAX_CALC_TIME_PER_INVARIANT) {
+          throw new RuntimeException("Max calculation time exceeded in knot determinant");
+        }
+
         if (matrix.numerators[j][i] != 0) {
           if (matrix.numerators[i][i] == 0) {
             subtractRows(matrix, i, j, 1, 1);

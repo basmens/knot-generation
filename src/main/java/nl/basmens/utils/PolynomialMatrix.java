@@ -2,6 +2,8 @@ package nl.basmens.utils;
 
 import java.util.ArrayList;
 
+import nl.basmens.Main;
+
 public class PolynomialMatrix {
   private Polynomial[][] polynomials;
 
@@ -61,7 +63,7 @@ public class PolynomialMatrix {
     return polynomials[0].length;
   }
 
-  public Polynomial getDeterminant() {
+  public Polynomial getDeterminant(long startTime) {
     if (width() != height()) {
       throw new IllegalArgumentException("ERROR: cannot calculate determinant, width and height are not the same");
     }
@@ -88,6 +90,10 @@ public class PolynomialMatrix {
       boolean isDiagonalZero = matrix.get(col, col).isZero();
 
       for (int row = col + 1; row < matrix.height(); row++) {
+        if (System.nanoTime() - startTime > Main.MAX_CALC_TIME_PER_INVARIANT) {
+          throw new RuntimeException("Max calculation time exceeded in alexander polynomial");
+        }
+
         if (!matrix.get(col, row).isZero()) {
           if (isDiagonalZero) {
             matrix.subtractRows(col, row, 0, new Polynomial(new Monomial(1, 0)));
