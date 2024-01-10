@@ -44,6 +44,7 @@ public class KnotGenerationPipeline implements Runnable {
   public void run() {
     System.out.println("Starting " + fileExportName);
 
+    int generation = 0;
     do {
       knots.clear();
       generator.generateGrid();
@@ -63,6 +64,11 @@ public class KnotGenerationPipeline implements Runnable {
       if (Main.SAVE_RESULTS) {
         ResultExporter exporter = ResultExporter.getExporter(fileExportName);
         exporter.save(knots);
+
+        if (generation % 100 == 0) {
+          System.out.println("Did generation " + generation + " of " + fileExportName);
+        }
+        generation++;
 
         if (exporter.getKnotCount() >= Main.TARGET_KNOT_COUNT) {
           System.out.println("Done with " + fileExportName);
