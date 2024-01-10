@@ -9,7 +9,7 @@
             "name": "Launch Java Program",
             "request": "launch",
             "mainClass": "nl.basmens.Main",
-            "vmArgs" : "-Xmx4g"
+            "vmArgs" : "-Xmx8g"
         }
     ]
 }

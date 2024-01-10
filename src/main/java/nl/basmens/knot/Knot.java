@@ -393,7 +393,7 @@ public class Knot {
       // round to get rid of precision loss
       return Math.round(Math.abs(matrix.getDeterminant(startTime)));
     } catch (RuntimeException e) {
-      e.printStackTrace();
+      // e.printStackTrace();
       return ERROR_VALUE_KNOT_DETERMINANT;
     }
 
@@ -447,7 +447,7 @@ public class Knot {
       }
       return determinant;
     } catch (RuntimeException e) {
-      e.printStackTrace();
+      // e.printStackTrace();
       return ERROR_VALUE_ALEXANDER_POLYNOMIAL;
     }
   }

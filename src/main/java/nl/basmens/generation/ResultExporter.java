@@ -41,44 +41,37 @@ public final class ResultExporter {
     exporters.forEach((String k, ResultExporter v) -> v.flush());
   }
 
-  public void save(Iterable<Knot> knots) {
-    // Start calculations
+  public synchronized void save(Iterable<Knot> knots) {
+    // Update Json and increment counters
     for (Knot k : knots) {
+      // Increment length counter
+      JSONObject lengthJson = jsonComputeIfAbsant(json, Integer.toString(k.getLength()));
+      incrementCounter(lengthJson, "count");
+
+      // Start and save calculations
       if (Main.SAVE_TRICOLORABILITY) {
-        k.startCalcTricolorability();
+        incrementCounter(jsonComputeIfAbsant(lengthJson, "tricolorability"), "" + k.isTricolorable());
       }
       if (Main.SAVE_KNOT_DETERMINANT) {
-        k.startCalcKnotDeterminant();
+        incrementCounter(jsonComputeIfAbsant(lengthJson, "knot determinant"), "" + k.getKnotDeterminant());
       }
       if (Main.SAVE_ALEXANDER_POLYNOMIAL) {
-        k.startCalcAlexanderPolynomial();
+        incrementCounter(jsonComputeIfAbsant(lengthJson, "alexander polynomial"), "" + k.getAlexanderPolynomial());
       }
     }
 
-    // Update Json and increment counter
-    synchronized (this) {
-      for (Knot k : knots) {
-        // Increment length counter
-        JSONObject lengthJson = jsonComputeIfAbsant(json, Integer.toString(k.getLength()));
-        incrementCounter(lengthJson, "count");
-
-        // Save calculations
-        if (Main.SAVE_TRICOLORABILITY) {
-          incrementCounter(jsonComputeIfAbsant(lengthJson, "tricolorability"), "" + k.isTricolorable());
-        }
-        if (Main.SAVE_KNOT_DETERMINANT) {
-          incrementCounter(jsonComputeIfAbsant(lengthJson, "knot determinant"), "" + k.getKnotDeterminant());
-        }
-        if (Main.SAVE_ALEXANDER_POLYNOMIAL) {
-          incrementCounter(jsonComputeIfAbsant(lengthJson, "alexander polynomial"), "" + k.getAlexanderPolynomial());
-        }
-      }
-
-      savesSinceLastFlush++;
-      if (savesSinceLastFlush > 5) {
-        flush();
-      }
+    savesSinceLastFlush++;
+    if (savesSinceLastFlush > 5) {
+      flush();
     }
+  }
+
+  public synchronized long getCountShortestKnot() {
+    JSONObject lengthJson = null;
+    for (int l = 2; lengthJson == null; l += 2) {
+      lengthJson = json.getJSONObject(Integer.toString(l));
+    }
+    return lengthJson.getLong("count", 0);
   }
 
   public synchronized void flush() {

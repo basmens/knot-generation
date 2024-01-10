@@ -24,19 +24,20 @@ import processing.opengl.PGraphicsOpenGL;
 
 public class Main extends PApplet {
   public static final String RESOURCE_PATH;
-  public static final boolean SAVE_RESULTS = false;
+  public static final boolean SAVE_RESULTS = true;
   public static final boolean SAVE_TRICOLORABILITY = false;
-  public static final boolean SAVE_KNOT_DETERMINANT = false;
-  public static final boolean SAVE_ALEXANDER_POLYNOMIAL = false;
-  public static final boolean MULTI_THREAD = false;
-  private static final Tilesets TILESET = Tilesets.EXPANDED_UNWEIGHTED;
+  public static final boolean SAVE_KNOT_DETERMINANT = true;
+  public static final boolean SAVE_ALEXANDER_POLYNOMIAL = true;
+  public static final boolean MULTI_THREAD = true;
+  private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
   public static final boolean KEEP_DRAWABLE_KNOTS = false; // Preformance
-  public static final long MAX_CALC_TIME_PER_INVARIANT = 3_000_000_000L;// In nanos
+  public static final long MAX_CALC_TIME_PER_INVARIANT = 5_000_000_000L; // In nanos
+  public static final long TARGET_COUNT_SHORTEST_KNOT = 10_000_000_000L;
   // Used to set the seed; ignore warning if no seed is given
-  public static final Supplier<Random> RANDOM_FACTORY = () -> new Random(10);
+  public static final Supplier<Random> RANDOM_FACTORY = () -> new Random();
 
-  public final KnotRenderer knotRenderer = new KnotRenderer(true, true, true);
-  private int size = 30;
+  public final KnotRenderer knotRenderer = new KnotRenderer(true, true, false);
+  private int size = 50;
   private int imgRes = 7;
 
   private enum Tilesets {
@@ -64,7 +65,7 @@ public class Main extends PApplet {
     }
   }
 
-  private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[1];
+  private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[21];
   private Thread[] knotGenerationPipelineThreads = new Thread[knotGenerationPipelines.length];
 
   static {
@@ -79,28 +80,11 @@ public class Main extends PApplet {
   }
 
   // ===================================================================================================================
-  // Native processing functions for lifecycle
+  // Functionality
   // ===================================================================================================================
-  @Override
-  public void settings() {
-    PAppletProxy.setSharedApplet(this);
-
-    if (MULTI_THREAD) {
-      size(300, 300, P2D);
-    } else {
-      size(1920, 1080, P2D);
-    }
-  }
-
-  @Override
-  public void setup() {
-    // A workaround for noSmooth() not being compatible with P2D
-    ((PGraphicsOpenGL) g).textureSampling(3);
-    surface.setLocation(0, 0);
-
-    // Start
+  private void startKnotGenerations() {
     for (int i = 0; i < knotGenerationPipelines.length; i++) {
-      // size = 10 * (knotGenerationPipelines.length - i);
+      size = i == 0 ? 3000 : (10 * (knotGenerationPipelines.length - i));
 
       String fileName = "knots tileset " + TILESET.toString().toLowerCase(Locale.ENGLISH) + "/knots " + size + "x"
           + size;
@@ -125,6 +109,40 @@ public class Main extends PApplet {
       knotGenerationPipelineThreads[index].start();
     } else {
       knotGenerationPipelines[index].run();
+    }
+  }
+
+  // ===================================================================================================================
+  // Native processing functions for lifecycle
+  // ===================================================================================================================
+  @Override
+  public void settings() {
+    PAppletProxy.setSharedApplet(this);
+
+    if (MULTI_THREAD) {
+      size(300, 300, P2D);
+    } else {
+      size(1920, 1080, P2D);
+    }
+  }
+
+  @Override
+  public void setup() {
+    // A workaround for noSmooth() not being compatible with P2D
+    ((PGraphicsOpenGL) g).textureSampling(3);
+    surface.setLocation(0, 0);
+
+    if (MULTI_THREAD) {
+      noLoop();
+      new Thread(() -> {
+        startKnotGenerations();
+        awaitKnotGenerationPipelines();
+        ResultExporter.saveAll();
+        System.out.println("Exiting");
+        exit();
+      }).start();
+    } else {
+      startKnotGenerations();
     }
   }
 
@@ -171,6 +189,7 @@ public class Main extends PApplet {
         println("Flushed data");
       }
 
+      exit();
     } else if (key == 'z' && !MULTI_THREAD) {
       println("Saving...");
       saveKnotImage();
@@ -185,15 +204,20 @@ public class Main extends PApplet {
     }
 
     // Wait for the threads to end
-    for (Thread t : knotGenerationPipelineThreads) {
+    awaitKnotGenerationPipelines();
+  }
+
+  private void awaitKnotGenerationPipelines() {
+    System.out.println("Awaiting...");
+    for (int i = knotGenerationPipelines.length - 1; i >= 0; i--) {
       try {
-        t.join();
+        knotGenerationPipelineThreads[i].join();
+        System.out.println("Joined " + knotGenerationPipelines[i].getFileExportName());
       } catch (InterruptedException e) {
         e.printStackTrace();
         Thread.currentThread().interrupt();
       }
     }
-    exit();
   }
 
   public void saveKnotImage() {

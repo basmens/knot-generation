@@ -22,7 +22,7 @@ public class KnotGenerationPipeline implements Runnable {
 
   private ArrayList<Knot> knots = new ArrayList<>();
 
-  private boolean running = true;
+  private volatile boolean running = true;
 
   public KnotGenerationPipeline(Tileset tileset, int gridW, int gridH, Function<Tileset, GridGenerator> gridGenerator,
       Supplier<GridAnalyzer> gridAnalyzer, String fileExportName) {
@@ -42,6 +42,8 @@ public class KnotGenerationPipeline implements Runnable {
 
   @Override
   public void run() {
+    System.out.println("Starting " + fileExportName);
+
     do {
       knots.clear();
       generator.generateGrid();
@@ -59,12 +61,19 @@ public class KnotGenerationPipeline implements Runnable {
       // System.out.println("Done");
 
       if (Main.SAVE_RESULTS) {
-        ResultExporter.getExporter(fileExportName).save(knots);
+        ResultExporter exporter = ResultExporter.getExporter(fileExportName);
+        exporter.save(knots);
+
+        if (exporter.getCountShortestKnot() >= Main.TARGET_COUNT_SHORTEST_KNOT) {
+          System.out.println("Done with " + fileExportName);
+          stop();
+        }
       }
     } while (running && Main.MULTI_THREAD);
   }
 
   public void stop() {
+    System.out.println("Stopped " + fileExportName);
     running = false;
   }
 
@@ -90,5 +99,9 @@ public class KnotGenerationPipeline implements Runnable {
 
   public List<Knot> getKnots() {
     return knots;
+  }
+
+  public String getFileExportName() {
+    return fileExportName;
   }
 }
