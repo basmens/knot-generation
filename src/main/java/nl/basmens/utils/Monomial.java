@@ -165,14 +165,15 @@ public class Monomial {
   }
 
   private String getCoefficientString() {
-    if (power != 0) {
-      if (isOne(this)) {
-        return "";
-      }
-      if (isMinusOne(this)) {
-        return "-";
-      }
-    }
+    // Unreachable code due to bug: isOne(this) should be nominator == 1
+    // if (power != 0) {
+    //   if (isOne(this)) {
+    //     return "";
+    //   }
+    //   if (isMinusOne(this)) {
+    //     return "-";
+    //   }
+    // }
 
     return String.format(Locale.ENGLISH, "%.4f", getCoefficient()).replaceAll("(\\.?)(0+)$", "");
   }
