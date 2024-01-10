@@ -44,6 +44,7 @@ public class KnotGenerationPipeline implements Runnable {
   public void run() {
     if (!running || ResultExporter.getExporter(fileExportName).getKnotCount() >= Main.TARGET_KNOT_COUNT) {
       System.out.println("Skipped " + fileExportName);
+      stop();
       return;
     }
     System.out.println("Starting " + fileExportName);
@@ -77,10 +78,7 @@ public class KnotGenerationPipeline implements Runnable {
   }
 
   public void stop() {
-    if (running) {
-      System.out.println("Stopped " + fileExportName);
-      running = false;
-    }
+    running = false;
   }
 
   public Tileset getTileset() {
