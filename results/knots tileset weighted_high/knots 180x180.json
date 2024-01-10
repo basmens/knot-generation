@@ -1,0 +1,157 @@
+{
+  "22": {
+    "count": 461645,
+    "alexander polynomial": {"1": 461645},
+    "knot determinant": {"1": 461645}
+  },
+  "44": {
+    "count": 369,
+    "alexander polynomial": {"1": 369},
+    "knot determinant": {"1": 369}
+  },
+  "24": {
+    "count": 254074,
+    "alexander polynomial": {"1": 254074},
+    "knot determinant": {"1": 254074}
+  },
+  "46": {
+    "count": 190,
+    "alexander polynomial": {"1": 190},
+    "knot determinant": {"1": 190}
+  },
+  "26": {
+    "count": 116597,
+    "alexander polynomial": {"1": 116597},
+    "knot determinant": {"1": 116597}
+  },
+  "48": {
+    "count": 109,
+    "alexander polynomial": {"1": 109},
+    "knot determinant": {"1": 109}
+  },
+  "28": {
+    "count": 59732,
+    "alexander polynomial": {"1": 59732},
+    "knot determinant": {"1": 59732}
+  },
+  "50": {
+    "count": 66,
+    "alexander polynomial": {"1": 66},
+    "knot determinant": {"1": 66}
+  },
+  "30": {
+    "count": 32133,
+    "alexander polynomial": {"1": 32133},
+    "knot determinant": {"1": 32133}
+  },
+  "52": {
+    "count": 35,
+    "alexander polynomial": {"1": 35},
+    "knot determinant": {"1": 35}
+  },
+  "10": {
+    "count": 27742046,
+    "alexander polynomial": {"1": 27742046},
+    "knot determinant": {"1": 27742046}
+  },
+  "32": {
+    "count": 17533,
+    "alexander polynomial": {"1": 17533},
+    "knot determinant": {"1": 17533}
+  },
+  "54": {
+    "count": 13,
+    "alexander polynomial": {"1": 13},
+    "knot determinant": {"1": 13}
+  },
+  "12": {
+    "count": 13927176,
+    "alexander polynomial": {"1": 13927176},
+    "knot determinant": {"1": 13927176}
+  },
+  "34": {
+    "count": 8481,
+    "alexander polynomial": {"1": 8481},
+    "knot determinant": {"1": 8481}
+  },
+  "56": {
+    "count": 6,
+    "alexander polynomial": {"1": 6},
+    "knot determinant": {"1": 6}
+  },
+  "14": {
+    "count": 7172127,
+    "alexander polynomial": {"1": 7172127},
+    "knot determinant": {"1": 7172127}
+  },
+  "36": {
+    "count": 4402,
+    "alexander polynomial": {"1": 4402},
+    "knot determinant": {"1": 4402}
+  },
+  "58": {
+    "count": 7,
+    "alexander polynomial": {"1": 7},
+    "knot determinant": {"1": 7}
+  },
+  "16": {
+    "count": 3963460,
+    "alexander polynomial": {"1": 3963460},
+    "knot determinant": {"1": 3963460}
+  },
+  "38": {
+    "count": 2410,
+    "alexander polynomial": {"1": 2410},
+    "knot determinant": {"1": 2410}
+  },
+  "18": {
+    "count": 1731327,
+    "alexander polynomial": {"1": 1731327},
+    "knot determinant": {"1": 1731327}
+  },
+  "2": {
+    "count": 492601642,
+    "alexander polynomial": {"1": 492601642},
+    "knot determinant": {"1": 492601642}
+  },
+  "4": {
+    "count": 253958471,
+    "alexander polynomial": {"1": 253958471},
+    "knot determinant": {"1": 253958471}
+  },
+  "6": {
+    "count": 124920550,
+    "alexander polynomial": {"1": 124920550},
+    "knot determinant": {"1": 124920550}
+  },
+  "8": {
+    "count": 72148660,
+    "alexander polynomial": {"1": 72148660},
+    "knot determinant": {"1": 72148660}
+  },
+  "60": {
+    "count": 3,
+    "alexander polynomial": {"1": 3},
+    "knot determinant": {"1": 3}
+  },
+  "40": {
+    "count": 1354,
+    "alexander polynomial": {"1": 1354},
+    "knot determinant": {"1": 1354}
+  },
+  "62": {
+    "count": 1,
+    "alexander polynomial": {"1": 1},
+    "knot determinant": {"1": 1}
+  },
+  "20": {
+    "count": 876031,
+    "alexander polynomial": {"1": 876031},
+    "knot determinant": {"1": 876031}
+  },
+  "42": {
+    "count": 693,
+    "alexander polynomial": {"1": 693},
+    "knot determinant": {"1": 693}
+  }
+}

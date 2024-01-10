@@ -42,6 +42,11 @@ public class KnotGenerationPipeline implements Runnable {
 
   @Override
   public void run() {
+    if (!running || ResultExporter.getExporter(fileExportName).getKnotCount() >= Main.TARGET_KNOT_COUNT) {
+      System.out.println("Skipped " + fileExportName);
+      stop();
+      return;
+    }
     System.out.println("Starting " + fileExportName);
 
     int generation = 0;
@@ -71,7 +76,7 @@ public class KnotGenerationPipeline implements Runnable {
         generation++;
 
         if (exporter.getKnotCount() >= Main.TARGET_KNOT_COUNT) {
-          System.out.println("Done with " + fileExportName);
+          System.out.println("Finished " + fileExportName);
           stop();
         }
       }
@@ -79,7 +84,6 @@ public class KnotGenerationPipeline implements Runnable {
   }
 
   public void stop() {
-    System.out.println("Stopped " + fileExportName);
     running = false;
   }
 
