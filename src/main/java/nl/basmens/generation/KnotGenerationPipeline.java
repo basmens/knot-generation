@@ -66,7 +66,7 @@ public class KnotGenerationPipeline implements Runnable {
         exporter.save(knots);
 
         if (generation % 100 == 0) {
-          System.out.println("Did generation " + generation + " of " + fileExportName);
+          System.out.println("Ran " + (generation + 1) + " times | Total knots " + exporter.getKnotCount() + " | " + fileExportName);
         }
         generation++;
 
