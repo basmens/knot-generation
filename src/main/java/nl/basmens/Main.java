@@ -6,6 +6,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import nl.basmens.generation.KnotGenerationPipeline;
@@ -32,7 +35,7 @@ public class Main extends PApplet {
   private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
   public static final boolean KEEP_DRAWABLE_KNOTS = false; // Preformance
   public static final long MAX_CALC_TIME_PER_INVARIANT = 5_000_000_000L; // In nanos
-  public static final long TARGET_COUNT_SHORTEST_KNOT = 10_000_000_000L;
+  public static final long TARGET_COUNT_SHORTEST_KNOT = 500_000_000L;
   // Used to set the seed; ignore warning if no seed is given
   public static final Supplier<Random> RANDOM_FACTORY = () -> new Random();
 
@@ -66,7 +69,7 @@ public class Main extends PApplet {
   }
 
   private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[21];
-  private Thread[] knotGenerationPipelineThreads = new Thread[knotGenerationPipelines.length];
+  private ExecutorService threadPool = Executors.newFixedThreadPool(9);
 
   static {
     String path = "";
@@ -105,8 +108,7 @@ public class Main extends PApplet {
     knotRenderer.setKnotBeingViewed(0);
 
     if (MULTI_THREAD) {
-      knotGenerationPipelineThreads[index] = new Thread(knotGenerationPipelines[index]);
-      knotGenerationPipelineThreads[index].start();
+      threadPool.execute(knotGenerationPipelines[index]);
     } else {
       knotGenerationPipelines[index].run();
     }
@@ -136,10 +138,20 @@ public class Main extends PApplet {
       noLoop();
       new Thread(() -> {
         startKnotGenerations();
-        awaitKnotGenerationPipelines();
+
+        System.out.println("Awaiting...");
+        threadPool.shutdown();
+        try {
+          threadPool.awaitTermination(1, TimeUnit.DAYS);
+        } catch (InterruptedException e) {
+          stopKnotGenerationPipelines();
+          e.printStackTrace();
+        }
+
         println("Flushing data...");
         ResultExporter.saveAll();
         println("Flushed data");
+        
         System.out.println("Exiting");
         exit();
       }).start();
@@ -203,19 +215,6 @@ public class Main extends PApplet {
     // Terminate threads
     for (KnotGenerationPipeline p : knotGenerationPipelines) {
       p.stop();
-    }
-  }
-
-  private void awaitKnotGenerationPipelines() {
-    System.out.println("Awaiting...");
-    for (int i = knotGenerationPipelines.length - 1; i >= 0; i--) {
-      try {
-        knotGenerationPipelineThreads[i].join();
-        System.out.println("Joined " + knotGenerationPipelines[i].getFileExportName());
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-        Thread.currentThread().interrupt();
-      }
     }
   }
 
