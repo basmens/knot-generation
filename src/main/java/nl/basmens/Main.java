@@ -35,7 +35,7 @@ public class Main extends PApplet {
   private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
   public static final boolean KEEP_DRAWABLE_KNOTS = false; // Preformance
   public static final long MAX_CALC_TIME_PER_INVARIANT = 5_000_000_000L; // In nanos
-  public static final long TARGET_KNOT_COUNT = 500_000_000L;
+  public static final long TARGET_KNOT_COUNT = 1_000_000_000L;
   // Used to set the seed; ignore warning if no seed is given
   public static final Supplier<Random> RANDOM_FACTORY = () -> new Random();
 
@@ -137,9 +137,12 @@ public class Main extends PApplet {
     if (MULTI_THREAD) {
       noLoop();
       new Thread(() -> {
+        println();
+        println("Starting...");
         startKnotGenerations();
 
-        System.out.println("Awaiting...");
+        println();
+        println("Awaiting termination...");
         threadPool.shutdown();
         try {
           threadPool.awaitTermination(1, TimeUnit.DAYS);
@@ -148,11 +151,13 @@ public class Main extends PApplet {
           e.printStackTrace();
         }
 
+        println();
         println("Flushing data...");
         ResultExporter.saveAll();
         println("Flushed data");
         
-        System.out.println("Exiting");
+        println();
+        println("Exiting");
         exit();
       }).start();
     } else {
@@ -192,11 +197,12 @@ public class Main extends PApplet {
 
     } else if (key == 'f') {
       if (MULTI_THREAD) {
+        println();
         println("Finishing...");
         stopKnotGenerationPipelines();
-        println("Finished");
       } else {
         if (SAVE_RESULTS) {
+          println();
           println("Flushing data...");
           ResultExporter.saveAll();
           println("Flushed data");

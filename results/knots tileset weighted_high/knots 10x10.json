@@ -1,0 +1,97 @@
+{
+  "22": {
+    "count": 16,
+    "alexander polynomial": {"1": 16},
+    "knot determinant": {"1": 16}
+  },
+  "12": {
+    "count": 212,
+    "alexander polynomial": {"1": 212},
+    "knot determinant": {"1": 212}
+  },
+  "24": {
+    "count": 15,
+    "alexander polynomial": {"1": 15},
+    "knot determinant": {"1": 15}
+  },
+  "14": {
+    "count": 156,
+    "alexander polynomial": {"1": 156},
+    "knot determinant": {"1": 156}
+  },
+  "36": {
+    "count": 1,
+    "alexander polynomial": {"1": 1},
+    "knot determinant": {"1": 1}
+  },
+  "26": {
+    "count": 6,
+    "alexander polynomial": {"1": 6},
+    "knot determinant": {"1": 6}
+  },
+  "16": {
+    "count": 127,
+    "alexander polynomial": {"1": 127},
+    "knot determinant": {"1": 127}
+  },
+  "28": {
+    "count": 4,
+    "alexander polynomial": {"1": 4},
+    "knot determinant": {"1": 4}
+  },
+  "18": {
+    "count": 36,
+    "alexander polynomial": {"1": 36},
+    "knot determinant": {"1": 36}
+  },
+  "2": {
+    "count": 4007,
+    "alexander polynomial": {"1": 4007},
+    "knot determinant": {"1": 4007}
+  },
+  "4": {
+    "count": 1990,
+    "alexander polynomial": {"1": 1990},
+    "knot determinant": {"1": 1990}
+  },
+  "6": {
+    "count": 1423,
+    "alexander polynomial": {"1": 1423},
+    "knot determinant": {"1": 1423}
+  },
+  "8": {
+    "count": 1161,
+    "alexander polynomial": {"1": 1161},
+    "knot determinant": {"1": 1161}
+  },
+  "40": {
+    "count": 1,
+    "alexander polynomial": {"1": 1},
+    "knot determinant": {"1": 1}
+  },
+  "30": {
+    "count": 3,
+    "alexander polynomial": {"1": 3},
+    "knot determinant": {"1": 3}
+  },
+  "20": {
+    "count": 28,
+    "alexander polynomial": {"1": 28},
+    "knot determinant": {"1": 28}
+  },
+  "42": {
+    "count": 1,
+    "alexander polynomial": {"1": 1},
+    "knot determinant": {"1": 1}
+  },
+  "10": {
+    "count": 338,
+    "alexander polynomial": {"1": 338},
+    "knot determinant": {"1": 338}
+  },
+  "32": {
+    "count": 2,
+    "alexander polynomial": {"1": 2},
+    "knot determinant": {"1": 2}
+  }
+}
