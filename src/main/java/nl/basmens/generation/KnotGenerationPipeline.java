@@ -65,7 +65,7 @@ public class KnotGenerationPipeline implements Runnable {
         ResultExporter exporter = ResultExporter.getExporter(fileExportName);
         exporter.save(knots);
 
-        if (generation % 100 == 0) {
+        if (generation % (10000000 / (gridW * gridH)) == 0) {
           System.out.println("Ran " + (generation + 1) + " times | Total knots " + exporter.getKnotCount() + " | " + fileExportName);
         }
         generation++;
