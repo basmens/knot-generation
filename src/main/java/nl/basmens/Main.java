@@ -137,7 +137,9 @@ public class Main extends PApplet {
       new Thread(() -> {
         startKnotGenerations();
         awaitKnotGenerationPipelines();
+        println("Flushing data...");
         ResultExporter.saveAll();
+        println("Flushed data");
         System.out.println("Exiting");
         exit();
       }).start();
@@ -181,15 +183,15 @@ public class Main extends PApplet {
         println("Finishing...");
         stopKnotGenerationPipelines();
         println("Finished");
-      }
+      } else {
+        if (SAVE_RESULTS) {
+          println("Flushing data...");
+          ResultExporter.saveAll();
+          println("Flushed data");
+        }
 
-      if (SAVE_RESULTS) {
-        println("Flushing data...");
-        ResultExporter.saveAll();
-        println("Flushed data");
+        exit();
       }
-
-      exit();
     } else if (key == 'z' && !MULTI_THREAD) {
       println("Saving...");
       saveKnotImage();
@@ -202,9 +204,6 @@ public class Main extends PApplet {
     for (KnotGenerationPipeline p : knotGenerationPipelines) {
       p.stop();
     }
-
-    // Wait for the threads to end
-    awaitKnotGenerationPipelines();
   }
 
   private void awaitKnotGenerationPipelines() {
