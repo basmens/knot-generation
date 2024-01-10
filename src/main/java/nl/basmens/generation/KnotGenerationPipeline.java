@@ -64,7 +64,7 @@ public class KnotGenerationPipeline implements Runnable {
         ResultExporter exporter = ResultExporter.getExporter(fileExportName);
         exporter.save(knots);
 
-        if (exporter.getCountShortestKnot() >= Main.TARGET_COUNT_SHORTEST_KNOT) {
+        if (exporter.getKnotCount() >= Main.TARGET_KNOT_COUNT) {
           System.out.println("Done with " + fileExportName);
           stop();
         }

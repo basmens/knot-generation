@@ -4,7 +4,9 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
 
 import nl.basmens.Main;
 import nl.basmens.knot.Knot;
@@ -19,6 +21,8 @@ public final class ResultExporter {
 
   private int savesSinceLastFlush;
 
+  private long knotCount;
+
   private ResultExporter(String fileExportName) {
     URL resource = ResultExporter.class.getResource("/");
     String p = null;
@@ -31,6 +35,10 @@ public final class ResultExporter {
     }
     file = new File(p);
     json = file.exists() ? PApplet.loadJSONObject(file) : new JSONObject();
+
+    ((Set<String>) json.keys()).forEach((String k) -> {
+      knotCount += json.getJSONObject(k).getLong("count", 0);
+    });
   }
 
   public static synchronized ResultExporter getExporter(String fileExportName) {
@@ -41,7 +49,7 @@ public final class ResultExporter {
     exporters.forEach((String k, ResultExporter v) -> v.flush());
   }
 
-  public synchronized void save(Iterable<Knot> knots) {
+  public synchronized void save(Collection<Knot> knots) {
     // Update Json and increment counters
     for (Knot k : knots) {
       // Increment length counter
@@ -60,18 +68,16 @@ public final class ResultExporter {
       }
     }
 
+    knotCount += knots.size();
+
     savesSinceLastFlush++;
     if (savesSinceLastFlush > 5) {
       flush();
     }
   }
 
-  public synchronized long getCountShortestKnot() {
-    JSONObject lengthJson = null;
-    for (int l = 2; lengthJson == null; l += 2) {
-      lengthJson = json.getJSONObject(Integer.toString(l));
-    }
-    return lengthJson.getLong("count", 0);
+  public synchronized long getKnotCount() {
+    return knotCount;
   }
 
   public synchronized void flush() {
