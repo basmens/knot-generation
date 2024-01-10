@@ -14,12 +14,15 @@ import processing.core.PApplet;
 import processing.data.JSONObject;
 
 public final class ResultExporter {
+  private static final long FLUSH_INTERVAL = 60 * 1_000_000_000l; // in nanotime
+
   private static HashMap<String, ResultExporter> exporters = new HashMap<>();
 
   private final File file;
   private final JSONObject json;
 
-  private int savesSinceLastFlush;
+  private long lastFlushNanoTime = -1;
+
 
   private long knotCount;
 
@@ -56,7 +59,7 @@ public final class ResultExporter {
       JSONObject lengthJson = jsonComputeIfAbsant(json, Integer.toString(k.getLength()));
       incrementCounter(lengthJson, "count");
 
-      // Start and save calculations
+      // save invariants
       if (Main.SAVE_TRICOLORABILITY) {
         incrementCounter(jsonComputeIfAbsant(lengthJson, "tricolorability"), "" + k.isTricolorable());
       }
@@ -69,10 +72,12 @@ public final class ResultExporter {
     }
 
     knotCount += knots.size();
-
-    savesSinceLastFlush++;
-    if (savesSinceLastFlush > 5) {
+    long currentNanoTime = System.nanoTime();
+    if (lastFlushNanoTime == -1 || currentNanoTime - lastFlushNanoTime > FLUSH_INTERVAL) {
       flush();
+      System.out.println("Flushed " + knotCount + " knots to " + file.getName() + " | " + (currentNanoTime - lastFlushNanoTime) / 1E9 + " seconds after last flush");
+
+      lastFlushNanoTime = currentNanoTime;
     }
   }
 
@@ -81,10 +86,7 @@ public final class ResultExporter {
   }
 
   public synchronized void flush() {
-    if (savesSinceLastFlush > 0) {
-      json.save(file, "indent=2");
-      savesSinceLastFlush = 0;
-    }
+    json.save(file, "indent=2");
   }
 
   private static JSONObject jsonComputeIfAbsant(JSONObject json, String key) {

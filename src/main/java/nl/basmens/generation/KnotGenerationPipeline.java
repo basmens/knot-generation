@@ -49,7 +49,6 @@ public class KnotGenerationPipeline implements Runnable {
     }
     System.out.println("Starting " + fileExportName);
 
-    int generation = 0;
     do {
       knots.clear();
       generator.generateGrid();
@@ -67,13 +66,22 @@ public class KnotGenerationPipeline implements Runnable {
       // System.out.println("Done");
 
       if (Main.SAVE_RESULTS) {
+
+        // Start calculations
+        for (Knot k : knots) {
+          if (Main.SAVE_TRICOLORABILITY) {
+            k.startCalcTricolorability();
+          }
+          if (Main.SAVE_KNOT_DETERMINANT) {
+            k.startCalcKnotDeterminant();
+          }
+          if (Main.SAVE_ALEXANDER_POLYNOMIAL) {
+            k.startCalcAlexanderPolynomial();
+          }
+        }
+
         ResultExporter exporter = ResultExporter.getExporter(fileExportName);
         exporter.save(knots);
-
-        if (generation % (10000000 / (gridW * gridH)) == 0) {
-          System.out.println("Ran " + (generation + 1) + " times | Total knots " + exporter.getKnotCount() + " | " + fileExportName);
-        }
-        generation++;
 
         if (exporter.getKnotCount() >= Main.TARGET_KNOT_COUNT) {
           System.out.println("Finished " + fileExportName);
@@ -81,6 +89,8 @@ public class KnotGenerationPipeline implements Runnable {
         }
       }
     } while (running && Main.MULTI_THREAD);
+    
+    System.out.println("Stopped " + fileExportName);
   }
 
   public void stop() {
