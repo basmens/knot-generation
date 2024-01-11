@@ -72,7 +72,7 @@ public final class ResultExporter {
     }
 
     knotCount += knots.size();
-    if (System.nanoTime() - lastFlushNanoTime > FLUSH_INTERVAL) {
+    if (lastFlushNanoTime == 0 || System.nanoTime() - lastFlushNanoTime > FLUSH_INTERVAL) {
       flush();
     }
   }

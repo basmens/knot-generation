@@ -42,6 +42,16 @@ public class KnotGenerationPipeline implements Runnable {
 
   @Override
   public void run() {
+    if (Main.MULTI_THREAD) {
+      runThreaded();
+    } else {
+      knots.clear();
+      generator.generateGrid();
+      knots = analyzer.extractKnots(generator.getGrid());
+    }
+  }
+
+  private void runThreaded() {
     if (!running || ResultExporter.getExporter(fileExportName).getKnotCount() >= Main.TARGET_KNOT_COUNT) {
       System.out.println("Skipped " + fileExportName);
       stop();
@@ -53,17 +63,6 @@ public class KnotGenerationPipeline implements Runnable {
       knots.clear();
       generator.generateGrid();
       knots = analyzer.extractKnots(generator.getGrid());
-
-      // new Thread(() -> knots.forEach((Knot k) -> {k.startCalcAlexanderPolynomial();
-      // k.startCalcKnotDeterminant();})).start();
-      // for (int i = 0; i < knots.size(); i++) {
-      // Knot k = knots.get(i);
-      // if ((long) k.getAlexanderPolynomial().evaluateOnT(-1) !=
-      // k.getKnotDeterminant()) {
-      // System.out.println("Error on knot" + (i + 1));
-      // }
-      // }
-      // System.out.println("Done");
 
       if (Main.SAVE_RESULTS) {
 
@@ -89,7 +88,7 @@ public class KnotGenerationPipeline implements Runnable {
         }
       }
     } while (running && Main.MULTI_THREAD);
-    
+
     System.out.println("Stopped " + fileExportName);
   }
 

@@ -32,7 +32,7 @@ public class Main extends PApplet {
   public static final boolean SAVE_KNOT_DETERMINANT = true;
   public static final boolean SAVE_ALEXANDER_POLYNOMIAL = true;
   public static final boolean MULTI_THREAD = true;
-  private static final Tilesets TILESET = Tilesets.EXPANDED_UNWEIGHTED;
+  private static final Tilesets TILESET = Tilesets.WEIGHTED_HIGH;
   public static final boolean KEEP_DRAWABLE_KNOTS = false; // Preformance
   public static final long MAX_CALC_TIME_PER_INVARIANT = 2_000_000_000L; // In nanos
   public static final long TARGET_KNOT_COUNT = 1_000_000_000L;
@@ -40,7 +40,7 @@ public class Main extends PApplet {
   public static final Supplier<Random> RANDOM_FACTORY = Random::new;
 
   public final KnotRenderer knotRenderer = new KnotRenderer(true, true, false);
-  private int size = 10;
+  private int size = 200;
   private int imgRes = 7;
 
   private enum Tilesets {
@@ -87,7 +87,9 @@ public class Main extends PApplet {
   // ===================================================================================================================
   private void startKnotGenerations() {
     for (int i = 0; i < knotGenerationPipelines.length; i++) {
-      size = i == 20 ? 3000 : (10 * (1 + i)); //
+      if (MULTI_THREAD) {
+        size = i == 20 ? 3000 : (10 * (1 + i));
+      }
 
       String fileName = "knots tileset " + TILESET.toString().toLowerCase(Locale.ENGLISH) + "/knots " + size + "x"
           + size;
