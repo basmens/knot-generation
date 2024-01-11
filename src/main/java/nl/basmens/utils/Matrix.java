@@ -76,9 +76,15 @@ public class Matrix {
   }
 
   private static void simplifyFraction(Matrix matrix, int col, int row) {
-    final long[] primeNumbers = { 2, 3, 5 };
     long[][] nums = matrix.numerators;
     long[][] denoms = matrix.denominators;
+
+    if (nums[col][row] == 0) {
+      denoms[col][row] = 1;
+      return;
+    }
+
+    final long[] primeNumbers = { 2, 3, 5 };
     for (long p : primeNumbers) {
       while (nums[col][row] % p == 0 && denoms[col][row] % p == 0) {
         nums[col][row] /= p;
@@ -86,8 +92,6 @@ public class Matrix {
       }
     }
   }
-
-  // R1 * A2/A1
 
   // =================================================================================================================
   // Getters

@@ -32,12 +32,12 @@ public class Main extends PApplet {
   public static final boolean SAVE_KNOT_DETERMINANT = true;
   public static final boolean SAVE_ALEXANDER_POLYNOMIAL = true;
   public static final boolean MULTI_THREAD = true;
-  private static final Tilesets TILESET = Tilesets.WEIGHTED_HIGH;
+  private static final Tilesets TILESET = Tilesets.EXPANDED_UNWEIGHTED;
   public static final boolean KEEP_DRAWABLE_KNOTS = false; // Preformance
-  public static final long MAX_CALC_TIME_PER_INVARIANT = 5_000_000_000L; // In nanos
+  public static final long MAX_CALC_TIME_PER_INVARIANT = 2_000_000_000L; // In nanos
   public static final long TARGET_KNOT_COUNT = 1_000_000_000L;
   // Used to set the seed; ignore warning if no seed is given
-  public static final Supplier<Random> RANDOM_FACTORY = () -> new Random();
+  public static final Supplier<Random> RANDOM_FACTORY = Random::new;
 
   public final KnotRenderer knotRenderer = new KnotRenderer(true, true, false);
   private int size = 10;
@@ -68,7 +68,7 @@ public class Main extends PApplet {
     }
   }
 
-  private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[12];
+  private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[21];
   private ExecutorService threadPool = Executors.newFixedThreadPool(9);
 
   static {
@@ -87,7 +87,7 @@ public class Main extends PApplet {
   // ===================================================================================================================
   private void startKnotGenerations() {
     for (int i = 0; i < knotGenerationPipelines.length; i++) {
-      size = i == 111110 ? 3000 : (10 * (1 + i / 4)); // knotGenerationPipelines.length - 
+      size = i == 20 ? 3000 : (10 * (1 + i)); //
 
       String fileName = "knots tileset " + TILESET.toString().toLowerCase(Locale.ENGLISH) + "/knots " + size + "x"
           + size;
@@ -218,10 +218,10 @@ public class Main extends PApplet {
   }
 
   private void stopKnotGenerationPipelines() {
+    threadPool.shutdown();
     // Terminate threads
     for (KnotGenerationPipeline p : knotGenerationPipelines) {
       p.stop();
-      System.out.println("Stopped " + p.getFileExportName());
     }
   }
 

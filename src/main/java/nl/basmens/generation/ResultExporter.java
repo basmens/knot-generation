@@ -21,7 +21,7 @@ public final class ResultExporter {
   private final File file;
   private final JSONObject json;
 
-  private long lastFlushNanoTime = -1;
+  private long lastFlushNanoTime;
 
 
   private long knotCount;
@@ -72,12 +72,8 @@ public final class ResultExporter {
     }
 
     knotCount += knots.size();
-    long currentNanoTime = System.nanoTime();
-    if (lastFlushNanoTime == -1 || currentNanoTime - lastFlushNanoTime > FLUSH_INTERVAL) {
+    if (System.nanoTime() - lastFlushNanoTime > FLUSH_INTERVAL) {
       flush();
-      System.out.println("Flushed " + knotCount + " knots to " + file.getName() + " | " + (currentNanoTime - lastFlushNanoTime) / 1E9 + " seconds after last flush");
-
-      lastFlushNanoTime = currentNanoTime;
     }
   }
 
@@ -87,6 +83,8 @@ public final class ResultExporter {
 
   public synchronized void flush() {
     json.save(file, "indent=2");
+    System.out.println("Flushed " + knotCount + " knots to " + file.getName() + " | " + (System.nanoTime() - lastFlushNanoTime) / 1E9 + " seconds after last flush");
+    lastFlushNanoTime = System.nanoTime();
   }
 
   private static JSONObject jsonComputeIfAbsant(JSONObject json, String key) {
