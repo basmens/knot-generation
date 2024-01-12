@@ -64,16 +64,10 @@ public final class ResultExporter {
         incrementCounter(jsonComputeIfAbsant(lengthJson, "tricolorability"), "" + k.isTricolorable());
       }
       if (Main.SAVE_KNOT_DETERMINANT) {
-        incrementCounter(jsonComputeIfAbsant(lengthJson, "knot determinant"),
-            k.getKnotDeterminant() == -1 ? FAILED : "" + k.getKnotDeterminant());
-      } else {
-        incrementCounter(jsonComputeIfAbsant(lengthJson, "knot determinant"), DISABLED);
+        incrementCounter(jsonComputeIfAbsant(lengthJson, "knot determinant"), "" + k.getKnotDeterminant());
       }
       if (Main.SAVE_ALEXANDER_POLYNOMIAL) {
-        incrementCounter(jsonComputeIfAbsant(lengthJson, "alexander polynomial"),
-            k.getAlexanderPolynomial().toString().equals("-1") ? FAILED : "" + k.getAlexanderPolynomial());
-      } else {
-        incrementCounter(jsonComputeIfAbsant(lengthJson, "alexander polynomial"), DISABLED);
+        incrementCounter(jsonComputeIfAbsant(lengthJson, "alexander polynomial"), "" + k.getAlexanderPolynomial());
       }
     }
 
