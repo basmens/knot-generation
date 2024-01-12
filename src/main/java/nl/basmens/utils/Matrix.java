@@ -68,9 +68,16 @@ public class Matrix {
     long[][] nums = matrix.numerators;
     long[][] denoms = matrix.denominators;
     for (int i = 0; i < matrix.height(); i++) {
-      nums[minuendRow][i] *= denoms[subtrahendRow][i] * multiplierDenum;
-      nums[minuendRow][i] -= nums[subtrahendRow][i] * denoms[minuendRow][i] * multiplierNum;
-      denoms[minuendRow][i] *= denoms[subtrahendRow][i] * multiplierDenum;
+      nums[minuendRow][i] = Math.multiplyExact(nums[minuendRow][i],
+          Math.multiplyExact(denoms[subtrahendRow][i], multiplierDenum));
+
+      nums[minuendRow][i] = Math.subtractExact(nums[minuendRow][i],
+          Math.multiplyExact(denoms[minuendRow][i], 
+          Math.multiplyExact(nums[subtrahendRow][i], multiplierNum)));
+
+      denoms[minuendRow][i] = Math.multiplyExact(denoms[minuendRow][i],
+          Math.multiplyExact(denoms[subtrahendRow][i], multiplierDenum));
+
       simplifyFraction(matrix, minuendRow, i);
     }
   }
