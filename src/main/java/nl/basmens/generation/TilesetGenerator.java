@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import nl.basmens.Main;
 import nl.basmens.knot.Connection;
-import nl.basmens.utils.Vector;
+import nl.basmens.utils.maths.Vector;
 import nl.benmens.processing.PAppletProxy;
 
 public class TilesetGenerator {

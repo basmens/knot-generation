@@ -32,7 +32,7 @@ import nl.basmens.generation.KnotGenerationPipeline;
 import nl.basmens.knot.Connection;
 import nl.basmens.knot.Intersection;
 import nl.basmens.knot.Knot;
-import nl.basmens.utils.Vector;
+import nl.basmens.utils.maths.Vector;
 
 public class KnotRenderer {
   public static final float PROGRAM_WINDOW_WIDTH = 2560; // internally uses these sizes to render the screen

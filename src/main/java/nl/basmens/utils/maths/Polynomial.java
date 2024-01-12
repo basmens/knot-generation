@@ -1,4 +1,4 @@
-package nl.basmens.utils;
+package nl.basmens.utils.maths;
 
 public class Polynomial {
   private Monomial[] monomials = new Monomial[0];

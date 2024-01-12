@@ -1,4 +1,4 @@
-package nl.basmens.generation;
+package nl.basmens.utils.io;
 
 import java.io.File;
 import java.net.URISyntaxException;

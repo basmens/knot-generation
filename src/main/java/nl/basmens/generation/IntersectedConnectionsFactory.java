@@ -6,7 +6,7 @@ import java.util.Random;
 import nl.basmens.Main;
 import nl.basmens.generation.analyzers.GridAnalyzer;
 import nl.basmens.knot.Connection;
-import nl.basmens.utils.Vector;
+import nl.basmens.utils.maths.Vector;
 
 public class IntersectedConnectionsFactory {
   private static Random random = Main.RANDOM_FACTORY.get();

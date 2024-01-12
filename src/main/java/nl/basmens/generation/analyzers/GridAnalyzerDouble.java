@@ -2,11 +2,11 @@ package nl.basmens.generation.analyzers;
 
 import java.util.ArrayList;
 
-import nl.basmens.IndexedSet;
 import nl.basmens.generation.Tile;
 import nl.basmens.knot.Connection;
 import nl.basmens.knot.Knot;
-import nl.basmens.utils.Vector;
+import nl.basmens.utils.collections.IndexedSet;
+import nl.basmens.utils.maths.Vector;
 
 public class GridAnalyzerDouble implements GridAnalyzer {
   private int gridW;

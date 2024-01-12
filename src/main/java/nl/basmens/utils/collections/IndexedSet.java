@@ -1,4 +1,4 @@
-package nl.basmens;
+package nl.basmens.utils.collections;
 
 import java.util.AbstractSet;
 import java.util.ArrayList;

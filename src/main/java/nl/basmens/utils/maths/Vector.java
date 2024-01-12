@@ -1,4 +1,4 @@
-package nl.basmens.utils;
+package nl.basmens.utils.maths;
 
 import java.util.Locale;
 

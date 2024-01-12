@@ -1,7 +1,7 @@
 package nl.basmens.knot;
 
 import nl.basmens.Main;
-import nl.basmens.utils.Vector;
+import nl.basmens.utils.maths.Vector;
 
 public class Connection implements Comparable<Connection> {
   private Connection prev;

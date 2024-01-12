@@ -7,11 +7,11 @@ import java.util.Locale;
 import java.util.concurrent.FutureTask;
 
 import nl.basmens.Main;
-import nl.basmens.utils.Matrix;
-import nl.basmens.utils.Monomial;
-import nl.basmens.utils.Polynomial;
-import nl.basmens.utils.PolynomialMatrix;
-import nl.basmens.utils.Vector;
+import nl.basmens.utils.maths.Matrix;
+import nl.basmens.utils.maths.Monomial;
+import nl.basmens.utils.maths.Polynomial;
+import nl.basmens.utils.maths.PolynomialMatrix;
+import nl.basmens.utils.maths.Vector;
 
 public class Knot {
   // Predefined values

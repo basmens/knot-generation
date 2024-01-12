@@ -2,12 +2,12 @@ package nl.basmens.generation.analyzers;
 
 import java.util.ArrayList;
 
-import nl.basmens.IndexedSet.IndexedSetElement;
 import nl.basmens.generation.Tile;
 import nl.basmens.knot.Connection;
 import nl.basmens.knot.Intersection;
 import nl.basmens.knot.Knot;
-import nl.basmens.utils.Vector;
+import nl.basmens.utils.collections.IndexedSet.IndexedSetElement;
+import nl.basmens.utils.maths.Vector;
 
 public interface GridAnalyzer {
   ArrayList<Knot> extractKnots(Tile[][] grid);

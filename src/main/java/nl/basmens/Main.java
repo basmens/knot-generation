@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import nl.basmens.generation.KnotGenerationPipeline;
-import nl.basmens.generation.ResultExporter;
 import nl.basmens.generation.Tileset;
 import nl.basmens.generation.TilesetGenerator;
 import nl.basmens.generation.analyzers.GridAnalyzerBasic;
@@ -20,6 +19,7 @@ import nl.basmens.generation.analyzers.GridAnalyzerDouble;
 import nl.basmens.generation.generators.GridGeneratorBasic;
 import nl.basmens.generation.generators.GridGeneratorDouble;
 import nl.basmens.rendering.KnotRenderer;
+import nl.basmens.utils.io.ResultExporter;
 import nl.benmens.processing.PApplet;
 import nl.benmens.processing.PAppletProxy;
 import processing.core.PGraphics;

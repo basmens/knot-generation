@@ -9,6 +9,7 @@ import nl.basmens.Main;
 import nl.basmens.generation.analyzers.GridAnalyzer;
 import nl.basmens.generation.generators.GridGenerator;
 import nl.basmens.knot.Knot;
+import nl.basmens.utils.io.ResultExporter;
 
 public class KnotGenerationPipeline implements Runnable {
   public final Tileset tileset;
