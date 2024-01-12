@@ -14,6 +14,8 @@ import processing.core.PApplet;
 import processing.data.JSONObject;
 
 public final class ResultExporter {
+  private static final String DISABLED = "Disabled";
+  private static final String FAILED = "Failed";
   private static final long FLUSH_INTERVAL = 60 * 1_000_000_000l; // in nanotime
 
   private static HashMap<String, ResultExporter> exporters = new HashMap<>();
@@ -22,7 +24,6 @@ public final class ResultExporter {
   private final JSONObject json;
 
   private long lastFlushNanoTime;
-
 
   private long knotCount;
 
@@ -62,12 +63,22 @@ public final class ResultExporter {
       // save invariants
       if (Main.SAVE_TRICOLORABILITY) {
         incrementCounter(jsonComputeIfAbsant(lengthJson, "tricolorability"), "" + k.isTricolorable());
+      } else {
+        incrementCounter(jsonComputeIfAbsant(lengthJson, "tricolorability"), DISABLED);
       }
+
       if (Main.SAVE_KNOT_DETERMINANT) {
-        incrementCounter(jsonComputeIfAbsant(lengthJson, "knot determinant"), "" + k.getKnotDeterminant());
+        incrementCounter(jsonComputeIfAbsant(lengthJson, "knot determinant"),
+            k.getKnotDeterminant() == -1 ? FAILED : "" + k.getKnotDeterminant());
+      } else {
+        incrementCounter(jsonComputeIfAbsant(lengthJson, "knot determinant"), DISABLED);
       }
+
       if (Main.SAVE_ALEXANDER_POLYNOMIAL) {
-        incrementCounter(jsonComputeIfAbsant(lengthJson, "alexander polynomial"), "" + k.getAlexanderPolynomial());
+        incrementCounter(jsonComputeIfAbsant(lengthJson, "alexander polynomial"),
+            k.getAlexanderPolynomial().toString().equals("-1") ? FAILED : "" + k.getAlexanderPolynomial());
+      } else {
+        incrementCounter(jsonComputeIfAbsant(lengthJson, "alexander polynomial"), DISABLED);
       }
     }
 
@@ -83,7 +94,8 @@ public final class ResultExporter {
 
   public synchronized void flush() {
     json.save(file, "indent=2");
-    System.out.println("Flushed " + knotCount + " knots to " + file.getName() + " | " + (System.nanoTime() - lastFlushNanoTime) / 1E9 + " seconds after last flush");
+    System.out.println("Flushed " + knotCount + " knots to " + file.getName() + " | "
+        + (System.nanoTime() - lastFlushNanoTime) / 1E9 + " seconds after last flush");
     lastFlushNanoTime = System.nanoTime();
   }
 
