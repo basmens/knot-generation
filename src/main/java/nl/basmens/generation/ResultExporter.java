@@ -4,7 +4,9 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
 
 import nl.basmens.Main;
 import nl.basmens.knot.Knot;
@@ -12,12 +14,17 @@ import processing.core.PApplet;
 import processing.data.JSONObject;
 
 public final class ResultExporter {
+  private static final long FLUSH_INTERVAL = 60 * 1_000_000_000l; // in nanotime
+
   private static HashMap<String, ResultExporter> exporters = new HashMap<>();
 
   private final File file;
   private final JSONObject json;
 
-  private int savesSinceLastFlush;
+  private long lastFlushNanoTime;
+
+
+  private long knotCount;
 
   private ResultExporter(String fileExportName) {
     URL resource = ResultExporter.class.getResource("/");
@@ -31,6 +38,10 @@ public final class ResultExporter {
     }
     file = new File(p);
     json = file.exists() ? PApplet.loadJSONObject(file) : new JSONObject();
+
+    ((Set<String>) json.keys()).forEach((String k) -> {
+      knotCount += json.getJSONObject(k).getLong("count", 0);
+    });
   }
 
   public static synchronized ResultExporter getExporter(String fileExportName) {
@@ -41,51 +52,39 @@ public final class ResultExporter {
     exporters.forEach((String k, ResultExporter v) -> v.flush());
   }
 
-  public void save(Iterable<Knot> knots) {
-    // Start calculations
+  public synchronized void save(Collection<Knot> knots) {
+    // Update Json and increment counters
     for (Knot k : knots) {
+      // Increment length counter
+      JSONObject lengthJson = jsonComputeIfAbsant(json, Integer.toString(k.getLength()));
+      incrementCounter(lengthJson, "count");
+
+      // save invariants
       if (Main.SAVE_TRICOLORABILITY) {
-        k.startCalcTricolorability();
+        incrementCounter(jsonComputeIfAbsant(lengthJson, "tricolorability"), "" + k.isTricolorable());
       }
       if (Main.SAVE_KNOT_DETERMINANT) {
-        k.startCalcKnotDeterminant();
+        incrementCounter(jsonComputeIfAbsant(lengthJson, "knot determinant"), "" + k.getKnotDeterminant());
       }
       if (Main.SAVE_ALEXANDER_POLYNOMIAL) {
-        k.startCalcAlexanderPolynomial();
+        incrementCounter(jsonComputeIfAbsant(lengthJson, "alexander polynomial"), "" + k.getAlexanderPolynomial());
       }
     }
 
-    // Update Json and increment counter
-    synchronized (this) {
-      for (Knot k : knots) {
-        // Increment length counter
-        JSONObject lengthJson = jsonComputeIfAbsant(json, Integer.toString(k.getLength()));
-        incrementCounter(lengthJson, "count");
-
-        // Save calculations
-        if (Main.SAVE_TRICOLORABILITY) {
-          incrementCounter(jsonComputeIfAbsant(lengthJson, "tricolorability"), "" + k.isTricolorable());
-        }
-        if (Main.SAVE_KNOT_DETERMINANT) {
-          incrementCounter(jsonComputeIfAbsant(lengthJson, "knot determinant"), "" + k.getKnotDeterminant());
-        }
-        if (Main.SAVE_ALEXANDER_POLYNOMIAL) {
-          incrementCounter(jsonComputeIfAbsant(lengthJson, "alexander polynomial"), "" + k.getAlexanderPolynomial());
-        }
-      }
-
-      savesSinceLastFlush++;
-      if (savesSinceLastFlush > 5) {
-        flush();
-      }
+    knotCount += knots.size();
+    if (lastFlushNanoTime == 0 || System.nanoTime() - lastFlushNanoTime > FLUSH_INTERVAL) {
+      flush();
     }
   }
 
+  public synchronized long getKnotCount() {
+    return knotCount;
+  }
+
   public synchronized void flush() {
-    if (savesSinceLastFlush > 0) {
-      json.save(file, "indent=2");
-      savesSinceLastFlush = 0;
-    }
+    json.save(file, "indent=2");
+    System.out.println("Flushed " + knotCount + " knots to " + file.getName() + " | " + (System.nanoTime() - lastFlushNanoTime) / 1E9 + " seconds after last flush");
+    lastFlushNanoTime = System.nanoTime();
   }
 
   private static JSONObject jsonComputeIfAbsant(JSONObject json, String key) {

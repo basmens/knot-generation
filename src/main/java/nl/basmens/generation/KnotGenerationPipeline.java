@@ -22,7 +22,7 @@ public class KnotGenerationPipeline implements Runnable {
 
   private ArrayList<Knot> knots = new ArrayList<>();
 
-  private boolean running = true;
+  private volatile boolean running = true;
 
   public KnotGenerationPipeline(Tileset tileset, int gridW, int gridH, Function<Tileset, GridGenerator> gridGenerator,
       Supplier<GridAnalyzer> gridAnalyzer, String fileExportName) {
@@ -42,15 +42,54 @@ public class KnotGenerationPipeline implements Runnable {
 
   @Override
   public void run() {
+    if (Main.MULTI_THREAD) {
+      runThreaded();
+    } else {
+      knots.clear();
+      generator.generateGrid();
+      knots = analyzer.extractKnots(generator.getGrid());
+    }
+  }
+
+  private void runThreaded() {
+    if (!running || ResultExporter.getExporter(fileExportName).getKnotCount() >= Main.TARGET_KNOT_COUNT) {
+      System.out.println("Skipped " + fileExportName);
+      stop();
+      return;
+    }
+    System.out.println("Starting " + fileExportName);
+
     do {
       knots.clear();
       generator.generateGrid();
       knots = analyzer.extractKnots(generator.getGrid());
 
       if (Main.SAVE_RESULTS) {
-        ResultExporter.getExporter(fileExportName).save(knots);
+
+        // Start calculations
+        for (Knot k : knots) {
+          if (Main.SAVE_TRICOLORABILITY) {
+            k.startCalcTricolorability();
+          }
+          if (Main.SAVE_KNOT_DETERMINANT) {
+            k.startCalcKnotDeterminant();
+          }
+          if (Main.SAVE_ALEXANDER_POLYNOMIAL) {
+            k.startCalcAlexanderPolynomial();
+          }
+        }
+
+        ResultExporter exporter = ResultExporter.getExporter(fileExportName);
+        exporter.save(knots);
+
+        if (exporter.getKnotCount() >= Main.TARGET_KNOT_COUNT) {
+          System.out.println("Finished " + fileExportName);
+          stop();
+        }
       }
     } while (running && Main.MULTI_THREAD);
+
+    System.out.println("Stopped " + fileExportName);
   }
 
   public void stop() {
@@ -79,5 +118,9 @@ public class KnotGenerationPipeline implements Runnable {
 
   public List<Knot> getKnots() {
     return knots;
+  }
+
+  public String getFileExportName() {
+    return fileExportName;
   }
 }

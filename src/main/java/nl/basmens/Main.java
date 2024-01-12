@@ -6,6 +6,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import nl.basmens.generation.KnotGenerationPipeline;
@@ -24,18 +27,20 @@ import processing.opengl.PGraphicsOpenGL;
 
 public class Main extends PApplet {
   public static final String RESOURCE_PATH;
-  public static final boolean SAVE_RESULTS = false;
+  public static final boolean SAVE_RESULTS = true;
   public static final boolean SAVE_TRICOLORABILITY = false;
-  public static final boolean SAVE_KNOT_DETERMINANT = false;
-  public static final boolean SAVE_ALEXANDER_POLYNOMIAL = false;
-  public static final boolean MULTI_THREAD = false;
-  private static final Tilesets TILESET = Tilesets.EXPANDED_UNWEIGHTED;
-  public static final boolean KEEP_DRAWABLE_KNOTS = true; // Preformance
+  public static final boolean SAVE_KNOT_DETERMINANT = true;
+  public static final boolean SAVE_ALEXANDER_POLYNOMIAL = true;
+  public static final boolean MULTI_THREAD = true;
+  private static final Tilesets TILESET = Tilesets.WEIGHTED_HIGH;
+  public static final boolean KEEP_DRAWABLE_KNOTS = false; // Preformance
+  public static final long MAX_CALC_TIME_PER_INVARIANT = 2_000_000_000L; // In nanos
+  public static final long TARGET_KNOT_COUNT = 1_000_000_000L;
   // Used to set the seed; ignore warning if no seed is given
-  public static final Supplier<Random> RANDOM_FACTORY = () -> new Random(10);
+  public static final Supplier<Random> RANDOM_FACTORY = Random::new;
 
-  public final KnotRenderer knotRenderer = new KnotRenderer(true, true, true);
-  private int size = 6;
+  public final KnotRenderer knotRenderer = new KnotRenderer(true, true, false);
+  private int size = 200;
   private int imgRes = 7;
 
   private enum Tilesets {
@@ -63,8 +68,8 @@ public class Main extends PApplet {
     }
   }
 
-  private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[1];
-  private Thread[] knotGenerationPipelineThreads = new Thread[knotGenerationPipelines.length];
+  private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[21];
+  private ExecutorService threadPool = Executors.newFixedThreadPool(9);
 
   static {
     String path = "";
@@ -75,6 +80,40 @@ public class Main extends PApplet {
       e.printStackTrace();
     }
     RESOURCE_PATH = path;
+  }
+
+  // ===================================================================================================================
+  // Functionality
+  // ===================================================================================================================
+  private void startKnotGenerations() {
+    for (int i = 0; i < knotGenerationPipelines.length; i++) {
+      if (MULTI_THREAD) {
+        size = i == 20 ? 3000 : (10 * (1 + i));
+      }
+
+      String fileName = "knots tileset " + TILESET.toString().toLowerCase(Locale.ENGLISH) + "/knots " + size + "x"
+          + size;
+
+      if (TILESET == Tilesets.BASIC) {
+        knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), size, size,
+            GridGeneratorBasic::new, GridAnalyzerBasic::new, fileName);
+      } else {
+        knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), size, size,
+            GridGeneratorDouble::new, GridAnalyzerDouble::new, fileName);
+      }
+
+      startGenerationCycle(i);
+    }
+  }
+
+  private void startGenerationCycle(int index) {
+    knotRenderer.setKnotBeingViewed(0);
+
+    if (MULTI_THREAD) {
+      threadPool.execute(knotGenerationPipelines[index]);
+    } else {
+      knotGenerationPipelines[index].run();
+    }
   }
 
   // ===================================================================================================================
@@ -97,33 +136,34 @@ public class Main extends PApplet {
     ((PGraphicsOpenGL) g).textureSampling(3);
     surface.setLocation(0, 0);
 
-    // Start
-    for (int i = 0; i < knotGenerationPipelines.length; i++) {
-      // size = 10 * (knotGenerationPipelines.length - i);
-
-      String fileName = "knots tileset " + TILESET.toString().toLowerCase(Locale.ENGLISH) + "/knots " + size + "x"
-          + size;
-
-      if (TILESET == Tilesets.BASIC) {
-        knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), size, size,
-            GridGeneratorBasic::new, GridAnalyzerBasic::new, fileName);
-      } else {
-        knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), size, size,
-            GridGeneratorDouble::new, GridAnalyzerDouble::new, fileName);
-      }
-
-      startGenerationCycle(i);
-    }
-  }
-
-  private void startGenerationCycle(int index) {
-    knotRenderer.setKnotBeingViewed(0);
-
     if (MULTI_THREAD) {
-      knotGenerationPipelineThreads[index] = new Thread(knotGenerationPipelines[index]);
-      knotGenerationPipelineThreads[index].start();
+      noLoop();
+      new Thread(() -> {
+        println();
+        println("Starting...");
+        startKnotGenerations();
+
+        println();
+        println("Awaiting termination...");
+        threadPool.shutdown();
+        try {
+          threadPool.awaitTermination(1, TimeUnit.DAYS);
+        } catch (InterruptedException e) {
+          stopKnotGenerationPipelines();
+          e.printStackTrace();
+        }
+
+        println();
+        println("Flushing data...");
+        ResultExporter.saveAll();
+        println("Flushed data");
+        
+        println();
+        println("Exiting");
+        exit();
+      }).start();
     } else {
-      knotGenerationPipelines[index].run();
+      startKnotGenerations();
     }
   }
 
@@ -159,17 +199,19 @@ public class Main extends PApplet {
 
     } else if (key == 'f') {
       if (MULTI_THREAD) {
+        println();
         println("Finishing...");
         stopKnotGenerationPipelines();
-        println("Finished");
-      }
+      } else {
+        if (SAVE_RESULTS) {
+          println();
+          println("Flushing data...");
+          ResultExporter.saveAll();
+          println("Flushed data");
+        }
 
-      if (SAVE_RESULTS) {
-        println("Flushing data...");
-        ResultExporter.saveAll();
-        println("Flushed data");
+        exit();
       }
-
     } else if (key == 'z' && !MULTI_THREAD) {
       println("Saving...");
       saveKnotImage();
@@ -178,21 +220,11 @@ public class Main extends PApplet {
   }
 
   private void stopKnotGenerationPipelines() {
+    threadPool.shutdown();
     // Terminate threads
     for (KnotGenerationPipeline p : knotGenerationPipelines) {
       p.stop();
     }
-
-    // Wait for the threads to end
-    for (Thread t : knotGenerationPipelineThreads) {
-      try {
-        t.join();
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-        Thread.currentThread().interrupt();
-      }
-    }
-    exit();
   }
 
   public void saveKnotImage() {

@@ -14,13 +14,15 @@ import nl.basmens.utils.PolynomialMatrix;
 import nl.basmens.utils.Vector;
 
 public class Knot {
-  // Unknot
-  private static final FutureTask<Boolean> FUTURE_UNKNOT_TRICOLORABILITY = new FutureTask<>(() -> {
-  }, false);
-  private static final FutureTask<Long> FUTURE_UNKNOT_KNOT_DETERMINANT = new FutureTask<>(() -> {
-  }, 1L);
-  private static final FutureTask<Polynomial> FUTURE_UNKNOT_ALEXANDER_POLYNOMIAL = new FutureTask<>(() -> {
-  }, new Polynomial(new Monomial(1, 0)));
+  // Predefined values
+  private static final FutureTask<Boolean> FUTURE_UNKNOT_TRICOLORABILITY = new FutureTask<>(() -> false);
+  private static final FutureTask<Long> FUTURE_UNKNOT_KNOT_DETERMINANT = new FutureTask<>(() -> 1L);
+  private static final FutureTask<Polynomial> FUTURE_UNKNOT_ALEXANDER_POLYNOMIAL = new FutureTask<>(
+      () -> new Polynomial(new Monomial(1, 0)));
+  private static final boolean ERROR_VALUE_TRICOLORABILITY = false; // Not really an error value tbh...
+  private static final long ERROR_VALUE_KNOT_DETERMINANT = -1;
+  private static final Polynomial ERROR_VALUE_ALEXANDER_POLYNOMIAL = new Polynomial(new Monomial(-1, 0));
+
   static {
     FUTURE_UNKNOT_TRICOLORABILITY.run();
     FUTURE_UNKNOT_KNOT_DETERMINANT.run();
@@ -93,6 +95,7 @@ public class Knot {
     } else {
       // Complete the loop
       currentReduced.setNext(reducedFirstConnection);
+      simplifyUsingReidemeisterMoves();
     }
   }
 
@@ -127,6 +130,7 @@ public class Knot {
       } else {
         lastIntersected.setNext(firstConnection.getNext());
       }
+      simplifyUsingReidemeisterMoves();
     }
     drawableFirstConnection = reducedFirstConnection;
   }
@@ -142,6 +146,74 @@ public class Knot {
 
     hasAsignedSectionIds = true;
     hasAsignedAreaIds = true;
+  }
+
+  public void simplifyUsingReidemeisterMoves() {
+    // Simplify using reidemeister move one
+    simplifyUsingReidemeisterMoveOne();
+    if (intersections.isEmpty()) {
+      return;
+    }
+
+    for (int index = intersections.size() - 1; index >= 0; index--) {
+      // Simplify using reidemeister move two
+      Intersection i = intersections.get(index);
+      Connection otherUnder = i.under.getNext();
+      if (otherUnder.isOver()) {
+        continue;
+      }
+
+      Connection otherOver = otherUnder.getIntersection().over;
+      if (i.over.getNext() == otherOver) {
+        i.over.getPrev().setNext(otherOver.getNext());
+      } else if (i.over.getPrev() == otherOver) {
+        i.over.getNext().setPrev(otherOver.getPrev());
+      } else {
+        continue;
+      }
+
+      i.under.getPrev().setNext(otherUnder.getNext());
+      intersections.remove(index);
+      intersections.remove(otherUnder.getIntersection());
+
+      // Check if unknot
+      if (intersections.size() < 3) {
+        initToUnknot(reducedFirstConnection.getPos());
+        return;
+      }
+
+      // Simplify using reidemeister move one
+      simplifyUsingReidemeisterMoveOne();
+      if (intersections.isEmpty()) {
+        return;
+      }
+
+      index = intersections.size();
+    }
+    reducedFirstConnection = intersections.get(0).under;
+  }
+
+  private void simplifyUsingReidemeisterMoveOne() {
+    for (int index = intersections.size() - 1; index >= 0; index--) {
+      Intersection i = intersections.get(index);
+
+      if (i.under.getNext() == i.over) {
+        i.under.getPrev().setNext(i.over.getNext());
+      } else if (i.over.getNext() == i.under) {
+        i.over.getPrev().setNext(i.under.getNext());
+      } else {
+        continue;
+      }
+
+      intersections.remove(index);
+      index = intersections.size();
+
+      if (intersections.size() < 3) {
+        initToUnknot(reducedFirstConnection.getPos());
+        return;
+      }
+    }
+    reducedFirstConnection = intersections.get(0).under;
   }
 
   // ===================================================================================================================
@@ -192,51 +264,49 @@ public class Knot {
     hasAsignedAreaIds = true;
   }
 
+  // indexes of areaIds
+  // / / | / /
+  // / 2 | 1 /
+  // >---|--->
+  // / 3 | 0 /
+  // / / | / /
+
   private void spreadAreaId(int areaId, Intersection prevIntersection, int prevAreaIdIndex) {
     Connection nextConnection;
     boolean isBackwards;
 
     double twoPi = Math.PI * 2;
-    boolean isUnderAngleLeft = ((prevIntersection.under.getDir() - prevIntersection.over.getDir()) % twoPi + twoPi)
+    boolean isOverAngleRight = ((prevIntersection.over.getDir() - prevIntersection.under.getDir()) % twoPi + twoPi)
         % twoPi < Math.PI;
 
     // find connection to continue on
     switch (prevAreaIdIndex) {
       case 0:
-        nextConnection = prevIntersection.over.getNext();
+        nextConnection = prevIntersection.under.getNext();
         isBackwards = false;
         break;
       case 1:
-        isBackwards = isUnderAngleLeft;
-        if (isUnderAngleLeft) {
-          nextConnection = prevIntersection.under.getPrev();
-        } else {
-          nextConnection = prevIntersection.under.getNext();
-        }
+        isBackwards = isOverAngleRight;
+        nextConnection = isOverAngleRight ? prevIntersection.over.getPrev() : prevIntersection.over.getNext();
         break;
       case 2:
-        nextConnection = prevIntersection.over.getPrev();
+        nextConnection = prevIntersection.under.getPrev();
         isBackwards = true;
         break;
-
       default:
-        isBackwards = !isUnderAngleLeft;
-        if (isUnderAngleLeft) {
-          nextConnection = prevIntersection.under.getNext();
-        } else {
-          nextConnection = prevIntersection.under.getPrev();
-        }
+        isBackwards = !isOverAngleRight;
+        nextConnection = isOverAngleRight ? prevIntersection.over.getNext() : prevIntersection.over.getPrev();
         break;
     }
 
     Intersection nextIntersection = nextConnection.getIntersection();
 
-    isUnderAngleLeft = ((nextIntersection.under.getDir() - nextIntersection.over.getDir()) % twoPi + twoPi)
+    isOverAngleRight = ((nextIntersection.over.getDir() - nextIntersection.under.getDir()) % twoPi + twoPi)
         % twoPi < Math.PI;
 
     int nextAreaIdIndex;
     // find areaIdIndex based on where the intersection got entered
-    if (nextConnection == nextIntersection.over) {
+    if (nextConnection == nextIntersection.under) {
       if (isBackwards) {
         nextAreaIdIndex = 1;
       } else {
@@ -244,13 +314,13 @@ public class Knot {
       }
     } else {
       if (isBackwards) {
-        if (isUnderAngleLeft) {
+        if (isOverAngleRight) {
           nextAreaIdIndex = 0;
         } else {
           nextAreaIdIndex = 2;
         }
       } else {
-        if (isUnderAngleLeft) {
+        if (isOverAngleRight) {
           nextAreaIdIndex = 2;
         } else {
           nextAreaIdIndex = 0;
@@ -270,92 +340,116 @@ public class Knot {
 
   // Tricolorability
   private boolean calculateTricolorability() {
-    Connection connection = reducedFirstConnection;
-    while (!connection.isUnder() && connection != reducedFirstConnection.getPrev()) {
-      connection = connection.getNext();
-    }
-    connection.propagateTricolorability(1);
-
-    connection = reducedFirstConnection;
-    int firstSectionValue = connection.getSectionValue();
-    do {
-      int sectionValue = connection.getSectionValue();
-      if (firstSectionValue != sectionValue) {
-        return true;
+    long startTime = System.nanoTime();
+    try {
+      Connection connection = reducedFirstConnection;
+      while (!connection.isUnder() && connection != reducedFirstConnection.getPrev()) {
+        connection = connection.getNext();
       }
-      connection = connection.getNext();
-    } while (connection != reducedFirstConnection);
+      connection.propagateTricolorability(1, startTime);
 
-    return false;
+      connection = reducedFirstConnection;
+      int firstSectionValue = connection.getSectionValue();
+      do {
+        int sectionValue = connection.getSectionValue();
+        if (firstSectionValue != sectionValue) {
+          return true;
+        }
+        connection = connection.getNext();
+      } while (connection != reducedFirstConnection);
+
+      return false;
+    } catch (RuntimeException e) {
+      e.printStackTrace();
+      return ERROR_VALUE_TRICOLORABILITY;
+    }
   }
 
   // KnotDeterminant
   private long calculateKnotDeterminant() {
-    if (intersections.size() < 3) {
-      return 1;
+    long startTime = System.nanoTime();
+    try {
+      if (intersections.size() < 3) {
+        return 1;
+      }
+
+      asignSectionIds();
+
+      Matrix matrix = new Matrix(intersections.size() - 1, intersections.size() - 1);
+
+      for (int i = 0; i < intersections.size() - 1; i++) {
+        Intersection intersection = intersections.get(i);
+        if (intersection.overSectionId < intersections.size() - 1) {
+          matrix.add(intersection.overSectionId, i, 2);
+        }
+        if (intersection.underSectionId1 < intersections.size() - 1) {
+          matrix.add(intersection.underSectionId1, i, -1);
+        }
+        if (intersection.underSectionId2 < intersections.size() - 1) {
+          matrix.add(intersection.underSectionId2, i, -1);
+        }
+      }
+
+      // round to get rid of precision loss
+      return Math.round(Math.abs(matrix.getDeterminant(startTime)));
+    } catch (RuntimeException e) {
+      // e.printStackTrace();
+      return ERROR_VALUE_KNOT_DETERMINANT;
     }
 
-    asignSectionIds();
-
-    Matrix matrix = new Matrix(intersections.size() - 1, intersections.size() - 1);
-
-    for (int i = 0; i < intersections.size() - 1; i++) {
-      Intersection intersection = intersections.get(i);
-      if (intersection.overSectionId < intersections.size() - 1) {
-        matrix.set(intersection.overSectionId, i, matrix.get(intersection.overSectionId, i) + 2);
-      }
-      if (intersection.underSectionId1 < intersections.size() - 1) {
-        matrix.set(intersection.underSectionId1, i, matrix.get(intersection.underSectionId1, i) - 1);
-      }
-      if (intersection.underSectionId2 < intersections.size() - 1) {
-        matrix.set(intersection.underSectionId2, i, matrix.get(intersection.underSectionId2, i) - 1);
-      }
-    }
-
-    // round to get rid of precision loss
-    return Math.round(Math.abs(matrix.getDeterminant()));
   }
 
   // AlexanderPolynomial
   private Polynomial calculateAlexanderPolynomial() {
-    if (intersections.size() < 3) {
-      return new Polynomial(new Monomial(1, 0));
-    }
-
-    asignAreaIds();
-
-    PolynomialMatrix matrix = new PolynomialMatrix(intersections.size(), intersections.size());
-
-    for (int i = 0; i < intersections.size(); i++) {
-      Intersection intersection = intersections.get(i);
-      for (int j = 0; j < 4; j++) {
-        if (intersection.areaIds[j] < 2) {
-          continue;
-        }
-
-        // / / | / /
-        // / t |-1 /
-        // >------->
-        // /-t | 1 /
-        // / / | / /
-        matrix.get(intersection.areaIds[j] - 2, i).add(switch (j) {
-          case 0:
-            yield new Polynomial(new Monomial(1, 0));
-          case 1:
-            yield new Polynomial(new Monomial(-1, 0));
-          case 2:
-            yield new Polynomial(new Monomial(1, 1));
-          default:
-            yield new Polynomial(new Monomial(-1, 1));
-        });
+    long startTime = System.nanoTime();
+    try {
+      if (intersections.size() < 3) {
+        return new Polynomial(new Monomial(1, 0));
       }
-    }
 
-    Polynomial determinant = matrix.getDeterminant();
-    Monomial smallestTerm = determinant.getLowestPower();
-    determinant = Polynomial.div(determinant,
-        new Monomial((long) Math.signum(smallestTerm.getCoefficient()), smallestTerm.getPower()));
-    return determinant;
+      asignAreaIds();
+
+      int s = intersections.size();
+      PolynomialMatrix matrix = new PolynomialMatrix(s, s);
+      for (int i = 0; i < s; i++) {
+        Intersection intersection = intersections.get(i);
+        for (int j = 0; j < 4; j++) {
+          if (intersection.areaIds[j] < 2) {
+            continue;
+          }
+
+          // / / | / /
+          // /-t | t /
+          // >---|--->
+          // / 1 | -1 /
+          // / / | / /
+
+          // Also take the transpose of the matrix, because the right top tends to have
+          // more zeros
+          matrix.get(i, intersection.areaIds[j] - 2).add(switch (j) {
+            case 0:
+              yield new Polynomial(new Monomial(-1, 0));
+            case 1:
+              yield new Polynomial(new Monomial(1, 1));
+            case 2:
+              yield new Polynomial(new Monomial(-1, 1));
+            default:
+              yield new Polynomial(new Monomial(1, 0));
+          });
+        }
+      }
+
+      Polynomial determinant = matrix.getDeterminant(startTime);
+      Monomial smallestTerm = determinant.getLowestMonomial();
+      if (smallestTerm != null) {
+        determinant = Polynomial.div(determinant,
+            new Monomial((long) Math.signum(smallestTerm.getCoefficient()), smallestTerm.getPower()));
+      }
+      return determinant;
+    } catch (RuntimeException e) {
+      // e.printStackTrace();
+      return ERROR_VALUE_ALEXANDER_POLYNOMIAL;
+    }
   }
 
   // ===================================================================================================================
@@ -381,10 +475,19 @@ public class Knot {
     return tricolorabilityFuture != null && tricolorabilityFuture.isDone();
   }
 
-  public synchronized void startCalcTricolorability() {
-    if (tricolorabilityFuture == null) {
-      tricolorabilityFuture = new FutureTask<>(this::calculateTricolorability);
-      new Thread(tricolorabilityFuture::run).start();
+  public void startCalcTricolorability() {
+    FutureTask<Boolean> f = tricolorabilityFuture;
+    if (f != null) {
+      return;
+    }
+
+    // Double check for thread safety, without potentially blocking all the thread
+    // that enter the function
+    synchronized (this) {
+      if (tricolorabilityFuture == null) {
+        tricolorabilityFuture = new FutureTask<>(this::calculateTricolorability);
+        tricolorabilityFuture.run();
+      }
     }
   }
 
@@ -416,10 +519,19 @@ public class Knot {
     return knotDeterminantFuture != null && knotDeterminantFuture.isDone();
   }
 
-  public synchronized void startCalcKnotDeterminant() {
-    if (knotDeterminantFuture == null) {
-      knotDeterminantFuture = new FutureTask<>(this::calculateKnotDeterminant);
-      knotDeterminantFuture.run();
+  public void startCalcKnotDeterminant() {
+    FutureTask<Long> f = knotDeterminantFuture;
+    if (f != null) {
+      return;
+    }
+
+    // Double check for thread safety, without potentially blocking all the thread
+    // that enter the function
+    synchronized (this) {
+      if (knotDeterminantFuture == null) {
+        knotDeterminantFuture = new FutureTask<>(this::calculateKnotDeterminant);
+        knotDeterminantFuture.run();
+      }
     }
   }
 
@@ -451,10 +563,19 @@ public class Knot {
     return alexanderPolynomialFuture != null && alexanderPolynomialFuture.isDone();
   }
 
-  public synchronized void startCalcAlexanderPolynomial() {
-    if (alexanderPolynomialFuture == null) {
-      alexanderPolynomialFuture = new FutureTask<>(this::calculateAlexanderPolynomial);
-      alexanderPolynomialFuture.run();
+  public void startCalcAlexanderPolynomial() {
+    FutureTask<Polynomial> f = alexanderPolynomialFuture;
+    if (f != null) {
+      return;
+    }
+
+    // Double check for thread safety, without potentially blocking all the thread
+    // that enter the function
+    synchronized (this) {
+      if (alexanderPolynomialFuture == null) {
+        alexanderPolynomialFuture = new FutureTask<>(this::calculateAlexanderPolynomial);
+        alexanderPolynomialFuture.run();
+      }
     }
   }
 

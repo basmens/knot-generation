@@ -106,7 +106,7 @@ public class KnotRenderer {
   }
 
   private void displayKnotInfo(KnotGenerationPipeline pipeLine, Knot knot) {
-    // knot.startCalcTricolorability();
+    // new Thread(knot::startCalcTricolorability).start();
     new Thread(knot::startCalcKnotDeterminant).start();
     new Thread(knot::startCalcAlexanderPolynomial).start();
 
@@ -125,7 +125,7 @@ public class KnotRenderer {
     text(" - Alexander Polynomial", 2078, 250);
     text("   " + knot.getAlexanderPolynomialState(), 2078, 290);
     if (knot.hasCalculatedAlexanderPolynomial()) {
-      text("   " + Math.abs(knot.getAlexanderPolynomial().getValue(-1)), 2078, 330);
+      text("   " + Math.abs(knot.getAlexanderPolynomial().evaluateOnT(-1)), 2078, 330);
     }
   }
 
@@ -284,26 +284,26 @@ public class KnotRenderer {
       int areaId = intersection.getAreaId(i);
 
       double twoPi = Math.PI * 2;
-      double underAngleLeft = ((intersection.under.getDir() - intersection.over.getDir()) % twoPi + twoPi)
-          % twoPi < Math.PI ? intersection.under.getDir() : intersection.under.getBackwardsDir();
+      double overAngleRight = ((intersection.over.getDir() - intersection.under.getDir()) % twoPi + twoPi)
+          % twoPi < Math.PI ? intersection.over.getDir() : intersection.over.getBackwardsDir();
 
       switch (i) {
         case 0:
-          textPos = Vector.fromAngle(getAvarageAngle(intersection.over.getDir(), underAngleLeft))
-              .mult(35).add(pos);
+          textPos = Vector.fromAngle(getAvarageAngle(intersection.under.getDir(), overAngleRight))
+              .mult(tileW / 10).add(pos);
           break;
         case 1:
-          textPos = Vector.fromAngle(getAvarageAngle(intersection.over.getDir(), underAngleLeft + Math.PI))
-              .mult(35).add(pos);
+          textPos = Vector.fromAngle(getAvarageAngle(intersection.under.getDir(), overAngleRight + Math.PI))
+              .mult(tileW / 10).add(pos);
           break;
         case 2:
           textPos = Vector
-              .fromAngle(getAvarageAngle(intersection.over.getBackwardsDir(), underAngleLeft + Math.PI))
-              .mult(35).add(pos);
+              .fromAngle(getAvarageAngle(intersection.under.getBackwardsDir(), overAngleRight + Math.PI))
+              .mult(tileW / 10).add(pos);
           break;
         case 3:
-          textPos = Vector.fromAngle(getAvarageAngle(intersection.over.getBackwardsDir(), underAngleLeft))
-              .mult(35).add(pos);
+          textPos = Vector.fromAngle(getAvarageAngle(intersection.under.getBackwardsDir(), overAngleRight))
+              .mult(tileW / 10).add(pos);
           break;
 
         default:
@@ -311,7 +311,7 @@ public class KnotRenderer {
       }
 
       textAlign(CENTER, BASELINE);
-      textSize(35);
+      textSize((float)tileW / 12);
       fill(debugPrimairyColor);
       text(areaId, (float) textPos.getX(), (float) textPos.getY());
     }

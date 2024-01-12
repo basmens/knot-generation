@@ -1,126 +1,142 @@
 package nl.basmens.utils;
 
+import java.math.BigInteger;
 import java.util.Locale;
 
 public class Monomial {
-  private static final char VARIABLE_SYMBOL = 't';
-  private long numerator = 0;
-  private long denominator = 1;
+  private BigInteger numerator;
+  private BigInteger denominator;
   private int power = 1;
 
   // =================================================================================================================
   // Constructor
   // =================================================================================================================
-
   public Monomial() {
-  } // for 0
+  }
 
   public Monomial(long coefficient, int power) {
-    this.numerator = coefficient;
+    this.numerator = BigInteger.valueOf(coefficient);
+    this.denominator = BigInteger.ONE;
     this.power = power;
   }
 
   public Monomial(long numerator, long denominator, int power) {
-    this.numerator = numerator;
-    this.denominator = denominator;
+    this.numerator = BigInteger.valueOf(numerator);
+    this.denominator = BigInteger.valueOf(denominator);
     this.power = power;
 
     simplifyFraction();
   }
 
-  public Monomial copy() {
-    return new Monomial(numerator, denominator, power);
+  public Monomial(Monomial toCopy) {
+    this.numerator = toCopy.numerator;
+    this.denominator = toCopy.denominator;
+    this.power = toCopy.power;
   }
 
   // =================================================================================================================
-  // Math
+  // Math instance
   // =================================================================================================================
-
-  public Monomial add(Monomial otherMonomial) {
-    if (power != otherMonomial.power) {
+  public Monomial add(Monomial other) {
+    if (power != other.power) {
       throw new IllegalArgumentException("ERROR: cant add Monomial because power is not the same");
     }
 
-    long oldDenominator = denominator;
-    numerator *= otherMonomial.denominator;
-    denominator *= otherMonomial.denominator;
-    numerator += otherMonomial.numerator * oldDenominator;
+    // Math exact functions throw an ArithmeticException in case of an overflow
+    numerator = numerator.multiply(other.denominator).add(other.numerator.multiply(denominator));
+    denominator = denominator.multiply(other.denominator);
 
     simplifyFraction();
     return this;
   }
 
-  public Monomial sub(Monomial otherMonomial) {
-    if (power != otherMonomial.power) {
+  public Monomial sub(Monomial other) {
+    if (power != other.power) {
       throw new IllegalArgumentException("ERROR: cant subtract Monomial because power is not the same");
     }
 
-    long oldDenominator = denominator;
-    numerator *= otherMonomial.denominator;
-    denominator *= otherMonomial.denominator;
-    numerator -= otherMonomial.numerator * oldDenominator;
+    // Math exact functions throw an ArithmeticException in case of an overflow
+    numerator = numerator.multiply(other.denominator).subtract(other.numerator.multiply(denominator));
+    denominator = denominator.multiply(other.denominator);
 
     simplifyFraction();
     return this;
   }
 
-  public Monomial mult(Monomial otherMonomial) {
-    numerator *= otherMonomial.numerator;
-    denominator *= otherMonomial.denominator;
-
-    power += otherMonomial.power;
-
-    simplifyFraction();
-    return this;
-  }
-
-  public Monomial div(Monomial otherMonomial) {
-    numerator *= otherMonomial.denominator;
-    denominator *= otherMonomial.numerator;
-
-    power -= otherMonomial.power;
+  public Monomial mult(Monomial other) {
+    // Math exact functions throw an ArithmeticException in case of an overflow
+    numerator = numerator.multiply(other.numerator);
+    denominator = denominator.multiply(other.denominator);
+    power += other.power;
 
     simplifyFraction();
     return this;
   }
 
+  public Monomial div(Monomial other) {
+    // Math exact functions throw an ArithmeticException in case of an overflow
+    numerator = numerator.multiply(other.denominator);
+    denominator = denominator.multiply(other.numerator);
+    power -= other.power;
+
+    simplifyFraction();
+    return this;
+  }
+
+  // =================================================================================================================
+  // Math static
+  // =================================================================================================================
+  public static Monomial add(Monomial m1, Monomial m2) {
+    return new Monomial(m1).add(m2);
+  }
+
+  public static Monomial sub(Monomial m1, Monomial m2) {
+    return new Monomial(m1).sub(m2);
+  }
+
+  public static Monomial mult(Monomial m1, Monomial m2) {
+    return new Monomial(m1).mult(m2);
+  }
+
+  public static Monomial div(Monomial m1, Monomial m2) {
+    return new Monomial(m1).div(m2);
+  }
+
+  // =================================================================================================================
+  // Functionality
+  // =================================================================================================================
   private void simplifyFraction() {
-    final long primeNumbers[] = {2, 3, 5, 7, 11};
-    for (long p : primeNumbers) {
-      while (numerator % p == 0 && denominator % p == 0) {
-        numerator /= p;
-        denominator /= p;
-      }
-    }
+    BigInteger gcd = numerator.gcd(denominator);
+    numerator = numerator.divide(gcd);
+    denominator = denominator.divide(gcd);
   }
 
   // =================================================================================================================
   // Getters
   // =================================================================================================================
+  public static boolean isZero(Monomial m) {
+    return m == null || m.numerator.equals(BigInteger.ZERO);
+  }
+
+  public static boolean isOne(Monomial m) {
+    return m != null && m.power == 0 && m.numerator.equals(m.denominator);
+  }
 
   public double getCoefficient() {
-    return numerator / (double) denominator;
-  }
-
-  public long getNumerator() {
-    return numerator;
-  }
-
-  public long getDenominator() {
-    return denominator;
+    return numerator.divide(denominator).doubleValue();
   }
 
   public int getPower() {
     return power;
   }
 
-  public double getValue(double unknown) {
-    return getCoefficient() * Math.pow(unknown, power);
+  public double evaluateOnT(double t) {
+    return getCoefficient() * Math.pow(t, power);
   }
 
   @Override
   public String toString() {
-    if (numerator == 0) {
+    if (isZero(this)) {
       return "0";
     }
 
@@ -128,28 +144,27 @@ public class Monomial {
   }
 
   private String getCoefficientString() {
-    if (numerator == denominator && power != 0) {
-      return "";
-    }
-    if (numerator == -denominator && power != 0) {
-      return "-";
+    // Unreachable code due to bug: isOne(this) should be nominator == 1
+    if (power != 0) {
+      if (numerator.equals(denominator)) {
+        return "";
+      }
+      if (numerator.equals(denominator.negate())) {
+        return "-";
+      }
     }
 
-    if (numerator % denominator == 0) {
-      return String.format(Locale.ENGLISH, "%d", numerator / denominator);
-    } else {
-      return String.format(Locale.ENGLISH, "%.4f", getCoefficient()).replaceAll("(,*)(0+)$", "");
-    }
+    return String.format(Locale.ENGLISH, "%.4f", getCoefficient()).replaceAll("(\\.?)(0+)$", "");
   }
 
   private String getPowerString() {
-    if (power == 0) {
-      return "";
-    }
-    if (power == 1) {
-      return "" + VARIABLE_SYMBOL;
-    }
-
-    return VARIABLE_SYMBOL + "^" + power;
+    return switch (power) {
+      case 0:
+        yield "";
+      case 1:
+        yield "t";
+      default:
+        yield "t^" + power;
+    };
   }
 }
