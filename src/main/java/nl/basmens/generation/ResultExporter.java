@@ -14,8 +14,7 @@ import processing.core.PApplet;
 import processing.data.JSONObject;
 
 public final class ResultExporter {
-  private static final String DISABLED = "Disabled";
-  private static final String FAILED = "Failed";
+  private static final String DISABLED = "-2";
   private static final long FLUSH_INTERVAL = 60 * 1_000_000_000l; // in nanotime
 
   private static HashMap<String, ResultExporter> exporters = new HashMap<>();
@@ -68,15 +67,13 @@ public final class ResultExporter {
       }
 
       if (Main.SAVE_KNOT_DETERMINANT) {
-        incrementCounter(jsonComputeIfAbsant(lengthJson, "knot determinant"),
-            k.getKnotDeterminant() == -1 ? FAILED : "" + k.getKnotDeterminant());
+        incrementCounter(jsonComputeIfAbsant(lengthJson, "knot determinant"), "" + k.getKnotDeterminant());
       } else {
         incrementCounter(jsonComputeIfAbsant(lengthJson, "knot determinant"), DISABLED);
       }
 
       if (Main.SAVE_ALEXANDER_POLYNOMIAL) {
-        incrementCounter(jsonComputeIfAbsant(lengthJson, "alexander polynomial"),
-            k.getAlexanderPolynomial().toString().equals("-1") ? FAILED : "" + k.getAlexanderPolynomial());
+        incrementCounter(jsonComputeIfAbsant(lengthJson, "alexander polynomial"), "" + k.getAlexanderPolynomial());
       } else {
         incrementCounter(jsonComputeIfAbsant(lengthJson, "alexander polynomial"), DISABLED);
       }
