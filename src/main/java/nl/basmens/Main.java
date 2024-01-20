@@ -32,7 +32,7 @@ public class Main extends PApplet {
   public static final boolean SAVE_KNOT_DETERMINANT = true;
   public static final boolean SAVE_ALEXANDER_POLYNOMIAL = true;
   public static final boolean MULTI_THREAD = true;
-  private static final Tilesets TILESET = Tilesets.WEIGHTED_HIGH;
+  private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
   public static final boolean KEEP_DRAWABLE_KNOTS = false; // Preformance
   public static final long MAX_CALC_TIME_PER_INVARIANT = 2_000_000_000L; // In nanos
   public static final long TARGET_KNOT_COUNT = 1_000_000_000L;
@@ -91,8 +91,7 @@ public class Main extends PApplet {
         size = i == 20 ? 3000 : (10 * (1 + i));
       }
 
-      String fileName = "knots tileset " + TILESET.toString().toLowerCase(Locale.ENGLISH) + "/knots " + size + "x"
-          + size;
+      String fileName = TILESET.toString().toLowerCase(Locale.ENGLISH) + "/" + size + "x" + size;
 
       if (TILESET == Tilesets.BASIC) {
         knotGenerationPipelines[i] = new KnotGenerationPipeline(TILESET.getTileset(), size, size,
@@ -157,7 +156,7 @@ public class Main extends PApplet {
         println("Flushing data...");
         ResultExporter.saveAll();
         println("Flushed data");
-        
+
         println();
         println("Exiting");
         exit();
