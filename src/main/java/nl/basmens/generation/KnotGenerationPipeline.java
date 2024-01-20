@@ -57,9 +57,11 @@ public class KnotGenerationPipeline implements Runnable {
     PerformanceTimer timer = new PerformanceTimer(getClass(), "run - " + fileExportName);
     if (Main.MULTI_THREAD) {
       if (!running || ResultExporter.getExporter(fileExportName).getKnotCount() >= Main.TARGET_KNOT_COUNT) {
-        System.out.println("Skipped " + fileExportName);
+        ResultExporter.closeExporter(fileExportName);
         stop();
         timer.stop();
+
+        System.out.println("Skipped " + fileExportName);
         return;
       }
       
@@ -103,6 +105,7 @@ public class KnotGenerationPipeline implements Runnable {
       }
     } while (running);
 
+    ResultExporter.closeExporter(fileExportName);
     System.out.println("Stopped " + fileExportName);
     timer.stop();
   }

@@ -33,7 +33,7 @@ public class Main extends PApplet {
   public static final boolean SAVE_KNOT_DETERMINANT = true;
   public static final boolean SAVE_ALEXANDER_POLYNOMIAL = true;
   public static final boolean MULTI_THREAD = true;
-  private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
+  private static final Tilesets TILESET = Tilesets.WEIGHTED_HIGH;
   public static final boolean KEEP_DRAWABLE_KNOTS = false; // Preformance
   public static final long MAX_CALC_TIME_PER_INVARIANT = 500_000_000L; // In nanos
   public static final long TARGET_KNOT_COUNT = 1_000_000_000L;
@@ -155,7 +155,7 @@ public class Main extends PApplet {
 
         println();
         println("Flushing data...");
-        ResultExporter.saveAll();
+        ResultExporter.closeAll();
         PerformanceTimer.flushData();
         println("Flushed data");
 
@@ -207,7 +207,7 @@ public class Main extends PApplet {
         println();
         println("Flushing data...");
         if (SAVE_RESULTS) {
-          ResultExporter.saveAll();
+          ResultExporter.closeAll();
         }
         PerformanceTimer.flushData();
         println("Flushed data");

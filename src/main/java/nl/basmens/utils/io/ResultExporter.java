@@ -1,11 +1,16 @@
 package nl.basmens.utils.io;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import nl.basmens.Main;
 import nl.basmens.knot.Knot;
@@ -22,11 +27,11 @@ public final class ResultExporter {
   private static HashMap<String, ResultExporter> exporters = new HashMap<>();
 
   private final File file;
-  private final JSONObject json;
+  private HashMap<Integer, KnotJson> lengths = new HashMap<>();
+  private HashMap<Integer, KnotJson> intersections = new HashMap<>();
+  private long knotCount;
 
   private long lastFlushMillis;
-
-  private long knotCount;
 
   private ResultExporter(String fileExportName) {
     // Get file
@@ -39,33 +44,50 @@ public final class ResultExporter {
     } catch (URISyntaxException e) {
       e.printStackTrace();
     }
-
     file = new File(path);
-    json = file.exists() ? PApplet.loadJSONObject(file) : new JSONObject();
 
-    knotCount = json.getLong(COUNT_KEY, 0);
+    // Read file
+    if (file.exists()) {
+      JSONObject json = PApplet.loadJSONObject(file);
+      knotCount = json.getLong(COUNT_KEY, 0);
+
+      JSONObject lengthJson = json.getJSONObject(LENGTH_BASED_KEY);
+      if (lengthJson != null) {
+        ((Set<String>) lengthJson.keys())
+            .forEach(k -> lengths.put(Integer.parseInt(k), new KnotJson(lengthJson.getJSONObject(k))));
+      }
+
+      JSONObject intersectionJson = json.getJSONObject(INTERSECTIONS_BASED_KEY);
+      if (intersectionJson != null) {
+        ((Set<String>) intersectionJson.keys())
+            .forEach(k -> lengths.put(Integer.parseInt(k), new KnotJson(intersectionJson.getJSONObject(k))));
+      }
+    }
   }
 
   public static synchronized ResultExporter getExporter(String fileExportName) {
     return exporters.computeIfAbsent(fileExportName, ResultExporter::new);
   }
 
-  public static synchronized void saveAll() {
+  public static synchronized void closeExporter(String fileExportName) {
+    ResultExporter exporter = exporters.get(fileExportName);
+    if (exporter != null) {
+      exporter.flush();
+      exporters.remove(fileExportName);
+    }
+  }
+
+  public static synchronized void closeAll() {
     exporters.forEach((String k, ResultExporter v) -> v.flush());
+    exporters.clear();
   }
 
   public synchronized void save(Collection<Knot> knots) {
     PerformanceTimer timer = new PerformanceTimer(getClass(), "save");
 
-    JSONObject lengthJson = jsonComputeIfAbsant(json, LENGTH_BASED_KEY);
-    JSONObject intersectionsJson = jsonComputeIfAbsant(json, INTERSECTIONS_BASED_KEY);
-
     for (Knot k : knots) {
-      // increment total knot count
-      incrementCounter(json, COUNT_KEY);
-
-      saveKnot(jsonComputeIfAbsant(lengthJson, Integer.toString(k.getLength())), k);
-      saveKnot(jsonComputeIfAbsant(intersectionsJson, Integer.toString(k.getIntersections().size())), k);
+      lengths.computeIfAbsent(k.getLength(), s -> new KnotJson()).addKnot(k);
+      intersections.computeIfAbsent(k.getLength(), s -> new KnotJson()).addKnot(k);
     }
 
     knotCount += knots.size();
@@ -76,46 +98,44 @@ public final class ResultExporter {
     timer.stop();
   }
 
-  public void saveKnot(JSONObject knotJson, Knot knot) {
-    incrementCounter(knotJson, COUNT_KEY);
-
-    // save invariants
-    if (Main.SAVE_TRICOLORABILITY) {
-      incrementCounter(jsonComputeIfAbsant(knotJson, "tricolorability"), "" + knot.isTricolorable());
-    }
-    if (Main.SAVE_KNOT_DETERMINANT) {
-      incrementCounter(jsonComputeIfAbsant(knotJson, "knot determinant"), "" + knot.getKnotDeterminant());
-    }
-    if (Main.SAVE_ALEXANDER_POLYNOMIAL) {
-      incrementCounter(jsonComputeIfAbsant(knotJson, "alexander polynomial"), "" + knot.getAlexanderPolynomial());
-    }
-  }
-
   public synchronized long getKnotCount() {
     return knotCount;
   }
 
   public synchronized void flush() {
     PerformanceTimer timer = new PerformanceTimer(getClass(), "flush");
-    json.save(file, "indent=2");
+    PApplet.createPath(file);
+    try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+      bw.append("{\n\"").append(COUNT_KEY).append("\":").append(Long.toString(knotCount));
+
+      bw.append(",\n\"").append(LENGTH_BASED_KEY).append("\":{");
+      boolean addComma = false;
+      for (Entry<Integer, KnotJson> e : lengths.entrySet()) {
+        if (addComma) {
+          bw.append(",");
+        }
+        bw.append("\n\"").append(e.getKey().toString()).append("\":").append(e.getValue().toString());
+        addComma = true;
+      }
+      
+      bw.append("\n},\n\"").append(INTERSECTIONS_BASED_KEY).append("\":{");
+      addComma = false;
+      for (Entry<Integer, KnotJson> e : intersections.entrySet()) {
+        if (addComma) {
+          bw.append(",");
+        }
+        bw.append("\n\"").append(e.getKey().toString()).append("\":").append(e.getValue().toString());
+        addComma = true;
+      }
+      bw.append("\n}\n}");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
     System.out.println("Flushed " + knotCount + " knots to " + file.getName() + " | "
         + (System.currentTimeMillis() - lastFlushMillis) / 1E3 + " seconds after last flush");
     lastFlushMillis = System.currentTimeMillis();
 
     timer.stop();
-  }
-
-  private static JSONObject jsonComputeIfAbsant(JSONObject json, String key) {
-    JSONObject result = json.getJSONObject(key);
-    if (result == null) {
-      result = new JSONObject();
-      json.put(key, result);
-    }
-    return result;
-  }
-
-  private static void incrementCounter(JSONObject json, String key) {
-    json.put(key, json.getLong(key, 0) + 1);
   }
 }
