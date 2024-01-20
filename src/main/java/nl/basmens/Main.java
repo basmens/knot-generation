@@ -19,6 +19,7 @@ import nl.basmens.generation.analyzers.GridAnalyzerDouble;
 import nl.basmens.generation.generators.GridGeneratorBasic;
 import nl.basmens.generation.generators.GridGeneratorDouble;
 import nl.basmens.rendering.KnotRenderer;
+import nl.basmens.utils.concurrent.PerformanceTimer;
 import nl.basmens.utils.io.ResultExporter;
 import nl.benmens.processing.PApplet;
 import nl.benmens.processing.PAppletProxy;
@@ -34,13 +35,13 @@ public class Main extends PApplet {
   public static final boolean MULTI_THREAD = true;
   private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
   public static final boolean KEEP_DRAWABLE_KNOTS = false; // Preformance
-  public static final long MAX_CALC_TIME_PER_INVARIANT = 2_000_000_000L; // In nanos
+  public static final long MAX_CALC_TIME_PER_INVARIANT = 500_000_000L; // In nanos
   public static final long TARGET_KNOT_COUNT = 1_000_000_000L;
   // Used to set the seed; ignore warning if no seed is given
-  public static final Supplier<Random> RANDOM_FACTORY = Random::new;
+  public static final Supplier<Random> RANDOM_FACTORY = () -> new Random(10);
 
   public final KnotRenderer knotRenderer = new KnotRenderer(true, true, false);
-  private int size = 200;
+  private int size = 20;
   private int imgRes = 7;
 
   private enum Tilesets {
@@ -68,7 +69,7 @@ public class Main extends PApplet {
     }
   }
 
-  private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[21];
+  private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[MULTI_THREAD ? 21 : 1];
   private ExecutorService threadPool = Executors.newFixedThreadPool(9);
 
   static {
@@ -155,6 +156,7 @@ public class Main extends PApplet {
         println();
         println("Flushing data...");
         ResultExporter.saveAll();
+        PerformanceTimer.flushData();
         println("Flushed data");
 
         println();
@@ -202,12 +204,13 @@ public class Main extends PApplet {
         println("Finishing...");
         stopKnotGenerationPipelines();
       } else {
+        println();
+        println("Flushing data...");
         if (SAVE_RESULTS) {
-          println();
-          println("Flushing data...");
           ResultExporter.saveAll();
-          println("Flushed data");
         }
+        PerformanceTimer.flushData();
+        println("Flushed data");
 
         exit();
       }

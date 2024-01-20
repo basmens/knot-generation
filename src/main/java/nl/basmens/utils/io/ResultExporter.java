@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import nl.basmens.Main;
 import nl.basmens.knot.Knot;
+import nl.basmens.utils.concurrent.PerformanceTimer;
 import processing.core.PApplet;
 import processing.data.JSONObject;
 
@@ -16,20 +17,20 @@ public final class ResultExporter {
   private static final String COUNT_KEY = "count";
   private static final String LENGTH_BASED_KEY = "length";
   private static final String INTERSECTIONS_BASED_KEY = "intersections";
-  private static final long FLUSH_INTERVAL = 60 * 1_000_000_000l; // in nanotime
+  private static final long FLUSH_INTERVAL = 60 * 1_000L; // in millis
 
   private static HashMap<String, ResultExporter> exporters = new HashMap<>();
 
   private final File file;
   private final JSONObject json;
 
-  private long lastFlushNanoTime;
-
+  private long lastFlushMillis;
 
   private long knotCount;
 
   private ResultExporter(String fileExportName) {
-    URL resource = ResultExporter.class.getResource("/");
+    // Get file
+    URL resource = getClass().getResource("/");
     String path = null;
     try {
       path = Paths.get(resource.toURI()).toAbsolutePath().toString();
@@ -38,6 +39,7 @@ public final class ResultExporter {
     } catch (URISyntaxException e) {
       e.printStackTrace();
     }
+
     file = new File(path);
     json = file.exists() ? PApplet.loadJSONObject(file) : new JSONObject();
 
@@ -53,7 +55,8 @@ public final class ResultExporter {
   }
 
   public synchronized void save(Collection<Knot> knots) {
-    // Update Json and increment counters
+    PerformanceTimer timer = new PerformanceTimer(getClass(), "save");
+
     JSONObject lengthJson = jsonComputeIfAbsant(json, LENGTH_BASED_KEY);
     JSONObject intersectionsJson = jsonComputeIfAbsant(json, INTERSECTIONS_BASED_KEY);
 
@@ -66,9 +69,11 @@ public final class ResultExporter {
     }
 
     knotCount += knots.size();
-    if (lastFlushNanoTime == 0 || System.nanoTime() - lastFlushNanoTime > FLUSH_INTERVAL) {
+    if (lastFlushMillis == 0 || System.currentTimeMillis() - lastFlushMillis > FLUSH_INTERVAL) {
       flush();
     }
+
+    timer.stop();
   }
 
   public void saveKnot(JSONObject knotJson, Knot knot) {
@@ -91,9 +96,14 @@ public final class ResultExporter {
   }
 
   public synchronized void flush() {
+    PerformanceTimer timer = new PerformanceTimer(getClass(), "flush");
     json.save(file, "indent=2");
-    System.out.println("Flushed " + knotCount + " knots to " + file.getName() + " | " + (System.nanoTime() - lastFlushNanoTime) / 1E9 + " seconds after last flush");
-    lastFlushNanoTime = System.nanoTime();
+
+    System.out.println("Flushed " + knotCount + " knots to " + file.getName() + " | "
+        + (System.currentTimeMillis() - lastFlushMillis) / 1E3 + " seconds after last flush");
+    lastFlushMillis = System.currentTimeMillis();
+
+    timer.stop();
   }
 
   private static JSONObject jsonComputeIfAbsant(JSONObject json, String key) {
@@ -106,6 +116,6 @@ public final class ResultExporter {
   }
 
   private static void incrementCounter(JSONObject json, String key) {
-    json.setLong(key, json.getLong(key, 0) + 1);
+    json.put(key, json.getLong(key, 0) + 1);
   }
 }

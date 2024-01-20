@@ -7,6 +7,7 @@ import nl.basmens.generation.IntersectedConnectionsFactory;
 import nl.basmens.generation.Tile;
 import nl.basmens.generation.Tileset;
 import nl.basmens.knot.Connection;
+import nl.basmens.utils.concurrent.PerformanceTimer;
 import nl.benmens.processing.PAppletProxy;
 
 public class GridGeneratorBasic implements GridGenerator {
@@ -101,6 +102,7 @@ public class GridGeneratorBasic implements GridGenerator {
   }
 
   public void generateGrid() {
+    PerformanceTimer timer = new PerformanceTimer(getClass(), "generateGrid");
     grid = new Tile[gridW][gridH];
 
     // Fill edges
@@ -123,6 +125,7 @@ public class GridGeneratorBasic implements GridGenerator {
         grid[x][y] = tileset.getTileByIndex(random.nextInt(tileset.getTileCount()));
       }
     }
+    timer.stop();
   }
 
   public Tile getTileAtPos(int x, int y) {

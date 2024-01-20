@@ -1,0 +1,1126 @@
+{"root": [
+  {
+    "total duration": 8768268500,
+    "children": [{
+      "total duration": 8768268300,
+      "children": [{
+        "total duration": 8753270500,
+        "children": [
+          {
+            "total duration": 19119800,
+            "children": [],
+            "name": "calc invariants",
+            "hit count": 32966
+          },
+          {
+            "total duration": 1546101900,
+            "children": [{
+              "total duration": 1511640200,
+              "children": [
+                {
+                  "total duration": 93200400,
+                  "children": [{
+                    "total duration": 67111900,
+                    "children": [{
+                      "total duration": 65362800,
+                      "children": [],
+                      "name": "generateGrid",
+                      "hit count": 32966
+                    }],
+                    "name": "nl.basmens.generation.generators.GridGeneratorDouble - generateGrid",
+                    "hit count": 32966
+                  }],
+                  "name": "generateGrid",
+                  "hit count": 32966
+                },
+                {
+                  "total duration": 1410421800,
+                  "children": [{
+                    "total duration": 1379142600,
+                    "children": [
+                      {
+                        "total duration": 731324500,
+                        "children": [],
+                        "name": "create empty connections",
+                        "hit count": 32966
+                      },
+                      {
+                        "total duration": 439657500,
+                        "children": [],
+                        "name": "Read knots",
+                        "hit count": 32966
+                      },
+                      {
+                        "total duration": 206225500,
+                        "children": [],
+                        "name": "connect connections in tiles",
+                        "hit count": 32966
+                      }
+                    ],
+                    "name": "nl.basmens.generation.analyzers.GridAnalyzerDouble - extractKnots",
+                    "hit count": 32966
+                  }],
+                  "name": "extractKnots",
+                  "hit count": 32966
+                },
+                {
+                  "total duration": 3877200,
+                  "children": [],
+                  "name": "clear",
+                  "hit count": 32966
+                }
+              ],
+              "name": "nl.basmens.generation.KnotGenerationPipeline - runGenCycle",
+              "hit count": 32966
+            }],
+            "name": "gen knots",
+            "hit count": 32966
+          },
+          {
+            "total duration": 732300,
+            "children": [],
+            "name": "start",
+            "hit count": 1
+          },
+          {
+            "total duration": 7187316200,
+            "children": [{
+              "total duration": 7165939900,
+              "children": [{
+                "total duration": 7162658500,
+                "children": [],
+                "name": "save",
+                "hit count": 32966
+              }],
+              "name": "nl.basmens.utils.io.ResultExporter - save",
+              "hit count": 32966
+            }],
+            "name": "export",
+            "hit count": 32966
+          }
+        ],
+        "name": "nl.basmens.generation.KnotGenerationPipeline - runThreaded",
+        "hit count": 1
+      }],
+      "name": "run - knots tileset weighted_high/knots 10x10",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 10x10",
+    "hit count": 1
+  },
+  {
+    "total duration": 610300,
+    "children": [{
+      "total duration": 610100,
+      "children": [],
+      "name": "run - knots tileset weighted_high/knots 150x150",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 150x150",
+    "hit count": 1
+  },
+  {
+    "total duration": 8768288000,
+    "children": [{
+      "total duration": 8768287900,
+      "children": [{
+        "total duration": 8758823700,
+        "children": [
+          {
+            "total duration": 24435600,
+            "children": [],
+            "name": "calc invariants",
+            "hit count": 3283
+          },
+          {
+            "total duration": 1548264400,
+            "children": [{
+              "total duration": 1538170300,
+              "children": [
+                {
+                  "total duration": 153713600,
+                  "children": [{
+                    "total duration": 149955300,
+                    "children": [{
+                      "total duration": 149767300,
+                      "children": [],
+                      "name": "generateGrid",
+                      "hit count": 3283
+                    }],
+                    "name": "nl.basmens.generation.generators.GridGeneratorDouble - generateGrid",
+                    "hit count": 3283
+                  }],
+                  "name": "generateGrid",
+                  "hit count": 3283
+                },
+                {
+                  "total duration": 1382009000,
+                  "children": [{
+                    "total duration": 1376332600,
+                    "children": [
+                      {
+                        "total duration": 768471600,
+                        "children": [],
+                        "name": "create empty connections",
+                        "hit count": 3283
+                      },
+                      {
+                        "total duration": 367767700,
+                        "children": [],
+                        "name": "Read knots",
+                        "hit count": 3283
+                      },
+                      {
+                        "total duration": 239722700,
+                        "children": [],
+                        "name": "connect connections in tiles",
+                        "hit count": 3283
+                      }
+                    ],
+                    "name": "nl.basmens.generation.analyzers.GridAnalyzerDouble - extractKnots",
+                    "hit count": 3283
+                  }],
+                  "name": "extractKnots",
+                  "hit count": 3283
+                },
+                {
+                  "total duration": 1987300,
+                  "children": [],
+                  "name": "clear",
+                  "hit count": 3283
+                }
+              ],
+              "name": "nl.basmens.generation.KnotGenerationPipeline - runGenCycle",
+              "hit count": 3283
+            }],
+            "name": "gen knots",
+            "hit count": 3283
+          },
+          {
+            "total duration": 6015800,
+            "children": [],
+            "name": "start",
+            "hit count": 1
+          },
+          {
+            "total duration": 7180107500,
+            "children": [{
+              "total duration": 7172449300,
+              "children": [{
+                "total duration": 7171793600,
+                "children": [],
+                "name": "save",
+                "hit count": 3283
+              }],
+              "name": "nl.basmens.utils.io.ResultExporter - save",
+              "hit count": 3283
+            }],
+            "name": "export",
+            "hit count": 3283
+          }
+        ],
+        "name": "nl.basmens.generation.KnotGenerationPipeline - runThreaded",
+        "hit count": 1
+      }],
+      "name": "run - knots tileset weighted_high/knots 30x30",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 30x30",
+    "hit count": 1
+  },
+  {
+    "total duration": 809700,
+    "children": [{
+      "total duration": 809500,
+      "children": [],
+      "name": "run - knots tileset weighted_high/knots 140x140",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 140x140",
+    "hit count": 1
+  },
+  {
+    "total duration": 775000,
+    "children": [{
+      "total duration": 774700,
+      "children": [],
+      "name": "run - knots tileset weighted_high/knots 190x190",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 190x190",
+    "hit count": 1
+  },
+  {
+    "total duration": 8776224300,
+    "children": [{
+      "total duration": 8776224100,
+      "children": [{
+        "total duration": 8770518400,
+        "children": [
+          {
+            "total duration": 84857100,
+            "children": [],
+            "name": "calc invariants",
+            "hit count": 1047
+          },
+          {
+            "total duration": 1628675300,
+            "children": [{
+              "total duration": 1624287100,
+              "children": [
+                {
+                  "total duration": 94771600,
+                  "children": [{
+                    "total duration": 93097600,
+                    "children": [{
+                      "total duration": 93032200,
+                      "children": [],
+                      "name": "generateGrid",
+                      "hit count": 1047
+                    }],
+                    "name": "nl.basmens.generation.generators.GridGeneratorDouble - generateGrid",
+                    "hit count": 1047
+                  }],
+                  "name": "generateGrid",
+                  "hit count": 1047
+                },
+                {
+                  "total duration": 1527106700,
+                  "children": [{
+                    "total duration": 1525553700,
+                    "children": [
+                      {
+                        "total duration": 609523400,
+                        "children": [],
+                        "name": "create empty connections",
+                        "hit count": 1047
+                      },
+                      {
+                        "total duration": 573023900,
+                        "children": [],
+                        "name": "Read knots",
+                        "hit count": 1047
+                      },
+                      {
+                        "total duration": 342715300,
+                        "children": [],
+                        "name": "connect connections in tiles",
+                        "hit count": 1047
+                      }
+                    ],
+                    "name": "nl.basmens.generation.analyzers.GridAnalyzerDouble - extractKnots",
+                    "hit count": 1047
+                  }],
+                  "name": "extractKnots",
+                  "hit count": 1047
+                },
+                {
+                  "total duration": 2152100,
+                  "children": [],
+                  "name": "clear",
+                  "hit count": 1047
+                }
+              ],
+              "name": "nl.basmens.generation.KnotGenerationPipeline - runGenCycle",
+              "hit count": 1047
+            }],
+            "name": "gen knots",
+            "hit count": 1047
+          },
+          {
+            "total duration": 3094700,
+            "children": [],
+            "name": "start",
+            "hit count": 1
+          },
+          {
+            "total duration": 7053890500,
+            "children": [{
+              "total duration": 7048278800,
+              "children": [{
+                "total duration": 7047891500,
+                "children": [],
+                "name": "save",
+                "hit count": 1047
+              }],
+              "name": "nl.basmens.utils.io.ResultExporter - save",
+              "hit count": 1047
+            }],
+            "name": "export",
+            "hit count": 1047
+          }
+        ],
+        "name": "nl.basmens.generation.KnotGenerationPipeline - runThreaded",
+        "hit count": 1
+      }],
+      "name": "run - knots tileset weighted_high/knots 50x50",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 50x50",
+    "hit count": 1
+  },
+  {
+    "total duration": 146400,
+    "children": [{
+      "total duration": 146300,
+      "children": [],
+      "name": "run - knots tileset weighted_high/knots 170x170",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 170x170",
+    "hit count": 1
+  },
+  {
+    "total duration": 387800,
+    "children": [{
+      "total duration": 387500,
+      "children": [],
+      "name": "run - knots tileset weighted_high/knots 3000x3000",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 3000x3000",
+    "hit count": 1
+  },
+  {
+    "total duration": 369900,
+    "children": [{
+      "total duration": 369700,
+      "children": [],
+      "name": "run - knots tileset weighted_high/knots 120x120",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 120x120",
+    "hit count": 1
+  },
+  {
+    "total duration": 8768266500,
+    "children": [{
+      "total duration": 8768266500,
+      "children": [{
+        "total duration": 8763996900,
+        "children": [
+          {
+            "total duration": 178767900,
+            "children": [],
+            "name": "calc invariants",
+            "hit count": 436
+          },
+          {
+            "total duration": 1757221300,
+            "children": [{
+              "total duration": 1756145700,
+              "children": [
+                {
+                  "total duration": 67816000,
+                  "children": [{
+                    "total duration": 65288000,
+                    "children": [{
+                      "total duration": 65247300,
+                      "children": [],
+                      "name": "generateGrid",
+                      "hit count": 436
+                    }],
+                    "name": "nl.basmens.generation.generators.GridGeneratorDouble - generateGrid",
+                    "hit count": 436
+                  }],
+                  "name": "generateGrid",
+                  "hit count": 436
+                },
+                {
+                  "total duration": 1680660700,
+                  "children": [{
+                    "total duration": 1679858700,
+                    "children": [
+                      {
+                        "total duration": 477967600,
+                        "children": [],
+                        "name": "create empty connections",
+                        "hit count": 436
+                      },
+                      {
+                        "total duration": 857415400,
+                        "children": [],
+                        "name": "Read knots",
+                        "hit count": 436
+                      },
+                      {
+                        "total duration": 344327900,
+                        "children": [],
+                        "name": "connect connections in tiles",
+                        "hit count": 436
+                      }
+                    ],
+                    "name": "nl.basmens.generation.analyzers.GridAnalyzerDouble - extractKnots",
+                    "hit count": 436
+                  }],
+                  "name": "extractKnots",
+                  "hit count": 436
+                },
+                {
+                  "total duration": 7545800,
+                  "children": [],
+                  "name": "clear",
+                  "hit count": 436
+                }
+              ],
+              "name": "nl.basmens.generation.KnotGenerationPipeline - runGenCycle",
+              "hit count": 436
+            }],
+            "name": "gen knots",
+            "hit count": 436
+          },
+          {
+            "total duration": 170700,
+            "children": [],
+            "name": "start",
+            "hit count": 1
+          },
+          {
+            "total duration": 6827836800,
+            "children": [{
+              "total duration": 6825650600,
+              "children": [{
+                "total duration": 6825541100,
+                "children": [],
+                "name": "save",
+                "hit count": 436
+              }],
+              "name": "nl.basmens.utils.io.ResultExporter - save",
+              "hit count": 436
+            }],
+            "name": "export",
+            "hit count": 436
+          }
+        ],
+        "name": "nl.basmens.generation.KnotGenerationPipeline - runThreaded",
+        "hit count": 1
+      }],
+      "name": "run - knots tileset weighted_high/knots 70x70",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 70x70",
+    "hit count": 1
+  },
+  {
+    "total duration": 25866800,
+    "children": [{
+      "total duration": 25864100,
+      "children": [],
+      "name": "flush",
+      "hit count": 9
+    }],
+    "name": "nl.basmens.utils.io.ResultExporter - flush",
+    "hit count": 9
+  },
+  {
+    "total duration": 583300,
+    "children": [{
+      "total duration": 583100,
+      "children": [],
+      "name": "run - knots tileset weighted_high/knots 200x200",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 200x200",
+    "hit count": 1
+  },
+  {
+    "total duration": 172800,
+    "children": [{
+      "total duration": 172600,
+      "children": [],
+      "name": "run - knots tileset weighted_high/knots 130x130",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 130x130",
+    "hit count": 1
+  },
+  {
+    "total duration": 8770247500,
+    "children": [{
+      "total duration": 8770247400,
+      "children": [{
+        "total duration": 8756169100,
+        "children": [
+          {
+            "total duration": 18766900,
+            "children": [],
+            "name": "calc invariants",
+            "hit count": 7729
+          },
+          {
+            "total duration": 1477363900,
+            "children": [{
+              "total duration": 1471222800,
+              "children": [
+                {
+                  "total duration": 53023200,
+                  "children": [{
+                    "total duration": 48490400,
+                    "children": [{
+                      "total duration": 47700400,
+                      "children": [],
+                      "name": "generateGrid",
+                      "hit count": 7729
+                    }],
+                    "name": "nl.basmens.generation.generators.GridGeneratorDouble - generateGrid",
+                    "hit count": 7729
+                  }],
+                  "name": "generateGrid",
+                  "hit count": 7729
+                },
+                {
+                  "total duration": 1415755900,
+                  "children": [{
+                    "total duration": 1405625300,
+                    "children": [
+                      {
+                        "total duration": 774744500,
+                        "children": [],
+                        "name": "create empty connections",
+                        "hit count": 7729
+                      },
+                      {
+                        "total duration": 467197800,
+                        "children": [],
+                        "name": "Read knots",
+                        "hit count": 7729
+                      },
+                      {
+                        "total duration": 155643800,
+                        "children": [],
+                        "name": "connect connections in tiles",
+                        "hit count": 7729
+                      }
+                    ],
+                    "name": "nl.basmens.generation.analyzers.GridAnalyzerDouble - extractKnots",
+                    "hit count": 7729
+                  }],
+                  "name": "extractKnots",
+                  "hit count": 7729
+                },
+                {
+                  "total duration": 1910100,
+                  "children": [],
+                  "name": "clear",
+                  "hit count": 7729
+                }
+              ],
+              "name": "nl.basmens.generation.KnotGenerationPipeline - runGenCycle",
+              "hit count": 7729
+            }],
+            "name": "gen knots",
+            "hit count": 7729
+          },
+          {
+            "total duration": 1995400,
+            "children": [],
+            "name": "start",
+            "hit count": 1
+          },
+          {
+            "total duration": 7258042600,
+            "children": [{
+              "total duration": 7250347700,
+              "children": [{
+                "total duration": 7248692800,
+                "children": [],
+                "name": "save",
+                "hit count": 7729
+              }],
+              "name": "nl.basmens.utils.io.ResultExporter - save",
+              "hit count": 7729
+            }],
+            "name": "export",
+            "hit count": 7729
+          }
+        ],
+        "name": "nl.basmens.generation.KnotGenerationPipeline - runThreaded",
+        "hit count": 1
+      }],
+      "name": "run - knots tileset weighted_high/knots 20x20",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 20x20",
+    "hit count": 1
+  },
+  {
+    "total duration": 8767874900,
+    "children": [{
+      "total duration": 8767874800,
+      "children": [{
+        "total duration": 8757685000,
+        "children": [
+          {
+            "total duration": 96408500,
+            "children": [],
+            "name": "calc invariants",
+            "hit count": 250
+          },
+          {
+            "total duration": 2093431800,
+            "children": [{
+              "total duration": 2092834200,
+              "children": [
+                {
+                  "total duration": 48234300,
+                  "children": [{
+                    "total duration": 47851000,
+                    "children": [{
+                      "total duration": 47821500,
+                      "children": [],
+                      "name": "generateGrid",
+                      "hit count": 250
+                    }],
+                    "name": "nl.basmens.generation.generators.GridGeneratorDouble - generateGrid",
+                    "hit count": 250
+                  }],
+                  "name": "generateGrid",
+                  "hit count": 250
+                },
+                {
+                  "total duration": 2042331500,
+                  "children": [{
+                    "total duration": 2041862200,
+                    "children": [
+                      {
+                        "total duration": 482807800,
+                        "children": [],
+                        "name": "create empty connections",
+                        "hit count": 250
+                      },
+                      {
+                        "total duration": 1088397500,
+                        "children": [],
+                        "name": "Read knots",
+                        "hit count": 250
+                      },
+                      {
+                        "total duration": 470543900,
+                        "children": [],
+                        "name": "connect connections in tiles",
+                        "hit count": 250
+                      }
+                    ],
+                    "name": "nl.basmens.generation.analyzers.GridAnalyzerDouble - extractKnots",
+                    "hit count": 250
+                  }],
+                  "name": "extractKnots",
+                  "hit count": 250
+                },
+                {
+                  "total duration": 2202000,
+                  "children": [],
+                  "name": "clear",
+                  "hit count": 250
+                }
+              ],
+              "name": "nl.basmens.generation.KnotGenerationPipeline - runGenCycle",
+              "hit count": 250
+            }],
+            "name": "gen knots",
+            "hit count": 250
+          },
+          {
+            "total duration": 7546900,
+            "children": [],
+            "name": "start",
+            "hit count": 1
+          },
+          {
+            "total duration": 6560297500,
+            "children": [{
+              "total duration": 6557143500,
+              "children": [{
+                "total duration": 6557037200,
+                "children": [],
+                "name": "save",
+                "hit count": 250
+              }],
+              "name": "nl.basmens.utils.io.ResultExporter - save",
+              "hit count": 250
+            }],
+            "name": "export",
+            "hit count": 250
+          }
+        ],
+        "name": "nl.basmens.generation.KnotGenerationPipeline - runThreaded",
+        "hit count": 1
+      }],
+      "name": "run - knots tileset weighted_high/knots 90x90",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 90x90",
+    "hit count": 1
+  },
+  {
+    "total duration": 769300,
+    "children": [{
+      "total duration": 769100,
+      "children": [],
+      "name": "run - knots tileset weighted_high/knots 100x100",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 100x100",
+    "hit count": 1
+  },
+  {
+    "total duration": 8768071100,
+    "children": [{
+      "total duration": 8768070900,
+      "children": [{
+        "total duration": 8762993300,
+        "children": [
+          {
+            "total duration": 60268500,
+            "children": [],
+            "name": "calc invariants",
+            "hit count": 1707
+          },
+          {
+            "total duration": 1497696700,
+            "children": [{
+              "total duration": 1493821700,
+              "children": [
+                {
+                  "total duration": 94111200,
+                  "children": [{
+                    "total duration": 92489100,
+                    "children": [{
+                      "total duration": 92370800,
+                      "children": [],
+                      "name": "generateGrid",
+                      "hit count": 1707
+                    }],
+                    "name": "nl.basmens.generation.generators.GridGeneratorDouble - generateGrid",
+                    "hit count": 1707
+                  }],
+                  "name": "generateGrid",
+                  "hit count": 1707
+                },
+                {
+                  "total duration": 1397528800,
+                  "children": [{
+                    "total duration": 1395601200,
+                    "children": [
+                      {
+                        "total duration": 626129200,
+                        "children": [],
+                        "name": "create empty connections",
+                        "hit count": 1707
+                      },
+                      {
+                        "total duration": 456389900,
+                        "children": [],
+                        "name": "Read knots",
+                        "hit count": 1707
+                      },
+                      {
+                        "total duration": 312850900,
+                        "children": [],
+                        "name": "connect connections in tiles",
+                        "hit count": 1707
+                      }
+                    ],
+                    "name": "nl.basmens.generation.analyzers.GridAnalyzerDouble - extractKnots",
+                    "hit count": 1707
+                  }],
+                  "name": "extractKnots",
+                  "hit count": 1707
+                },
+                {
+                  "total duration": 1953300,
+                  "children": [],
+                  "name": "clear",
+                  "hit count": 1707
+                }
+              ],
+              "name": "nl.basmens.generation.KnotGenerationPipeline - runGenCycle",
+              "hit count": 1707
+            }],
+            "name": "gen knots",
+            "hit count": 1707
+          },
+          {
+            "total duration": 125300,
+            "children": [],
+            "name": "start",
+            "hit count": 1
+          },
+          {
+            "total duration": 7204902300,
+            "children": [{
+              "total duration": 7198791100,
+              "children": [{
+                "total duration": 7198330600,
+                "children": [],
+                "name": "save",
+                "hit count": 1707
+              }],
+              "name": "nl.basmens.utils.io.ResultExporter - save",
+              "hit count": 1707
+            }],
+            "name": "export",
+            "hit count": 1707
+          }
+        ],
+        "name": "nl.basmens.generation.KnotGenerationPipeline - runThreaded",
+        "hit count": 1
+      }],
+      "name": "run - knots tileset weighted_high/knots 40x40",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 40x40",
+    "hit count": 1
+  },
+  {
+    "total duration": 8769078500,
+    "children": [{
+      "total duration": 8769078400,
+      "children": [{
+        "total duration": 8765472900,
+        "children": [
+          {
+            "total duration": 94367200,
+            "children": [],
+            "name": "calc invariants",
+            "hit count": 614
+          },
+          {
+            "total duration": 1690310400,
+            "children": [{
+              "total duration": 1688938700,
+              "children": [
+                {
+                  "total duration": 88744000,
+                  "children": [{
+                    "total duration": 87816800,
+                    "children": [{
+                      "total duration": 87760500,
+                      "children": [],
+                      "name": "generateGrid",
+                      "hit count": 614
+                    }],
+                    "name": "nl.basmens.generation.generators.GridGeneratorDouble - generateGrid",
+                    "hit count": 614
+                  }],
+                  "name": "generateGrid",
+                  "hit count": 614
+                },
+                {
+                  "total duration": 1597816400,
+                  "children": [{
+                    "total duration": 1584954700,
+                    "children": [
+                      {
+                        "total duration": 543894700,
+                        "children": [],
+                        "name": "create empty connections",
+                        "hit count": 614
+                      },
+                      {
+                        "total duration": 678326900,
+                        "children": [],
+                        "name": "Read knots",
+                        "hit count": 614
+                      },
+                      {
+                        "total duration": 362581500,
+                        "children": [],
+                        "name": "connect connections in tiles",
+                        "hit count": 614
+                      }
+                    ],
+                    "name": "nl.basmens.generation.analyzers.GridAnalyzerDouble - extractKnots",
+                    "hit count": 614
+                  }],
+                  "name": "extractKnots",
+                  "hit count": 614
+                },
+                {
+                  "total duration": 2229000,
+                  "children": [],
+                  "name": "clear",
+                  "hit count": 614
+                }
+              ],
+              "name": "nl.basmens.generation.KnotGenerationPipeline - runGenCycle",
+              "hit count": 614
+            }],
+            "name": "gen knots",
+            "hit count": 614
+          },
+          {
+            "total duration": 210900,
+            "children": [],
+            "name": "start",
+            "hit count": 1
+          },
+          {
+            "total duration": 6980584000,
+            "children": [{
+              "total duration": 6977659500,
+              "children": [{
+                "total duration": 6977368200,
+                "children": [],
+                "name": "save",
+                "hit count": 614
+              }],
+              "name": "nl.basmens.utils.io.ResultExporter - save",
+              "hit count": 614
+            }],
+            "name": "export",
+            "hit count": 614
+          }
+        ],
+        "name": "nl.basmens.generation.KnotGenerationPipeline - runThreaded",
+        "hit count": 1
+      }],
+      "name": "run - knots tileset weighted_high/knots 60x60",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 60x60",
+    "hit count": 1
+  },
+  {
+    "total duration": 316000,
+    "children": [{
+      "total duration": 315800,
+      "children": [],
+      "name": "run - knots tileset weighted_high/knots 160x160",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 160x160",
+    "hit count": 1
+  },
+  {
+    "total duration": 967800,
+    "children": [{
+      "total duration": 967700,
+      "children": [],
+      "name": "run - knots tileset weighted_high/knots 180x180",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 180x180",
+    "hit count": 1
+  },
+  {
+    "total duration": 598500,
+    "children": [{
+      "total duration": 598300,
+      "children": [],
+      "name": "run - knots tileset weighted_high/knots 110x110",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 110x110",
+    "hit count": 1
+  },
+  {
+    "total duration": 8777753100,
+    "children": [{
+      "total duration": 8777753000,
+      "children": [{
+        "total duration": 8765409600,
+        "children": [
+          {
+            "total duration": 107683800,
+            "children": [],
+            "name": "calc invariants",
+            "hit count": 327
+          },
+          {
+            "total duration": 1835762300,
+            "children": [{
+              "total duration": 1834885800,
+              "children": [
+                {
+                  "total duration": 64606800,
+                  "children": [{
+                    "total duration": 64105200,
+                    "children": [{
+                      "total duration": 64070300,
+                      "children": [],
+                      "name": "generateGrid",
+                      "hit count": 327
+                    }],
+                    "name": "nl.basmens.generation.generators.GridGeneratorDouble - generateGrid",
+                    "hit count": 327
+                  }],
+                  "name": "generateGrid",
+                  "hit count": 327
+                },
+                {
+                  "total duration": 1768046500,
+                  "children": [{
+                    "total duration": 1765879000,
+                    "children": [
+                      {
+                        "total duration": 458309300,
+                        "children": [],
+                        "name": "create empty connections",
+                        "hit count": 327
+                      },
+                      {
+                        "total duration": 1006011500,
+                        "children": [],
+                        "name": "Read knots",
+                        "hit count": 327
+                      },
+                      {
+                        "total duration": 301427000,
+                        "children": [],
+                        "name": "connect connections in tiles",
+                        "hit count": 327
+                      }
+                    ],
+                    "name": "nl.basmens.generation.analyzers.GridAnalyzerDouble - extractKnots",
+                    "hit count": 327
+                  }],
+                  "name": "extractKnots",
+                  "hit count": 327
+                },
+                {
+                  "total duration": 2147600,
+                  "children": [],
+                  "name": "clear",
+                  "hit count": 327
+                }
+              ],
+              "name": "nl.basmens.generation.KnotGenerationPipeline - runGenCycle",
+              "hit count": 327
+            }],
+            "name": "gen knots",
+            "hit count": 327
+          },
+          {
+            "total duration": 5057500,
+            "children": [],
+            "name": "start",
+            "hit count": 1
+          },
+          {
+            "total duration": 6816905400,
+            "children": [{
+              "total duration": 6813554600,
+              "children": [{
+                "total duration": 6813415300,
+                "children": [],
+                "name": "save",
+                "hit count": 327
+              }],
+              "name": "nl.basmens.utils.io.ResultExporter - save",
+              "hit count": 327
+            }],
+            "name": "export",
+            "hit count": 327
+          }
+        ],
+        "name": "nl.basmens.generation.KnotGenerationPipeline - runThreaded",
+        "hit count": 1
+      }],
+      "name": "run - knots tileset weighted_high/knots 80x80",
+      "hit count": 1
+    }],
+    "name": "nl.basmens.generation.KnotGenerationPipeline - run - knots tileset weighted_high/knots 80x80",
+    "hit count": 1
+  }
+]}

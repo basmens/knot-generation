@@ -1,0 +1,1871 @@
+{
+  "590": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"6561": 1}
+  },
+  "350": {
+    "count": 2,
+    "alexander polynomial": {
+      "t^12 - 6t^11 + 21t^10 - 50t^9 + 90t^8 - 126t^7 + 141t^6 - 126t^5 + 90t^4 - 50t^3 + 21t^2 - 6t + 1": 1,
+      "t^8 - 4t^7 + 10t^6 - 16t^5 + 19t^4 - 16t^3 + 10t^2 - 4t + 1": 1
+    },
+    "knot determinant": {
+      "81": 1,
+      "729": 1
+    }
+  },
+  "230": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "352": {
+    "count": 1,
+    "alexander polynomial": {"t^4 - 2t^3 + 3t^2 - 2t + 1": 1},
+    "knot determinant": {"9": 1}
+  },
+  "110": {
+    "count": 2,
+    "alexander polynomial": {
+      "1": 1,
+      "t^2 - t + 1": 1
+    },
+    "knot determinant": {
+      "1": 1,
+      "3": 1
+    }
+  },
+  "232": {
+    "count": 1,
+    "alexander polynomial": {"2t^4 - 9t^3 + 15t^2 - 9t + 2": 1},
+    "knot determinant": {"37": 1}
+  },
+  "112": {
+    "count": 6,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1,
+      "1": 1,
+      "t^2 - t + 1": 4
+    },
+    "knot determinant": {
+      "1": 1,
+      "3": 4,
+      "27": 1
+    }
+  },
+  "354": {
+    "count": 2,
+    "alexander polynomial": {
+      "t^12 - 6t^11 + 21t^10 - 50t^9 + 90t^8 - 126t^7 + 141t^6 - 126t^5 + 90t^4 - 50t^3 + 21t^2 - 6t + 1": 1,
+      "t^6 - 5t^5 + 10t^4 - 13t^3 + 10t^2 - 5t + 1": 1
+    },
+    "knot determinant": {
+      "45": 1,
+      "729": 1
+    }
+  },
+  "114": {
+    "count": 5,
+    "alexander polynomial": {
+      "t^2 - t + 1": 4,
+      "t^4 - 3t^3 + 3t^2 - 3t + 1": 1
+    },
+    "knot determinant": {
+      "11": 1,
+      "3": 4
+    }
+  },
+  "236": {
+    "count": 1,
+    "alexander polynomial": {"t^4 - 2t^3 + 3t^2 - 2t + 1": 1},
+    "knot determinant": {"9": 1}
+  },
+  "116": {
+    "count": 6,
+    "alexander polynomial": {
+      "1": 2,
+      "t^2 - t + 1": 3,
+      "t^6 - 4t^5 + 9t^4 - 11t^3 + 9t^2 - 4t + 1": 1
+    },
+    "knot determinant": {
+      "1": 2,
+      "3": 3,
+      "39": 1
+    }
+  },
+  "358": {
+    "count": 1,
+    "alexander polynomial": {"t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1},
+    "knot determinant": {"27": 1}
+  },
+  "238": {
+    "count": 1,
+    "alexander polynomial": {"2t^4 - 5t^3 + 7t^2 - 5t + 2": 1},
+    "knot determinant": {"21": 1}
+  },
+  "118": {
+    "count": 4,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 2,
+      "t^2 - t + 1": 2
+    },
+    "knot determinant": {
+      "3": 2,
+      "27": 2
+    }
+  },
+  "10": {
+    "count": 151,
+    "alexander polynomial": {"1": 151},
+    "knot determinant": {"1": 151}
+  },
+  "1218": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "12": {
+    "count": 181,
+    "alexander polynomial": {
+      "1": 158,
+      "t^2 - t + 1": 23
+    },
+    "knot determinant": {
+      "1": 158,
+      "3": 23
+    }
+  },
+  "14": {
+    "count": 170,
+    "alexander polynomial": {
+      "1": 144,
+      "t^2 - t + 1": 26
+    },
+    "knot determinant": {
+      "1": 144,
+      "3": 26
+    }
+  },
+  "16": {
+    "count": 148,
+    "alexander polynomial": {
+      "1": 128,
+      "t^2 - t + 1": 20
+    },
+    "knot determinant": {
+      "1": 128,
+      "3": 20
+    }
+  },
+  "18": {
+    "count": 82,
+    "alexander polynomial": {
+      "1": 70,
+      "t^2 - t + 1": 12
+    },
+    "knot determinant": {
+      "1": 70,
+      "3": 12
+    }
+  },
+  "240": {
+    "count": 5,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1,
+      "1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 2,
+      "t^16 - 8t^15 + 36t^14 - 112t^13 + 266t^12 - 504t^11 + 784t^10 - 1016t^9 + 1107t^8 - 1016t^7 + 784t^6 - 504t^5 + 266t^4 - 112t^3 + 36t^2 - 8t + 1": 1
+    },
+    "knot determinant": {
+      "1": 1,
+      "6561": 1,
+      "27": 1,
+      "9": 2
+    }
+  },
+  "120": {
+    "count": 5,
+    "alexander polynomial": {
+      "1": 1,
+      "t^2 - t + 1": 3,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 1,
+      "3": 3,
+      "9": 1
+    }
+  },
+  "362": {
+    "count": 3,
+    "alexander polynomial": {
+      "-1": 1,
+      "2t^6 - 7t^5 + 14t^4 - 17t^3 + 14t^2 - 7t + 2": 1,
+      "2t^8 - 9t^7 + 23t^6 - 38t^5 + 45t^4 - 38t^3 + 23t^2 - 9t + 2": 1
+    },
+    "knot determinant": {
+      "189": 1,
+      "2457": 1,
+      "63": 1
+    }
+  },
+  "242": {
+    "count": 1,
+    "alexander polynomial": {"t^8 - 4t^7 + 10t^6 - 16t^5 + 19t^4 - 16t^3 + 10t^2 - 4t + 1": 1},
+    "knot determinant": {"81": 1}
+  },
+  "122": {
+    "count": 2,
+    "alexander polynomial": {
+      "t^2 - t + 1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "3": 1,
+      "9": 1
+    }
+  },
+  "2": {
+    "count": 3330,
+    "alexander polynomial": {"1": 3330},
+    "knot determinant": {"1": 3330}
+  },
+  "244": {
+    "count": 1,
+    "alexander polynomial": {"t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1},
+    "knot determinant": {"27": 1}
+  },
+  "124": {
+    "count": 2,
+    "alexander polynomial": {
+      "t^2 - t + 1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "3": 1,
+      "9": 1
+    }
+  },
+  "1346": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "4": {
+    "count": 1188,
+    "alexander polynomial": {"1": 1188},
+    "knot determinant": {"1": 1188}
+  },
+  "488": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"1215": 1}
+  },
+  "246": {
+    "count": 1,
+    "alexander polynomial": {"t^4 - 2t^3 + 3t^2 - 2t + 1": 1},
+    "knot determinant": {"9": 1}
+  },
+  "368": {
+    "count": 2,
+    "alexander polynomial": {
+      "2t^14 - 14t^13 + 55t^12 - 149t^11 + 307t^10 - 502t^9 + 669t^8 - 735t^7 + 669t^6 - 502t^5 + 307t^4 - 149t^3 + 55t^2 - 14t + 2": 1,
+      "t^8 - 4t^7 + 10t^6 - 16t^5 + 19t^4 - 16t^3 + 10t^2 - 4t + 1": 1
+    },
+    "knot determinant": {
+      "-1": 1,
+      "81": 1
+    }
+  },
+  "126": {
+    "count": 4,
+    "alexander polynomial": {
+      "1": 1,
+      "t^2 - t + 1": 3
+    },
+    "knot determinant": {
+      "1": 1,
+      "3": 3
+    }
+  },
+  "6": {
+    "count": 496,
+    "alexander polynomial": {"1": 496},
+    "knot determinant": {"1": 496}
+  },
+  "248": {
+    "count": 3,
+    "alexander polynomial": {
+      "2t^6 - 8t^5 + 17t^4 - 21t^3 + 17t^2 - 8t + 2": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 2
+    },
+    "knot determinant": {
+      "9": 2,
+      "75": 1
+    }
+  },
+  "128": {
+    "count": 4,
+    "alexander polynomial": {
+      "1": 1,
+      "t^2 - t + 1": 1,
+      "10t^8 - 53t^7 + 143t^6 - 246t^5 + 293t^4 - 246t^3 + 143t^2 - 53t + 10": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 1,
+      "3": 1,
+      "1197": 1,
+      "9": 1
+    }
+  },
+  "8": {
+    "count": 290,
+    "alexander polynomial": {"1": 290},
+    "knot determinant": {"1": 290}
+  },
+  "926": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "20": {
+    "count": 82,
+    "alexander polynomial": {
+      "1": 72,
+      "t^2 - t + 1": 10
+    },
+    "knot determinant": {
+      "1": 72,
+      "3": 10
+    }
+  },
+  "928": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "22": {
+    "count": 63,
+    "alexander polynomial": {
+      "1": 59,
+      "t^2 - t + 1": 4
+    },
+    "knot determinant": {
+      "1": 59,
+      "3": 4
+    }
+  },
+  "24": {
+    "count": 60,
+    "alexander polynomial": {
+      "1": 54,
+      "t^2 - t + 1": 5,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 54,
+      "3": 5,
+      "9": 1
+    }
+  },
+  "26": {
+    "count": 58,
+    "alexander polynomial": {
+      "1": 46,
+      "t^2 - t + 1": 12
+    },
+    "knot determinant": {
+      "1": 46,
+      "3": 12
+    }
+  },
+  "28": {
+    "count": 41,
+    "alexander polynomial": {
+      "1": 33,
+      "t^2 - t + 1": 7,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 33,
+      "3": 7,
+      "9": 1
+    }
+  },
+  "1120": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"12301875": 1}
+  },
+  "490": {
+    "count": 1,
+    "alexander polynomial": {"t^12 - 6t^11 + 21t^10 - 50t^9 + 90t^8 - 126t^7 + 141t^6 - 126t^5 + 90t^4 - 50t^3 + 21t^2 - 6t + 1": 1},
+    "knot determinant": {"729": 1}
+  },
+  "250": {
+    "count": 3,
+    "alexander polynomial": {
+      "2t^8 - 13t^7 + 37t^6 - 66t^5 + 79t^4 - 66t^3 + 37t^2 - 13t + 2": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1,
+      "3t^2 - 5t + 3": 1
+    },
+    "knot determinant": {
+      "11": 1,
+      "315": 1,
+      "9": 1
+    }
+  },
+  "130": {
+    "count": 3,
+    "alexander polynomial": {
+      "t^10 - 4t^9 + 10t^8 - 17t^7 + 23t^6 - 25t^5 + 23t^4 - 17t^3 + 10t^2 - 4t + 1": 1,
+      "2t^4 - 8t^3 + 11t^2 - 8t + 2": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "135": 1,
+      "9": 1,
+      "31": 1
+    }
+  },
+  "252": {
+    "count": 2,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1,
+      "t^8 - 5t^7 + 14t^6 - 24t^5 + 29t^4 - 24t^3 + 14t^2 - 5t + 1": 1
+    },
+    "knot determinant": {
+      "-1": 1,
+      "27": 1
+    }
+  },
+  "132": {
+    "count": 5,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1,
+      "1": 1,
+      "t^2 - t + 1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1,
+      "2t^4 - 5t^3 + 5t^2 - 5t + 2": 1
+    },
+    "knot determinant": {
+      "1": 1,
+      "3": 1,
+      "27": 1,
+      "19": 1,
+      "9": 1
+    }
+  },
+  "1238": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "376": {
+    "count": 1,
+    "alexander polynomial": {"t^10 - 5t^9 + 15t^8 - 30t^7 + 45t^6 - 51t^5 + 45t^4 - 30t^3 + 15t^2 - 5t + 1": 1},
+    "knot determinant": {"243": 1}
+  },
+  "498": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "256": {
+    "count": 1,
+    "alexander polynomial": {"t^4 - 2t^3 + 3t^2 - 2t + 1": 1},
+    "knot determinant": {"9": 1}
+  },
+  "136": {
+    "count": 4,
+    "alexander polynomial": {
+      "2t^2 - 3t + 2": 1,
+      "1": 2,
+      "t^4 - 3t^3 + 3t^2 - 3t + 1": 1
+    },
+    "knot determinant": {
+      "11": 1,
+      "1": 2,
+      "7": 1
+    }
+  },
+  "138": {
+    "count": 6,
+    "alexander polynomial": {
+      "1": 1,
+      "t^6 - 3t^5 + 3t^4 - 3t^3 + 3t^2 - 3t + 1": 1,
+      "t^2 - t + 1": 2,
+      "t^6 - 4t^5 + 9t^4 - 11t^3 + 9t^2 - 4t + 1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 1,
+      "3": 2,
+      "-1": 2,
+      "9": 1
+    }
+  },
+  "812": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "30": {
+    "count": 42,
+    "alexander polynomial": {
+      "1": 33,
+      "t^2 - t + 1": 8,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 33,
+      "3": 8,
+      "9": 1
+    }
+  },
+  "32": {
+    "count": 40,
+    "alexander polynomial": {
+      "1": 30,
+      "t^2 - t + 1": 9,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 30,
+      "3": 9,
+      "9": 1
+    }
+  },
+  "34": {
+    "count": 33,
+    "alexander polynomial": {
+      "1": 20,
+      "t^2 - t + 1": 12,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 20,
+      "3": 12,
+      "9": 1
+    }
+  },
+  "36": {
+    "count": 25,
+    "alexander polynomial": {
+      "1": 18,
+      "t^2 - t + 1": 7
+    },
+    "knot determinant": {
+      "1": 18,
+      "3": 7
+    }
+  },
+  "38": {
+    "count": 31,
+    "alexander polynomial": {
+      "1": 22,
+      "t^2 - t + 1": 9
+    },
+    "knot determinant": {
+      "1": 22,
+      "3": 9
+    }
+  },
+  "380": {
+    "count": 1,
+    "alexander polynomial": {"t^12 - 8t^11 + 31t^10 - 80t^9 + 150t^8 - 216t^7 + 243t^6 - 216t^5 + 150t^4 - 80t^3 + 31t^2 - 8t + 1": 1},
+    "knot determinant": {"1215": 1}
+  },
+  "260": {
+    "count": 1,
+    "alexander polynomial": {"1": 1},
+    "knot determinant": {"1": 1}
+  },
+  "140": {
+    "count": 2,
+    "alexander polynomial": {
+      "t^2 - t + 1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "3": 1,
+      "9": 1
+    }
+  },
+  "142": {
+    "count": 3,
+    "alexander polynomial": {
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 2,
+      "t^6 - 5t^5 + 10t^4 - 13t^3 + 10t^2 - 5t + 1": 1
+    },
+    "knot determinant": {
+      "45": 1,
+      "9": 2
+    }
+  },
+  "384": {
+    "count": 1,
+    "alexander polynomial": {"t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1},
+    "knot determinant": {"27": 1}
+  },
+  "144": {
+    "count": 2,
+    "alexander polynomial": {
+      "-1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {"9": 2}
+  },
+  "266": {
+    "count": 1,
+    "alexander polynomial": {"t^10 - 5t^9 + 15t^8 - 30t^7 + 45t^6 - 51t^5 + 45t^4 - 30t^3 + 15t^2 - 5t + 1": 1},
+    "knot determinant": {"243": 1}
+  },
+  "146": {
+    "count": 6,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1,
+      "2t^2 - 3t + 2": 1,
+      "1": 1,
+      "2t^4 - 5t^3 + 7t^2 - 5t + 2": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 2
+    },
+    "knot determinant": {
+      "1": 1,
+      "27": 1,
+      "7": 1,
+      "9": 2,
+      "21": 1
+    }
+  },
+  "388": {
+    "count": 1,
+    "alexander polynomial": {"2t^12 - 16t^11 + 61t^10 - 154t^9 + 284t^8 - 404t^7 + 453t^6 - 404t^5 + 284t^4 - 154t^3 + 61t^2 - 16t + 2": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "268": {
+    "count": 2,
+    "alexander polynomial": {
+      "t^8 - 5t^7 + 12t^6 - 20t^5 + 23t^4 - 20t^3 + 12t^2 - 5t + 1": 1,
+      "t^2 - t + 1": 1
+    },
+    "knot determinant": {
+      "99": 1,
+      "3": 1
+    }
+  },
+  "148": {
+    "count": 2,
+    "alexander polynomial": {
+      "1": 1,
+      "t^4 - t^3 + t^2 - t + 1": 1
+    },
+    "knot determinant": {
+      "1": 1,
+      "5": 1
+    }
+  },
+  "824": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "946": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"11160261": 1}
+  },
+  "40": {
+    "count": 21,
+    "alexander polynomial": {
+      "1": 16,
+      "t^2 - t + 1": 3,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1,
+      "2t^4 - 4t^3 + 5t^2 - 4t + 2": 1
+    },
+    "knot determinant": {
+      "1": 16,
+      "3": 3,
+      "17": 1,
+      "9": 1
+    }
+  },
+  "706": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "42": {
+    "count": 18,
+    "alexander polynomial": {
+      "1": 16,
+      "t^2 - t + 1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 16,
+      "3": 1,
+      "9": 1
+    }
+  },
+  "44": {
+    "count": 22,
+    "alexander polynomial": {
+      "1": 17,
+      "t^2 - t + 1": 4,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 17,
+      "3": 4,
+      "9": 1
+    }
+  },
+  "46": {
+    "count": 15,
+    "alexander polynomial": {
+      "1": 12,
+      "t^2 - t + 1": 2,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 12,
+      "3": 2,
+      "9": 1
+    }
+  },
+  "48": {
+    "count": 18,
+    "alexander polynomial": {
+      "1": 9,
+      "t^2 - t + 1": 7,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 2
+    },
+    "knot determinant": {
+      "1": 9,
+      "3": 7,
+      "9": 2
+    }
+  },
+  "1384": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "150": {
+    "count": 2,
+    "alexander polynomial": {
+      "t^8 - 5t^7 + 12t^6 - 20t^5 + 23t^4 - 20t^3 + 12t^2 - 5t + 1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "99": 1,
+      "9": 1
+    }
+  },
+  "392": {
+    "count": 1,
+    "alexander polynomial": {"2t^6 - 6t^5 + 11t^4 - 13t^3 + 11t^2 - 6t + 2": 1},
+    "knot determinant": {"51": 1}
+  },
+  "272": {
+    "count": 1,
+    "alexander polynomial": {"t^4 - 2t^3 + 3t^2 - 2t + 1": 1},
+    "knot determinant": {"9": 1}
+  },
+  "152": {
+    "count": 2,
+    "alexander polynomial": {
+      "1": 1,
+      "t^2 - t + 1": 1
+    },
+    "knot determinant": {
+      "1": 1,
+      "3": 1
+    }
+  },
+  "394": {
+    "count": 1,
+    "alexander polynomial": {"t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1},
+    "knot determinant": {"27": 1}
+  },
+  "274": {
+    "count": 2,
+    "alexander polynomial": {
+      "2t^8 - 12t^7 + 33t^6 - 58t^5 + 69t^4 - 58t^3 + 33t^2 - 12t + 2": 1,
+      "-1": 1
+    },
+    "knot determinant": {"-1": 2}
+  },
+  "396": {
+    "count": 2,
+    "alexander polynomial": {
+      "-1": 1,
+      "t^22 - 12t^21 + 72t^20 - 293t^19 + 904t^18 - 2238t^17 + 4603t^16 - 8054t^15 + 12207t^14 - 16252t^13 + 19210t^12 - 20295t^11 + 19210t^10 - 16252t^9 + 12207t^8 - 8054t^7 + 4603t^6 - 2238t^5 + 904t^4 - 293t^3 + 72t^2 - 12t + 1": 1
+    },
+    "knot determinant": {"-1": 2}
+  },
+  "398": {
+    "count": 2,
+    "alexander polynomial": {
+      "-1": 1,
+      "2t^10 - 11t^9 + 34t^8 - 70t^7 + 106t^6 - 121t^5 + 106t^4 - 70t^3 + 34t^2 - 11t + 2": 1
+    },
+    "knot determinant": {
+      "-1": 1,
+      "675": 1
+    }
+  },
+  "156": {
+    "count": 3,
+    "alexander polynomial": {
+      "1": 1,
+      "t^2 - t + 1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 1,
+      "3": 1,
+      "9": 1
+    }
+  },
+  "278": {
+    "count": 1,
+    "alexander polynomial": {"t^8 - 4t^7 + 9t^6 - 15t^5 + 17t^4 - 15t^3 + 9t^2 - 4t + 1": 1},
+    "knot determinant": {"75": 1}
+  },
+  "158": {
+    "count": 2,
+    "alexander polynomial": {"1": 2},
+    "knot determinant": {"1": 2}
+  },
+  "832": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "50": {
+    "count": 15,
+    "alexander polynomial": {
+      "1": 10,
+      "t^2 - t + 1": 5
+    },
+    "knot determinant": {
+      "1": 10,
+      "3": 5
+    }
+  },
+  "52": {
+    "count": 21,
+    "alexander polynomial": {
+      "1": 12,
+      "t^2 - t + 1": 8,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 12,
+      "3": 8,
+      "9": 1
+    }
+  },
+  "54": {
+    "count": 20,
+    "alexander polynomial": {
+      "2t^2 - 3t + 2": 1,
+      "1": 14,
+      "t^2 - t + 1": 4,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 14,
+      "3": 4,
+      "7": 1,
+      "9": 1
+    }
+  },
+  "56": {
+    "count": 15,
+    "alexander polynomial": {
+      "1": 8,
+      "t^2 - t + 1": 6,
+      "t^8 - 4t^7 + 10t^6 - 16t^5 + 19t^4 - 16t^3 + 10t^2 - 4t + 1": 1
+    },
+    "knot determinant": {
+      "1": 8,
+      "3": 6,
+      "81": 1
+    }
+  },
+  "58": {
+    "count": 14,
+    "alexander polynomial": {
+      "1": 6,
+      "t^2 - t + 1": 8
+    },
+    "knot determinant": {
+      "1": 6,
+      "3": 8
+    }
+  },
+  "280": {
+    "count": 2,
+    "alexander polynomial": {
+      "t^10 - 4t^9 + 10t^8 - 17t^7 + 23t^6 - 25t^5 + 23t^4 - 17t^3 + 10t^2 - 4t + 1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "135": 1,
+      "9": 1
+    }
+  },
+  "160": {
+    "count": 2,
+    "alexander polynomial": {
+      "2t^4 - 5t^3 + 7t^2 - 5t + 2": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "9": 1,
+      "21": 1
+    }
+  },
+  "162": {
+    "count": 2,
+    "alexander polynomial": {"t^2 - t + 1": 2},
+    "knot determinant": {"3": 2}
+  },
+  "284": {
+    "count": 2,
+    "alexander polynomial": {
+      "2t^4 - 7t^3 + 9t^2 - 7t + 2": 1,
+      "t^8 - 4t^7 + 10t^6 - 16t^5 + 19t^4 - 16t^3 + 10t^2 - 4t + 1": 1
+    },
+    "knot determinant": {
+      "27": 1,
+      "81": 1
+    }
+  },
+  "164": {
+    "count": 1,
+    "alexander polynomial": {"t^2 - t + 1": 1},
+    "knot determinant": {"3": 1}
+  },
+  "166": {
+    "count": 2,
+    "alexander polynomial": {
+      "t^2 - t + 1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "3": 1,
+      "9": 1
+    }
+  },
+  "288": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"73": 1}
+  },
+  "168": {
+    "count": 2,
+    "alexander polynomial": {
+      "1": 1,
+      "t^2 - t + 1": 1
+    },
+    "knot determinant": {
+      "1": 1,
+      "3": 1
+    }
+  },
+  "1144": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"1948617": 1}
+  },
+  "60": {
+    "count": 15,
+    "alexander polynomial": {
+      "1": 9,
+      "t^2 - t + 1": 5,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 9,
+      "3": 5,
+      "9": 1
+    }
+  },
+  "62": {
+    "count": 16,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1,
+      "1": 9,
+      "t^2 - t + 1": 5,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 9,
+      "3": 5,
+      "27": 1,
+      "9": 1
+    }
+  },
+  "64": {
+    "count": 8,
+    "alexander polynomial": {
+      "1": 2,
+      "t^2 - t + 1": 3,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 3
+    },
+    "knot determinant": {
+      "1": 2,
+      "3": 3,
+      "9": 3
+    }
+  },
+  "1702": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "66": {
+    "count": 7,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1,
+      "1": 4,
+      "t^2 - 3t + 1": 2
+    },
+    "knot determinant": {
+      "1": 4,
+      "5": 2,
+      "27": 1
+    }
+  },
+  "68": {
+    "count": 10,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1,
+      "1": 7,
+      "t^2 - t + 1": 2
+    },
+    "knot determinant": {
+      "1": 7,
+      "3": 2,
+      "27": 1
+    }
+  },
+  "2496": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "290": {
+    "count": 2,
+    "alexander polynomial": {
+      "2t^8 - 11t^7 + 29t^6 - 50t^5 + 59t^4 - 50t^3 + 29t^2 - 11t + 2": 1,
+      "t^8 - 4t^7 + 10t^6 - 16t^5 + 19t^4 - 16t^3 + 10t^2 - 4t + 1": 1
+    },
+    "knot determinant": {
+      "243": 1,
+      "81": 1
+    }
+  },
+  "170": {
+    "count": 3,
+    "alexander polynomial": {
+      "1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 2
+    },
+    "knot determinant": {
+      "1": 1,
+      "9": 2
+    }
+  },
+  "172": {
+    "count": 1,
+    "alexander polynomial": {"t^2 - t + 1": 1},
+    "knot determinant": {"3": 1}
+  },
+  "174": {
+    "count": 3,
+    "alexander polynomial": {
+      "1": 1,
+      "t^2 - t + 1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 1,
+      "3": 1,
+      "9": 1
+    }
+  },
+  "296": {
+    "count": 2,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1,
+      "t^8 - 5t^7 + 12t^6 - 20t^5 + 23t^4 - 20t^3 + 12t^2 - 5t + 1": 1
+    },
+    "knot determinant": {
+      "99": 1,
+      "27": 1
+    }
+  },
+  "176": {
+    "count": 2,
+    "alexander polynomial": {
+      "t^6 - 7t^5 + 16t^4 - 19t^3 + 16t^2 - 7t + 1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "67": 1,
+      "9": 1
+    }
+  },
+  "178": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "732": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "70": {
+    "count": 13,
+    "alexander polynomial": {
+      "1": 6,
+      "t^2 - t + 1": 5,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 2
+    },
+    "knot determinant": {
+      "1": 6,
+      "3": 5,
+      "9": 2
+    }
+  },
+  "614": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"243": 1}
+  },
+  "72": {
+    "count": 11,
+    "alexander polynomial": {
+      "1": 5,
+      "t^2 - t + 1": 3,
+      "t^2 - 3t + 1": 1,
+      "3t^4 - 10t^3 + 13t^2 - 10t + 3": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 5,
+      "3": 3,
+      "5": 1,
+      "39": 1,
+      "9": 1
+    }
+  },
+  "74": {
+    "count": 10,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1,
+      "2t^2 - 3t + 2": 1,
+      "1": 2,
+      "t^2 - t + 1": 4,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1,
+      "2t^2 - 5t + 2": 1
+    },
+    "knot determinant": {
+      "1": 2,
+      "3": 4,
+      "27": 1,
+      "7": 1,
+      "9": 2
+    }
+  },
+  "76": {
+    "count": 6,
+    "alexander polynomial": {
+      "1": 1,
+      "t^2 - t + 1": 4,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 1,
+      "3": 4,
+      "9": 1
+    }
+  },
+  "78": {
+    "count": 8,
+    "alexander polynomial": {
+      "1": 5,
+      "t^2 - t + 1": 3
+    },
+    "knot determinant": {
+      "1": 5,
+      "3": 3
+    }
+  },
+  "180": {
+    "count": 1,
+    "alexander polynomial": {"t^2 - t + 1": 1},
+    "knot determinant": {"3": 1}
+  },
+  "184": {
+    "count": 3,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1,
+      "t^8 - 4t^7 + 10t^6 - 16t^5 + 19t^4 - 16t^3 + 10t^2 - 4t + 1": 1
+    },
+    "knot determinant": {
+      "27": 1,
+      "81": 1,
+      "9": 1
+    }
+  },
+  "1292": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "1290": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "188": {
+    "count": 1,
+    "alexander polynomial": {"t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1},
+    "knot determinant": {"27": 1}
+  },
+  "744": {
+    "count": 2,
+    "alexander polynomial": {"-1": 2},
+    "knot determinant": {"-1": 2}
+  },
+  "80": {
+    "count": 10,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1,
+      "1": 2,
+      "t^2 - t + 1": 5,
+      "t^2 - 3t + 1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 2,
+      "3": 5,
+      "5": 1,
+      "27": 1,
+      "9": 1
+    }
+  },
+  "82": {
+    "count": 7,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1,
+      "1": 2,
+      "t^2 - t + 1": 3,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 2,
+      "3": 3,
+      "27": 1,
+      "9": 1
+    }
+  },
+  "84": {
+    "count": 6,
+    "alexander polynomial": {
+      "1": 3,
+      "t^2 - t + 1": 2,
+      "t^2 - 3t + 1": 1
+    },
+    "knot determinant": {
+      "1": 3,
+      "3": 2,
+      "5": 1
+    }
+  },
+  "86": {
+    "count": 4,
+    "alexander polynomial": {
+      "1": 2,
+      "t^2 - t + 1": 2
+    },
+    "knot determinant": {
+      "1": 2,
+      "3": 2
+    }
+  },
+  "88": {
+    "count": 9,
+    "alexander polynomial": {
+      "1": 1,
+      "t^2 - t + 1": 5,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 2,
+      "t^4 - t^3 + t^2 - t + 1": 1
+    },
+    "knot determinant": {
+      "1": 1,
+      "3": 5,
+      "5": 1,
+      "9": 2
+    }
+  },
+  "190": {
+    "count": 3,
+    "alexander polynomial": {
+      "1": 1,
+      "t^8 - 4t^7 + 8t^6 - 12t^5 + 13t^4 - 12t^3 + 8t^2 - 4t + 1": 1,
+      "t^4 - 4t^3 + 5t^2 - 4t + 1": 1
+    },
+    "knot determinant": {
+      "1": 1,
+      "15": 1,
+      "63": 1
+    }
+  },
+  "192": {
+    "count": 1,
+    "alexander polynomial": {"t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1},
+    "knot determinant": {"27": 1}
+  },
+  "194": {
+    "count": 1,
+    "alexander polynomial": {"t^2 - t + 1": 1},
+    "knot determinant": {"3": 1}
+  },
+  "1182": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "198": {
+    "count": 1,
+    "alexander polynomial": {"t^2 - t + 1": 1},
+    "knot determinant": {"3": 1}
+  },
+  "996": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "90": {
+    "count": 9,
+    "alexander polynomial": {
+      "1": 2,
+      "t^2 - t + 1": 3,
+      "t^6 - 2t^5 + 3t^4 - 3t^3 + 3t^2 - 2t + 1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 2,
+      "3t^2 - 5t + 3": 1
+    },
+    "knot determinant": {
+      "11": 1,
+      "1": 2,
+      "3": 3,
+      "15": 1,
+      "9": 2
+    }
+  },
+  "92": {
+    "count": 6,
+    "alexander polynomial": {
+      "1": 4,
+      "t^2 - t + 1": 2
+    },
+    "knot determinant": {
+      "1": 4,
+      "3": 2
+    }
+  },
+  "636": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "94": {
+    "count": 5,
+    "alexander polynomial": {
+      "1": 1,
+      "t^2 - t + 1": 2,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 2
+    },
+    "knot determinant": {
+      "1": 1,
+      "3": 2,
+      "9": 2
+    }
+  },
+  "518": {
+    "count": 1,
+    "alexander polynomial": {"t^8 - 4t^7 + 10t^6 - 16t^5 + 19t^4 - 16t^3 + 10t^2 - 4t + 1": 1},
+    "knot determinant": {"81": 1}
+  },
+  "96": {
+    "count": 7,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1,
+      "1": 1,
+      "t^2 - t + 1": 4,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 1,
+      "3": 4,
+      "27": 1,
+      "9": 1
+    }
+  },
+  "1856": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "98": {
+    "count": 2,
+    "alexander polynomial": {"1": 2},
+    "knot determinant": {"1": 2}
+  },
+  "640": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "762": {
+    "count": 1,
+    "alexander polynomial": {"t^12 - 8t^11 + 31t^10 - 80t^9 + 150t^8 - 216t^7 + 243t^6 - 216t^5 + 150t^4 - 80t^3 + 31t^2 - 8t + 1": 1},
+    "knot determinant": {"1215": 1}
+  },
+  "642": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "886": {
+    "count": 1,
+    "alexander polynomial": {"4t^22 - 50t^21 + 324t^20 - 1427t^19 + 4754t^18 - 12676t^17 + 27988t^16 - 52316t^15 + 84026t^14 - 117126t^13 + 142610t^12 - 152223t^11 + 142610t^10 - 117126t^9 + 84026t^8 - 52316t^7 + 27988t^6 - 12676t^5 + 4754t^4 - 1427t^3 + 324t^2 - 50t + 4": 1},
+    "knot determinant": {"1038825": 1}
+  },
+  "406": {
+    "count": 1,
+    "alexander polynomial": {"2t^10 - 12t^9 + 37t^8 - 77t^7 + 116t^6 - 133t^5 + 116t^4 - 77t^3 + 37t^2 - 12t + 2": 1},
+    "knot determinant": {"621": 1}
+  },
+  "408": {
+    "count": 1,
+    "alexander polynomial": {"2t^10 - 11t^9 + 34t^8 - 70t^7 + 106t^6 - 121t^5 + 106t^4 - 70t^3 + 34t^2 - 11t + 2": 1},
+    "knot determinant": {"567": 1}
+  },
+  "1086": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "770": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "650": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "410": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"27": 1}
+  },
+  "414": {
+    "count": 3,
+    "alexander polynomial": {
+      "-1": 2,
+      "t^12 - 8t^11 + 31t^10 - 80t^9 + 150t^8 - 216t^7 + 243t^6 - 216t^5 + 150t^4 - 80t^3 + 31t^2 - 8t + 1": 1
+    },
+    "knot determinant": {
+      "1215": 1,
+      "6561": 1,
+      "9315": 1
+    }
+  },
+  "778": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"69255": 1}
+  },
+  "416": {
+    "count": 1,
+    "alexander polynomial": {"t^4 - 2t^3 + 3t^2 - 2t + 1": 1},
+    "knot determinant": {"9": 1}
+  },
+  "418": {
+    "count": 1,
+    "alexander polynomial": {"4t^12 - 26t^11 + 92t^10 - 221t^9 + 397t^8 - 556t^7 + 621t^6 - 556t^5 + 397t^4 - 221t^3 + 92t^2 - 26t + 4": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "540": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "422": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"693": 1}
+  },
+  "786": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "304": {
+    "count": 2,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1,
+      "t^10 - 9t^9 + 33t^8 - 76t^7 + 121t^6 - 141t^5 + 121t^4 - 76t^3 + 33t^2 - 9t + 1": 1
+    },
+    "knot determinant": {
+      "621": 1,
+      "27": 1
+    }
+  },
+  "428": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "1406": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "552": {
+    "count": 2,
+    "alexander polynomial": {
+      "t^10 - 5t^9 + 15t^8 - 30t^7 + 45t^6 - 51t^5 + 45t^4 - 30t^3 + 15t^2 - 5t + 1": 1,
+      "-1": 1
+    },
+    "knot determinant": {
+      "243": 1,
+      "-1": 1
+    }
+  },
+  "310": {
+    "count": 2,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1,
+      "2t^2 - 3t + 2": 1
+    },
+    "knot determinant": {
+      "27": 1,
+      "7": 1
+    }
+  },
+  "312": {
+    "count": 2,
+    "alexander polynomial": {
+      "2t^12 - 14t^11 + 53t^10 - 134t^9 + 250t^8 - 358t^7 + 403t^6 - 358t^5 + 250t^4 - 134t^3 + 53t^2 - 14t + 2": 1,
+      "t^8 - 4t^7 + 10t^6 - 16t^5 + 19t^4 - 16t^3 + 10t^2 - 4t + 1": 1
+    },
+    "knot determinant": {
+      "-1": 1,
+      "81": 1
+    }
+  },
+  "434": {
+    "count": 1,
+    "alexander polynomial": {"t^10 - 5t^9 + 15t^8 - 30t^7 + 45t^6 - 51t^5 + 45t^4 - 30t^3 + 15t^2 - 5t + 1": 1},
+    "knot determinant": {"243": 1}
+  },
+  "314": {
+    "count": 1,
+    "alexander polynomial": {"t^8 - 6t^7 + 16t^6 - 28t^5 + 33t^4 - 28t^3 + 16t^2 - 6t + 1": 1},
+    "knot determinant": {"135": 1}
+  },
+  "316": {
+    "count": 1,
+    "alexander polynomial": {"2t^12 - 13t^11 + 38t^10 - 70t^9 + 96t^8 - 109t^7 + 113t^6 - 109t^5 + 96t^4 - 70t^3 + 38t^2 - 13t + 2": 1},
+    "knot determinant": {"769": 1}
+  },
+  "438": {
+    "count": 1,
+    "alexander polynomial": {"2t^4 - 7t^3 + 9t^2 - 7t + 2": 1},
+    "knot determinant": {"27": 1}
+  },
+  "318": {
+    "count": 1,
+    "alexander polynomial": {"t^6 - 3t^5 + 4t^4 - 5t^3 + 4t^2 - 3t + 1": 1},
+    "knot determinant": {"21": 1}
+  },
+  "320": {
+    "count": 3,
+    "alexander polynomial": {
+      "-1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1,
+      "t^8 - 4t^7 + 10t^6 - 16t^5 + 19t^4 - 16t^3 + 10t^2 - 4t + 1": 1
+    },
+    "knot determinant": {
+      "12393": 1,
+      "9": 1,
+      "81": 1
+    }
+  },
+  "322": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"2097": 1}
+  },
+  "444": {
+    "count": 1,
+    "alexander polynomial": {"t^8 - 4t^7 + 10t^6 - 16t^5 + 19t^4 - 16t^3 + 10t^2 - 4t + 1": 1},
+    "knot determinant": {"81": 1}
+  },
+  "1542": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "1784": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "324": {
+    "count": 1,
+    "alexander polynomial": {"t^10 - 7t^9 + 23t^8 - 50t^7 + 77t^6 - 89t^5 + 77t^4 - 50t^3 + 23t^2 - 7t + 1": 1},
+    "knot determinant": {"405": 1}
+  },
+  "688": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"566433": 1}
+  },
+  "204": {
+    "count": 2,
+    "alexander polynomial": {
+      "t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1,
+      "t^2 - t + 1": 1
+    },
+    "knot determinant": {
+      "3": 1,
+      "27": 1
+    }
+  },
+  "326": {
+    "count": 2,
+    "alexander polynomial": {
+      "2t^10 - 11t^9 + 34t^8 - 70t^7 + 106t^6 - 121t^5 + 106t^4 - 70t^3 + 34t^2 - 11t + 2": 1,
+      "2t^14 - 20t^13 + 97t^12 - 305t^11 + 697t^10 - 1222t^9 + 1695t^8 - 1887t^7 + 1695t^6 - 1222t^5 + 697t^4 - 305t^3 + 97t^2 - 20t + 2": 1
+    },
+    "knot determinant": {
+      "567": 1,
+      "9963": 1
+    }
+  },
+  "206": {
+    "count": 1,
+    "alexander polynomial": {"t^8 - 3t^7 + 6t^6 - 8t^5 + 9t^4 - 8t^3 + 6t^2 - 3t + 1": 1},
+    "knot determinant": {"45": 1}
+  },
+  "328": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"15": 1}
+  },
+  "208": {
+    "count": 1,
+    "alexander polynomial": {"t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1},
+    "knot determinant": {"27": 1}
+  },
+  "570": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "210": {
+    "count": 4,
+    "alexander polynomial": {
+      "1": 1,
+      "t^8 - 6t^7 + 16t^6 - 28t^5 + 33t^4 - 28t^3 + 16t^2 - 6t + 1": 1,
+      "t^8 - 4t^7 + 10t^6 - 16t^5 + 19t^4 - 16t^3 + 10t^2 - 4t + 1": 2
+    },
+    "knot determinant": {
+      "1": 1,
+      "135": 1,
+      "81": 2
+    }
+  },
+  "1436": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "334": {
+    "count": 2,
+    "alexander polynomial": {
+      "t^8 - 4t^7 + 10t^6 - 16t^5 + 19t^4 - 16t^3 + 10t^2 - 4t + 1": 1,
+      "2t^8 - 9t^7 + 23t^6 - 38t^5 + 45t^4 - 38t^3 + 23t^2 - 9t + 2": 1
+    },
+    "knot determinant": {
+      "-1": 1,
+      "81": 1
+    }
+  },
+  "576": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"124605": 1}
+  },
+  "214": {
+    "count": 1,
+    "alexander polynomial": {"t^10 - 6t^9 + 20t^8 - 43t^7 + 67t^6 - 77t^5 + 67t^4 - 43t^3 + 20t^2 - 6t + 1": 1},
+    "knot determinant": {"351": 1}
+  },
+  "456": {
+    "count": 1,
+    "alexander polynomial": {"t^14 - 9t^13 + 39t^12 - 113t^11 + 242t^10 - 406t^9 + 548t^8 - 605t^7 + 548t^6 - 406t^5 + 242t^4 - 113t^3 + 39t^2 - 9t + 1": 1},
+    "knot determinant": {"3321": 1}
+  },
+  "578": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "218": {
+    "count": 1,
+    "alexander polynomial": {"t^2 - t + 1": 1},
+    "knot determinant": {"3": 1}
+  },
+  "340": {
+    "count": 1,
+    "alexander polynomial": {"4t^6 - 15t^5 + 30t^4 - 37t^3 + 30t^2 - 15t + 4": 1},
+    "knot determinant": {"135": 1}
+  },
+  "582": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"232551": 1}
+  },
+  "220": {
+    "count": 3,
+    "alexander polynomial": {
+      "t^6 - 2t^5 + 3t^4 - 3t^3 + 3t^2 - 2t + 1": 1,
+      "t^8 - 5t^7 + 14t^6 - 24t^5 + 29t^4 - 24t^3 + 14t^2 - 5t + 1": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "15": 1,
+      "117": 1,
+      "9": 1
+    }
+  },
+  "100": {
+    "count": 6,
+    "alexander polynomial": {
+      "1": 2,
+      "t^2 - t + 1": 3,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 2,
+      "3": 3,
+      "9": 1
+    }
+  },
+  "222": {
+    "count": 3,
+    "alexander polynomial": {
+      "t^10 - 5t^9 + 15t^8 - 30t^7 + 45t^6 - 51t^5 + 45t^4 - 30t^3 + 15t^2 - 5t + 1": 2,
+      "-1": 1
+    },
+    "knot determinant": {
+      "243": 2,
+      "267": 1
+    }
+  },
+  "464": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "102": {
+    "count": 7,
+    "alexander polynomial": {
+      "1": 2,
+      "t^2 - t + 1": 5
+    },
+    "knot determinant": {
+      "1": 2,
+      "3": 5
+    }
+  },
+  "466": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "224": {
+    "count": 1,
+    "alexander polynomial": {"t^6 - 3t^5 + 6t^4 - 7t^3 + 6t^2 - 3t + 1": 1},
+    "knot determinant": {"27": 1}
+  },
+  "346": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "104": {
+    "count": 5,
+    "alexander polynomial": {
+      "1": 3,
+      "t^2 - t + 1": 2
+    },
+    "knot determinant": {
+      "1": 3,
+      "3": 2
+    }
+  },
+  "226": {
+    "count": 1,
+    "alexander polynomial": {"t^4 - 5t^3 + 7t^2 - 5t + 1": 1},
+    "knot determinant": {"19": 1}
+  },
+  "106": {
+    "count": 6,
+    "alexander polynomial": {
+      "1": 2,
+      "t^2 - t + 1": 3,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 2,
+      "3": 3,
+      "9": 1
+    }
+  },
+  "3740": {
+    "count": 1,
+    "alexander polynomial": {"-1": 1},
+    "knot determinant": {"-1": 1}
+  },
+  "108": {
+    "count": 3,
+    "alexander polynomial": {
+      "1": 1,
+      "2t^4 - 8t^3 + 11t^2 - 8t + 2": 1,
+      "t^4 - 2t^3 + 3t^2 - 2t + 1": 1
+    },
+    "knot determinant": {
+      "1": 1,
+      "-1": 1,
+      "9": 1
+    }
+  }
+}

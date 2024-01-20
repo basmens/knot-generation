@@ -9,6 +9,7 @@ import nl.basmens.Main;
 import nl.basmens.generation.analyzers.GridAnalyzer;
 import nl.basmens.generation.generators.GridGenerator;
 import nl.basmens.knot.Knot;
+import nl.basmens.utils.concurrent.PerformanceTimer;
 import nl.basmens.utils.io.ResultExporter;
 
 public class KnotGenerationPipeline implements Runnable {
@@ -41,33 +42,44 @@ public class KnotGenerationPipeline implements Runnable {
     analyzer.setGridH(gridH);
   }
 
+  private void runGenCycle() {
+    PerformanceTimer timer = new PerformanceTimer(getClass(), "runGenCycle", "clear");
+    knots.clear();
+    timer.nextSegment("generateGrid");
+    generator.generateGrid();
+    timer.nextSegment("extractKnots");
+    knots = analyzer.extractKnots(generator.getGrid());
+    timer.stop();
+  }
+
   @Override
   public void run() {
+    PerformanceTimer timer = new PerformanceTimer(getClass(), "run - " + fileExportName);
     if (Main.MULTI_THREAD) {
+      if (!running || ResultExporter.getExporter(fileExportName).getKnotCount() >= Main.TARGET_KNOT_COUNT) {
+        System.out.println("Skipped " + fileExportName);
+        stop();
+        timer.stop();
+        return;
+      }
+      
       runThreaded();
     } else {
-      knots.clear();
-      generator.generateGrid();
-      knots = analyzer.extractKnots(generator.getGrid());
+      runGenCycle();
     }
+    timer.stop();
   }
 
   private void runThreaded() {
-    if (!running || ResultExporter.getExporter(fileExportName).getKnotCount() >= Main.TARGET_KNOT_COUNT) {
-      System.out.println("Skipped " + fileExportName);
-      stop();
-      return;
-    }
+    PerformanceTimer timer = new PerformanceTimer(getClass(), "runThreaded", "start");
     System.out.println("Starting " + fileExportName);
-
     do {
-      knots.clear();
-      generator.generateGrid();
-      knots = analyzer.extractKnots(generator.getGrid());
+      timer.nextSegment("gen knots");
+      runGenCycle();
 
       if (Main.SAVE_RESULTS) {
-
         // Start calculations
+        timer.nextSegment("calc invariants");
         for (Knot k : knots) {
           if (Main.SAVE_TRICOLORABILITY) {
             k.startCalcTricolorability();
@@ -80,17 +92,19 @@ public class KnotGenerationPipeline implements Runnable {
           }
         }
 
+        // Export
+        timer.nextSegment("export");
         ResultExporter exporter = ResultExporter.getExporter(fileExportName);
         exporter.save(knots);
-
         if (exporter.getKnotCount() >= Main.TARGET_KNOT_COUNT) {
           System.out.println("Finished " + fileExportName);
           stop();
         }
       }
-    } while (running && Main.MULTI_THREAD);
+    } while (running);
 
     System.out.println("Stopped " + fileExportName);
+    timer.stop();
   }
 
   public void stop() {

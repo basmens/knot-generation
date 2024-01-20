@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.concurrent.FutureTask;
 
 import nl.basmens.Main;
+import nl.basmens.utils.concurrent.PerformanceTimer;
 import nl.basmens.utils.maths.Matrix;
 import nl.basmens.utils.maths.Monomial;
 import nl.basmens.utils.maths.Polynomial;
@@ -340,6 +341,8 @@ public class Knot {
 
   // Tricolorability
   private boolean calculateTricolorability() {
+    PerformanceTimer timer = new PerformanceTimer(getClass(), "calculateTricolorability");
+
     long startTime = System.nanoTime();
     try {
       Connection connection = reducedFirstConnection;
@@ -353,23 +356,28 @@ public class Knot {
       do {
         int sectionValue = connection.getSectionValue();
         if (firstSectionValue != sectionValue) {
+          timer.stop();
           return true;
         }
         connection = connection.getNext();
       } while (connection != reducedFirstConnection);
 
+      timer.stop();
       return false;
     } catch (RuntimeException e) {
       e.printStackTrace();
+      timer.stop();
       return ERROR_VALUE_TRICOLORABILITY;
     }
   }
 
   // KnotDeterminant
   private long calculateKnotDeterminant() {
+    PerformanceTimer timer = new PerformanceTimer(getClass(), "calculateKnotDeterminant");
     long startTime = System.nanoTime();
     try {
       if (intersections.size() < 3) {
+        timer.stop();
         return 1;
       }
 
@@ -391,19 +399,22 @@ public class Knot {
       }
 
       // round to get rid of precision loss
+      timer.stop();
       return Math.round(Math.abs(matrix.getDeterminant(startTime)));
     } catch (RuntimeException e) {
       // e.printStackTrace();
+      timer.stop();
       return ERROR_VALUE_KNOT_DETERMINANT;
     }
-
   }
 
   // AlexanderPolynomial
   private Polynomial calculateAlexanderPolynomial() {
+    PerformanceTimer timer = new PerformanceTimer(getClass(), "calculateAlexanderPolynomial");
     long startTime = System.nanoTime();
     try {
       if (intersections.size() < 3) {
+        timer.stop();
         return new Polynomial(new Monomial(1, 0));
       }
 
@@ -445,9 +456,11 @@ public class Knot {
         determinant = Polynomial.div(determinant,
             new Monomial((long) Math.signum(smallestTerm.getCoefficient()), smallestTerm.getPower()));
       }
+      timer.stop();
       return determinant;
     } catch (RuntimeException e) {
       // e.printStackTrace();
+      timer.stop();
       return ERROR_VALUE_ALEXANDER_POLYNOMIAL;
     }
   }
