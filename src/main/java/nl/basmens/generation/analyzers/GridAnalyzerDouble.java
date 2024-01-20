@@ -6,6 +6,7 @@ import nl.basmens.generation.Tile;
 import nl.basmens.knot.Connection;
 import nl.basmens.knot.Knot;
 import nl.basmens.utils.collections.IndexedSet;
+import nl.basmens.utils.concurrent.PerformanceTimer;
 import nl.basmens.utils.maths.Vector;
 
 public class GridAnalyzerDouble implements GridAnalyzer {
@@ -13,6 +14,7 @@ public class GridAnalyzerDouble implements GridAnalyzer {
   private int gridH;
 
   public ArrayList<Knot> extractKnots(Tile[][] grid) {
+    PerformanceTimer timer = new PerformanceTimer(getClass(), "extractKnots", "create empty connections");
     ArrayList<Knot> result = new ArrayList<>();
 
     // Create empty connections
@@ -41,6 +43,7 @@ public class GridAnalyzerDouble implements GridAnalyzer {
     }
 
     // Make tiles set the connections
+    timer.nextSegment("connect connections in tiles");
     for (int x = 0; x < gridW; x++) {
       for (int y = 0; y < gridH; y++) {
         grid[x][y].setConnections(x, y, horizontalConnections, verticalConnections);
@@ -48,14 +51,17 @@ public class GridAnalyzerDouble implements GridAnalyzer {
     }
 
     // Read one loop at a time, until no loops remain unread
+    timer.nextSegment("Read knots");
     while (!allConnections.isEmpty()) {
       result.add(readKnot(allConnections));
     }
 
+    timer.stop();
     return result;
   }
 
-  private Knot readKnot(IndexedSet<AnalyzerConnection> allConnections) {
+  private static Knot readKnot(IndexedSet<AnalyzerConnection> allConnections) {
+    
     AnalyzerConnection firstConnection = allConnections.getAny();
     IndexedSet<AnalyzerIntersection> intersectionsToRemove = new IndexedSet<>();
     Connection current = firstConnection;
