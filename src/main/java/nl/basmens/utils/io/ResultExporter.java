@@ -60,7 +60,7 @@ public final class ResultExporter {
       JSONObject intersectionJson = json.getJSONObject(INTERSECTIONS_BASED_KEY);
       if (intersectionJson != null) {
         ((Set<String>) intersectionJson.keys())
-            .forEach(k -> lengths.put(Integer.parseInt(k), new KnotJson(intersectionJson.getJSONObject(k))));
+            .forEach(k -> intersections.put(Integer.parseInt(k), new KnotJson(intersectionJson.getJSONObject(k))));
       }
     }
   }
@@ -87,7 +87,7 @@ public final class ResultExporter {
 
     for (Knot k : knots) {
       lengths.computeIfAbsent(k.getLength(), s -> new KnotJson()).addKnot(k);
-      intersections.computeIfAbsent(k.getLength(), s -> new KnotJson()).addKnot(k);
+      intersections.computeIfAbsent(k.getIntersectionCount(), s -> new KnotJson()).addKnot(k);
     }
 
     knotCount += knots.size();

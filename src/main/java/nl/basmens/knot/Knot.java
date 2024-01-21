@@ -39,6 +39,7 @@ public class Knot {
 
   // Drawable
   private Connection drawableFirstConnection;
+  private int intersectionCount;
   private int length;
 
   // Invariants
@@ -91,6 +92,7 @@ public class Knot {
     } while (current != firstConnection);
 
     // Check for obvious unknot
+    intersectionCount = intersections.size();
     if (intersections.size() < 3) {
       initToUnknot(firstConnection.getPos());
     } else {
@@ -121,6 +123,7 @@ public class Knot {
     } while (current != firstConnection);
 
     // Check if obvious unknot
+    intersectionCount = intersections.size();
     if (intersections.size() < 3) {
       initToUnknot(firstConnection.getPos());
     } else {
@@ -482,6 +485,10 @@ public class Knot {
 
   public int getLength() {
     return length;
+  }
+
+  public int getIntersectionCount() {
+    return intersectionCount;
   }
 
   public boolean hasCalculatedTricolorability() {

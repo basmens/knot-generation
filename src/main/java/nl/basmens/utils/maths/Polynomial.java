@@ -1,6 +1,11 @@
 package nl.basmens.utils.maths;
 
-public class Polynomial {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Polynomial implements Comparable {
+  private static final Pattern PARSE_REGEX = Pattern.compile("(?>(-|\\+|^) ?(\\d*)(?>(t)(?>\\^(-?\\d+))?)?)");
+
   private Monomial[] monomials = new Monomial[0];
   private int index0Power;
 
@@ -350,5 +355,54 @@ public class Polynomial {
       }
     }
     return stringBuilder.toString().substring(" + ".length()).replace("+ -", "- ");
+  }
+
+  public static Polynomial parseString(String toParse) {
+    Polynomial result = new Polynomial();
+    Matcher monomialMatcher = PARSE_REGEX.matcher(toParse);
+
+    while (monomialMatcher.find()) {
+      // First group containts sign, second the coefficient, third t if present,
+      // fourth the exponent if present
+      long coefficient = "-".equals(monomialMatcher.group(1)) ? -1 : 1;
+      coefficient *= "".equals(monomialMatcher.group(2)) ? 1 : Long.parseLong(monomialMatcher.group(2));
+      int exponent = monomialMatcher.group(3) == null ? 0
+          : (monomialMatcher.group(4) == null ? 1 : Integer.parseInt(monomialMatcher.group(4)));
+      result.add(new Polynomial(new Monomial(coefficient, exponent)));
+    }
+
+    return result;
+  }
+
+  @Override
+  public int compareTo(Object o) {
+    if (this == o) {
+      return 0;
+    }
+    if (o != null && o instanceof Polynomial other) {
+      for (int i = 0; i < Math.min(monomials.length, other.monomials.length); i++) {
+        if (monomials[i] == null) {
+          return -1;
+        }
+        int compare = monomials[i].compareTo(other.monomials[i]);
+        if (compare != 0) {
+          return compare;
+        }
+      }
+      return monomials.length - other.monomials.length;
+    }
+    return 1;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return compareTo(obj) == 0;
+  }
+
+  @Override
+  public int hashCode() {
+    Monomial first = monomials[0];
+    Monomial last = monomials[monomials.length - 1];
+    return (int) (first.getCoefficient() * first.getPower() * last.getCoefficient() * last.getPower());
   }
 }

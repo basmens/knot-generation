@@ -5,6 +5,7 @@ import java.util.Set;
 
 import nl.basmens.Main;
 import nl.basmens.knot.Knot;
+import nl.basmens.utils.maths.Polynomial;
 import processing.data.JSONObject;
 
 public class KnotJson {
@@ -12,7 +13,7 @@ public class KnotJson {
 
   // Leaving out tricolorability because it is never used
   private HashMap<Long, LongValue> knotDeterminants = new HashMap<>();
-  private HashMap<String, LongValue> alexanderPolynomials = new HashMap<>();
+  private HashMap<Polynomial, LongValue> alexanderPolynomials = new HashMap<>();
 
   public KnotJson() {
   }
@@ -29,7 +30,7 @@ public class KnotJson {
     JSONObject apJson = fromJson.getJSONObject("alexander polynomial");
     if (apJson != null) {
       ((Set<String>) apJson.keys())
-          .forEach(k -> alexanderPolynomials.put(k, new LongValue(apJson.getLong(k))));
+          .forEach(k -> alexanderPolynomials.put(Polynomial.parseString(k), new LongValue(apJson.getLong(k))));
     }
   }
 
@@ -39,7 +40,7 @@ public class KnotJson {
       knotDeterminants.computeIfAbsent(knot.getKnotDeterminant(), k -> new LongValue()).increment();
     }
     if (Main.SAVE_ALEXANDER_POLYNOMIAL) {
-      alexanderPolynomials.computeIfAbsent(knot.getAlexanderPolynomial().toString(), k -> new LongValue()).increment();
+      alexanderPolynomials.computeIfAbsent(knot.getAlexanderPolynomial(), k -> new LongValue()).increment();
     }
   }
 
@@ -55,7 +56,7 @@ public class KnotJson {
     }
     if (!alexanderPolynomials.isEmpty()) {
       b.append(",\n\"alexander polynomial\":{\n\"");
-      alexanderPolynomials.forEach((k, v) -> b.append(k).append("\":").append(v.get()).append(",\n\""));
+      alexanderPolynomials.forEach((k, v) -> b.append(k.toString()).append("\":").append(v.get()).append(",\n\""));
       b.setLength(b.length() - 3);
       b.append("\n}");
     }
