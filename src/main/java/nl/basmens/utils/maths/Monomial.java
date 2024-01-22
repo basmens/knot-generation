@@ -111,6 +111,13 @@ public class Monomial implements Comparable {
     denominator = denominator.divide(gcd);
   }
 
+  private void moveSignumToNumerator() {
+    if (denominator.signum() == -1) {
+      numerator = numerator.negate();
+      denominator = denominator.negate();
+    }
+  }
+
   // =================================================================================================================
   // Getters
   // =================================================================================================================
@@ -173,18 +180,17 @@ public class Monomial implements Comparable {
     if (this == o) {
       return 0;
     }
-    if (o != null && o instanceof Monomial other) {
-      if (power != other.power) {
-        return power - other.power;
-      }
-      simplifyFraction();
-      other.simplifyFraction();
-      int dif = numerator.subtract(other.numerator).signum();
-      if (dif != 0) {
-        return dif;
-      }
-      return denominator.subtract(other.denominator).signum();
+    if (!(o instanceof Monomial)) {
+      return 1;
     }
-    return 1;
+    
+    Monomial other = (Monomial) o;
+    if (power != other.power) {
+      return power - other.power;
+    }
+
+    moveSignumToNumerator();
+    other.moveSignumToNumerator();
+    return numerator.multiply(other.denominator).compareTo(denominator.multiply(other.numerator));
   }
 }

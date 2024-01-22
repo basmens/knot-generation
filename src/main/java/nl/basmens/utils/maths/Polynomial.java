@@ -379,19 +379,24 @@ public class Polynomial implements Comparable {
     if (this == o) {
       return 0;
     }
-    if (o != null && o instanceof Polynomial other) {
-      for (int i = 0; i < Math.min(monomials.length, other.monomials.length); i++) {
-        if (monomials[i] == null) {
-          return -1;
-        }
-        int compare = monomials[i].compareTo(other.monomials[i]);
-        if (compare != 0) {
-          return compare;
-        }
-      }
-      return monomials.length - other.monomials.length;
+    if (!(o instanceof Polynomial)) {
+      return 1;
     }
-    return 1;
+    
+    Polynomial other = (Polynomial) o;
+    for (int i = 0; i < Math.min(monomials.length, other.monomials.length); i++) {
+      if (monomials[i] == null) {
+        if (other.monomials[i] == null) {
+          continue;
+        }
+        return -1;
+      }
+      int compare = monomials[i].compareTo(other.monomials[i]);
+      if (compare != 0) {
+        return compare;
+      }
+    }
+    return getHighestMonomial().compareTo(other.getHighestMonomial());
   }
 
   @Override
