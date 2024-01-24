@@ -75,7 +75,7 @@ public class KnotGenerationPipeline implements Runnable {
   private void runThreaded() {
     PerformanceTimer timer = new PerformanceTimer(getClass(), "runThreaded", "start");
     System.out.println("Starting " + fileExportName);
-    do {
+    while (running) {
       timer.nextSegment("gen knots");
       runGenCycle();
 
@@ -103,7 +103,7 @@ public class KnotGenerationPipeline implements Runnable {
           stop();
         }
       }
-    } while (running);
+    }
 
     ResultExporter.closeExporter(fileExportName);
     System.out.println("Stopped " + fileExportName);

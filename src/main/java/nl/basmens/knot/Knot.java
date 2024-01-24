@@ -346,7 +346,7 @@ public class Knot {
   private boolean calculateTricolorability() {
     PerformanceTimer timer = new PerformanceTimer(getClass(), "calculateTricolorability");
 
-    long startTime = System.nanoTime();
+    long startTime = System.currentTimeMillis();
     try {
       Connection connection = reducedFirstConnection;
       while (!connection.isUnder() && connection != reducedFirstConnection.getPrev()) {
@@ -377,13 +377,13 @@ public class Knot {
   // KnotDeterminant
   private long calculateKnotDeterminant() {
     PerformanceTimer timer = new PerformanceTimer(getClass(), "calculateKnotDeterminant");
-    long startTime = System.nanoTime();
     try {
       if (intersections.size() < 3) {
         timer.stop();
         return 1;
       }
-
+      
+      long startTime = System.currentTimeMillis();
       asignSectionIds();
 
       Matrix matrix = new Matrix(intersections.size() - 1, intersections.size() - 1);
@@ -414,13 +414,13 @@ public class Knot {
   // AlexanderPolynomial
   private Polynomial calculateAlexanderPolynomial() {
     PerformanceTimer timer = new PerformanceTimer(getClass(), "calculateAlexanderPolynomial");
-    long startTime = System.nanoTime();
     try {
       if (intersections.size() < 3) {
         timer.stop();
         return new Polynomial(new Monomial(1, 0));
       }
-
+      
+      long startTime = System.currentTimeMillis();
       asignAreaIds();
 
       int s = intersections.size();

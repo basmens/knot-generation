@@ -6,13 +6,11 @@ import java.io.FileWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import nl.basmens.Main;
 import nl.basmens.knot.Knot;
 import nl.basmens.utils.concurrent.PerformanceTimer;
 import processing.core.PApplet;
