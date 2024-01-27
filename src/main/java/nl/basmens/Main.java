@@ -33,7 +33,7 @@ public class Main extends PApplet {
   public static final boolean SAVE_KNOT_DETERMINANT = true;
   public static final boolean SAVE_ALEXANDER_POLYNOMIAL = true;
   public static final boolean MULTI_THREAD = true;
-  private static final Tilesets TILESET = Tilesets.WEIGHTED_LOW;
+  private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
   public static final boolean KEEP_DRAWABLE_KNOTS = false; // Preformance
   public static final boolean PROFILE_PERFORMANCE = true;
   public static final long MAX_CALC_TIME_PER_INVARIANT = 500L; // In millis
@@ -90,7 +90,7 @@ public class Main extends PApplet {
   private void startKnotGenerations() {
     for (int i = 0; i < knotGenerationPipelines.length; i++) {
       if (MULTI_THREAD) {
-        size = i == 20 ? 3000 : (10 * (1 + i));
+        size = i == 0 ? 3000 : (10 * (21 - i)); // Start with biggest grids
       }
 
       String fileName = TILESET.toString().toLowerCase(Locale.ENGLISH) + "/" + size + "x" + size;
