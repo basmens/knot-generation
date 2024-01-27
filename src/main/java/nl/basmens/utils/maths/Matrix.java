@@ -131,7 +131,7 @@ public class Matrix {
 
     for (int i = 0; i < matrix.width() - 1; i++) {
       for (int j = i + 1; j < matrix.width(); j++) {
-        if (System.nanoTime() - startTime > Main.MAX_CALC_TIME_PER_INVARIANT) {
+        if (System.currentTimeMillis() - startTime > Main.MAX_CALC_TIME_PER_INVARIANT) {
           throw new RuntimeException("Max calculation time exceeded in knot determinant");
         }
 

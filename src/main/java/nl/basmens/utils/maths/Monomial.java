@@ -3,7 +3,7 @@ package nl.basmens.utils.maths;
 import java.math.BigInteger;
 import java.util.Locale;
 
-public class Monomial {
+public class Monomial implements Comparable {
   private BigInteger numerator;
   private BigInteger denominator;
   private int power = 1;
@@ -111,6 +111,13 @@ public class Monomial {
     denominator = denominator.divide(gcd);
   }
 
+  private void moveSignumToNumerator() {
+    if (denominator.signum() == -1) {
+      numerator = numerator.negate();
+      denominator = denominator.negate();
+    }
+  }
+
   // =================================================================================================================
   // Getters
   // =================================================================================================================
@@ -166,5 +173,24 @@ public class Monomial {
       default:
         yield "t^" + power;
     };
+  }
+
+  @Override
+  public int compareTo(Object o) {
+    if (this == o) {
+      return 0;
+    }
+    if (!(o instanceof Monomial)) {
+      return 1;
+    }
+    
+    Monomial other = (Monomial) o;
+    if (power != other.power) {
+      return power - other.power;
+    }
+
+    moveSignumToNumerator();
+    other.moveSignumToNumerator();
+    return numerator.multiply(other.denominator).compareTo(denominator.multiply(other.numerator));
   }
 }

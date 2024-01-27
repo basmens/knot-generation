@@ -39,6 +39,7 @@ public class Knot {
 
   // Drawable
   private Connection drawableFirstConnection;
+  private int intersectionCount;
   private int length;
 
   // Invariants
@@ -91,6 +92,7 @@ public class Knot {
     } while (current != firstConnection);
 
     // Check for obvious unknot
+    intersectionCount = intersections.size();
     if (intersections.size() < 3) {
       initToUnknot(firstConnection.getPos());
     } else {
@@ -121,6 +123,7 @@ public class Knot {
     } while (current != firstConnection);
 
     // Check if obvious unknot
+    intersectionCount = intersections.size();
     if (intersections.size() < 3) {
       initToUnknot(firstConnection.getPos());
     } else {
@@ -343,7 +346,7 @@ public class Knot {
   private boolean calculateTricolorability() {
     PerformanceTimer timer = new PerformanceTimer(getClass(), "calculateTricolorability");
 
-    long startTime = System.nanoTime();
+    long startTime = System.currentTimeMillis();
     try {
       Connection connection = reducedFirstConnection;
       while (!connection.isUnder() && connection != reducedFirstConnection.getPrev()) {
@@ -374,13 +377,13 @@ public class Knot {
   // KnotDeterminant
   private long calculateKnotDeterminant() {
     PerformanceTimer timer = new PerformanceTimer(getClass(), "calculateKnotDeterminant");
-    long startTime = System.nanoTime();
     try {
       if (intersections.size() < 3) {
         timer.stop();
         return 1;
       }
-
+      
+      long startTime = System.currentTimeMillis();
       asignSectionIds();
 
       Matrix matrix = new Matrix(intersections.size() - 1, intersections.size() - 1);
@@ -411,13 +414,13 @@ public class Knot {
   // AlexanderPolynomial
   private Polynomial calculateAlexanderPolynomial() {
     PerformanceTimer timer = new PerformanceTimer(getClass(), "calculateAlexanderPolynomial");
-    long startTime = System.nanoTime();
     try {
       if (intersections.size() < 3) {
         timer.stop();
         return new Polynomial(new Monomial(1, 0));
       }
-
+      
+      long startTime = System.currentTimeMillis();
       asignAreaIds();
 
       int s = intersections.size();
@@ -482,6 +485,10 @@ public class Knot {
 
   public int getLength() {
     return length;
+  }
+
+  public int getIntersectionCount() {
+    return intersectionCount;
   }
 
   public boolean hasCalculatedTricolorability() {

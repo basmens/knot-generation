@@ -33,15 +33,16 @@ public class Main extends PApplet {
   public static final boolean SAVE_KNOT_DETERMINANT = true;
   public static final boolean SAVE_ALEXANDER_POLYNOMIAL = true;
   public static final boolean MULTI_THREAD = true;
-  private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
+  private static final Tilesets TILESET = Tilesets.WEIGHTED_LOW;
   public static final boolean KEEP_DRAWABLE_KNOTS = false; // Preformance
-  public static final long MAX_CALC_TIME_PER_INVARIANT = 500_000_000L; // In nanos
+  public static final boolean PROFILE_PERFORMANCE = true;
+  public static final long MAX_CALC_TIME_PER_INVARIANT = 500L; // In millis
   public static final long TARGET_KNOT_COUNT = 1_000_000_000L;
   // Used to set the seed; ignore warning if no seed is given
-  public static final Supplier<Random> RANDOM_FACTORY = () -> new Random(10);
+  public static final Supplier<Random> RANDOM_FACTORY = Random::new;
 
   public final KnotRenderer knotRenderer = new KnotRenderer(true, true, false);
-  private int size = 20;
+  private int size = 10;
   private int imgRes = 7;
 
   private enum Tilesets {
@@ -155,7 +156,7 @@ public class Main extends PApplet {
 
         println();
         println("Flushing data...");
-        ResultExporter.saveAll();
+        ResultExporter.closeAll();
         PerformanceTimer.flushData();
         println("Flushed data");
 
@@ -207,7 +208,7 @@ public class Main extends PApplet {
         println();
         println("Flushing data...");
         if (SAVE_RESULTS) {
-          ResultExporter.saveAll();
+          ResultExporter.closeAll();
         }
         PerformanceTimer.flushData();
         println("Flushed data");
@@ -244,9 +245,9 @@ public class Main extends PApplet {
             imgRes);
       }
     }
+    p.endDraw();
 
     // Save
-    p.endDraw();
     String path = RESOURCE_PATH.substring(0, RESOURCE_PATH.length() - "target/classes/".length());
     p.save(path + "results/gen result.png");
   }

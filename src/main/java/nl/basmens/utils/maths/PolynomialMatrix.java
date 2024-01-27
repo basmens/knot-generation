@@ -3,6 +3,7 @@ package nl.basmens.utils.maths;
 import java.util.ArrayList;
 
 import nl.basmens.Main;
+import nl.basmens.utils.concurrent.PerformanceTimer;
 
 public class PolynomialMatrix {
   private Polynomial[][] polynomials;
@@ -71,6 +72,8 @@ public class PolynomialMatrix {
       return new Polynomial();
     }
 
+    PerformanceTimer timer = new PerformanceTimer(getClass(), "getDeterminant", "mold matrix");
+
     // Arithmetic to set lower left corner to 0, so that the resulting determinant
     // equals the product of the diagonal:
     // [n00, n10, n20, n30, n40],
@@ -90,7 +93,8 @@ public class PolynomialMatrix {
       boolean isDiagonalZero = matrix.get(col, col).isZero();
 
       for (int row = col + 1; row < matrix.height(); row++) {
-        if (System.nanoTime() - startTime > Main.MAX_CALC_TIME_PER_INVARIANT) {
+        if (System.currentTimeMillis() - startTime > Main.MAX_CALC_TIME_PER_INVARIANT) {
+          timer.stop();
           throw new RuntimeException("Max calculation time exceeded in alexander polynomial");
         }
 
@@ -118,7 +122,9 @@ public class PolynomialMatrix {
       }
     }
 
-    // Multiply the diagonal and divide by the final divisors in parts to make long overflows less likely to occur
+    timer.nextSegment("multiply diagonals");
+    // Multiply the diagonal and divide by the final divisors in parts to make long
+    // overflows less likely to occur
     Polynomial result = new Polynomial(new Monomial(1, 0));
     Polynomial remainder = new Polynomial();
     Polynomial devisor = new Polynomial(new Monomial(1, 0));
@@ -141,9 +147,11 @@ public class PolynomialMatrix {
     }
 
     if (!remainder.isZero()) {
+      timer.stop();
       throw new RuntimeException("Determinant calculation in PolynomialMatrix resulted in a remainder");
     }
 
+    timer.stop();
     return result;
   }
 

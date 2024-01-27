@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import nl.basmens.Main;
 import nl.basmens.utils.io.ResultExporter;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
@@ -27,6 +28,14 @@ public final class PerformanceTimer {
   private long lastTimeStamp;
 
   public PerformanceTimer(Class<?> c, String timerName, String firstSegment) {
+    if (!Main.PROFILE_PERFORMANCE) {
+      this.startTime = 0;
+      this.ownerThread = null;
+      this.segmentStack = null;
+      this.functionTimer = null;
+      return;
+    }
+
     timerName = c.getName() + " - " + timerName;
 
     ownerThread = Thread.currentThread();
@@ -48,6 +57,10 @@ public final class PerformanceTimer {
   }
 
   public void nextSegment(String nextSegmentName) {
+    if (!Main.PROFILE_PERFORMANCE) {
+      return;
+    }
+
     if (Thread.currentThread() != ownerThread) {
       throw new RuntimeException("PerformanceTimer must be used in the same thread as the one who created it");
     }
@@ -66,6 +79,10 @@ public final class PerformanceTimer {
   }
 
   public void stop() {
+    if (!Main.PROFILE_PERFORMANCE) {
+      return;
+    }
+
     if (Thread.currentThread() != ownerThread) {
       throw new RuntimeException("PerformanceTimer must be used in the same thread as the one who created it");
     }
@@ -79,6 +96,10 @@ public final class PerformanceTimer {
 
 
   public static void flushData() {
+    if (!Main.PROFILE_PERFORMANCE) {
+      return;
+    }
+
     try {
       String p = Paths.get(ResultExporter.class.getResource("/").toURI()).toAbsolutePath().toString();
       p = p.substring(0, p.length() - "target/classes".length());
