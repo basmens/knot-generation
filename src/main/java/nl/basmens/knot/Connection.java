@@ -34,7 +34,7 @@ public class Connection implements Comparable<Connection> {
   // ===================================================================================================================
 
   protected boolean propagateTricolorability(int sectionValue, long startTime) {
-    if (System.nanoTime() - startTime > Main.MAX_CALC_TIME_PER_INVARIANT) {
+    if (System.currentTimeMillis() - startTime > Main.MAX_CALC_TIME_PER_INVARIANT) {
       throw new RuntimeException("Max calculation time exceeded in tricolorability");
     }
 
