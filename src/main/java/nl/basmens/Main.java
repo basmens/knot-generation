@@ -37,6 +37,7 @@ public class Main extends PApplet {
   public static final boolean KEEP_DRAWABLE_KNOTS = false; // Preformance
   public static final boolean PROFILE_PERFORMANCE = true;
   public static final long MAX_CALC_TIME_PER_INVARIANT = 500L; // In millis
+  public static final int CALC_INVARIANT_MAX_INTERSECTION_COUNT = 300;
   public static final long TARGET_KNOT_COUNT = 10_000_000L;
   // Used to set the seed; ignore warning if no seed is given
   public static final Supplier<Random> RANDOM_FACTORY = Random::new;
@@ -70,8 +71,7 @@ public class Main extends PApplet {
     }
   }
 
-  private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[MULTI_THREAD ? 6 : 1];
-  // private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[MULTI_THREAD ? 21 : 1];
+  private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[MULTI_THREAD ? 21 : 1];
   private ExecutorService threadPool = Executors.newFixedThreadPool(9);
 
   static {
@@ -91,8 +91,7 @@ public class Main extends PApplet {
   private void startKnotGenerations() {
     for (int i = 0; i < knotGenerationPipelines.length; i++) {
       if (MULTI_THREAD) {
-        // size = i == 0 ? 3000 : (10 * (21 - i)); // Start with biggest grids
-        size = (i < 2) ? 10 : ((i < 4) ? 20 : 30);
+        size = i == 0 ? 3000 : (10 * (21 - i)); // Start with biggest grids
       }
 
       String fileName = TILESET.toString().toLowerCase(Locale.ENGLISH) + "/" + size + "x" + size;

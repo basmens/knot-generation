@@ -20,9 +20,17 @@ public class Knot {
   private static final FutureTask<Long> FUTURE_UNKNOT_KNOT_DETERMINANT = new FutureTask<>(() -> 1L);
   private static final FutureTask<Polynomial> FUTURE_UNKNOT_ALEXANDER_POLYNOMIAL = new FutureTask<>(
       () -> new Polynomial(new Monomial(1, 0)));
+
   private static final boolean ERROR_VALUE_TRICOLORABILITY = false; // Not really an error value tbh...
   private static final long ERROR_VALUE_KNOT_DETERMINANT = -1;
   private static final Polynomial ERROR_VALUE_ALEXANDER_POLYNOMIAL = new Polynomial(new Monomial(-1, 0));
+
+  private static final FutureTask<Boolean> ERROR_FUTURE_TRICOLORABILITY = new FutureTask<>(
+      () -> ERROR_VALUE_TRICOLORABILITY);
+  private static final FutureTask<Long> ERROR_FUTURE_KNOT_DETERMINANT = new FutureTask<>(
+      () -> ERROR_VALUE_KNOT_DETERMINANT);
+  private static final FutureTask<Polynomial> ERROR_FUTURE_ALEXANDER_POLYNOMIAL = new FutureTask<>(
+      () -> ERROR_VALUE_ALEXANDER_POLYNOMIAL);
 
   static {
     FUTURE_UNKNOT_TRICOLORABILITY.run();
@@ -99,6 +107,11 @@ public class Knot {
       // Complete the loop
       currentReduced.setNext(reducedFirstConnection);
       simplifyUsingReidemeisterMoves();
+
+      // If there are too many intersectons, set invariants to error
+      if (intersections.size() > Main.CALC_INVARIANT_MAX_INTERSECTION_COUNT) {
+        initInvariantsToError();
+      }
     }
   }
 
@@ -135,6 +148,12 @@ public class Knot {
         lastIntersected.setNext(firstConnection.getNext());
       }
       simplifyUsingReidemeisterMoves();
+
+      // If there are too many intersectons, set invariants to error
+      if (intersections.size() > Main.CALC_INVARIANT_MAX_INTERSECTION_COUNT) {
+        initInvariantsToError();
+      }
+
     }
     drawableFirstConnection = reducedFirstConnection;
   }
@@ -147,6 +166,15 @@ public class Knot {
     tricolorabilityFuture = FUTURE_UNKNOT_TRICOLORABILITY;
     knotDeterminantFuture = FUTURE_UNKNOT_KNOT_DETERMINANT;
     alexanderPolynomialFuture = FUTURE_UNKNOT_ALEXANDER_POLYNOMIAL;
+
+    hasAsignedSectionIds = true;
+    hasAsignedAreaIds = true;
+  }
+
+  private void initInvariantsToError() {
+    tricolorabilityFuture = ERROR_FUTURE_TRICOLORABILITY;
+    knotDeterminantFuture = ERROR_FUTURE_KNOT_DETERMINANT;
+    alexanderPolynomialFuture = ERROR_FUTURE_ALEXANDER_POLYNOMIAL;
 
     hasAsignedSectionIds = true;
     hasAsignedAreaIds = true;
@@ -382,7 +410,7 @@ public class Knot {
         timer.stop();
         return 1;
       }
-      
+
       long startTime = System.currentTimeMillis();
       asignSectionIds();
 
@@ -419,7 +447,7 @@ public class Knot {
         timer.stop();
         return new Polynomial(new Monomial(1, 0));
       }
-      
+
       long startTime = System.currentTimeMillis();
       asignAreaIds();
 
