@@ -70,7 +70,8 @@ public class Main extends PApplet {
     }
   }
 
-  private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[MULTI_THREAD ? 21 : 1];
+  private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[MULTI_THREAD ? 6 : 1];
+  // private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[MULTI_THREAD ? 21 : 1];
   private ExecutorService threadPool = Executors.newFixedThreadPool(9);
 
   static {
@@ -90,7 +91,8 @@ public class Main extends PApplet {
   private void startKnotGenerations() {
     for (int i = 0; i < knotGenerationPipelines.length; i++) {
       if (MULTI_THREAD) {
-        size = i == 0 ? 3000 : (10 * (21 - i)); // Start with biggest grids
+        // size = i == 0 ? 3000 : (10 * (21 - i)); // Start with biggest grids
+        size = (i < 2) ? 10 : ((i < 4) ? 20 : 30);
       }
 
       String fileName = TILESET.toString().toLowerCase(Locale.ENGLISH) + "/" + size + "x" + size;
