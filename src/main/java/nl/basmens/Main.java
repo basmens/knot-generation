@@ -33,11 +33,11 @@ public class Main extends PApplet {
   public static final boolean SAVE_KNOT_DETERMINANT = true;
   public static final boolean SAVE_ALEXANDER_POLYNOMIAL = true;
   public static final boolean MULTI_THREAD = true;
-  private static final Tilesets TILESET = Tilesets.UNWEIGHTED;
+  private static final Tilesets TILESET = Tilesets.EXPANDED_UNWEIGHTED;
   public static final boolean KEEP_DRAWABLE_KNOTS = false; // Preformance
   public static final boolean PROFILE_PERFORMANCE = true;
   public static final long MAX_CALC_TIME_PER_INVARIANT = 500L; // In millis
-  public static final long TARGET_KNOT_COUNT = 1_000_000_000L;
+  public static final long TARGET_KNOT_COUNT = 10_000_000L;
   // Used to set the seed; ignore warning if no seed is given
   public static final Supplier<Random> RANDOM_FACTORY = Random::new;
 
