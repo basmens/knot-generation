@@ -33,9 +33,9 @@ public class Main extends PApplet {
   public static final boolean SAVE_KNOT_DETERMINANT = true;
   public static final boolean SAVE_ALEXANDER_POLYNOMIAL = true;
   public static final boolean MULTI_THREAD = true;
-  private static final Tilesets TILESET = Tilesets.EXPANDED_UNWEIGHTED;
+  private static final Tilesets TILESET = Tilesets.BASIC;
   public static final boolean KEEP_DRAWABLE_KNOTS = false; // Preformance
-  public static final boolean PROFILE_PERFORMANCE = true;
+  public static final boolean PROFILE_PERFORMANCE = false;
   public static final long MAX_CALC_TIME_PER_INVARIANT = 500L; // In millis
   public static final int CALC_INVARIANT_MAX_INTERSECTION_COUNT = 300;
   public static final long TARGET_KNOT_COUNT = 10_000_000L;
@@ -71,7 +71,8 @@ public class Main extends PApplet {
     }
   }
 
-  private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[MULTI_THREAD ? 21 : 1];
+  // private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[MULTI_THREAD ? 21 : 1];
+  private KnotGenerationPipeline[] knotGenerationPipelines = new KnotGenerationPipeline[MULTI_THREAD ? 12 : 1];
   private ExecutorService threadPool = Executors.newFixedThreadPool(9);
 
   static {
@@ -91,7 +92,8 @@ public class Main extends PApplet {
   private void startKnotGenerations() {
     for (int i = 0; i < knotGenerationPipelines.length; i++) {
       if (MULTI_THREAD) {
-        size = i == 0 ? 3000 : (10 * (21 - i)); // Start with biggest grids
+        // size = i == 0 ? 10 : (10 * (21 - i)); // Start with biggest grids
+        size = (i / 3 + 2) * 10;
       }
 
       String fileName = TILESET.toString().toLowerCase(Locale.ENGLISH) + "/" + size + "x" + size;
